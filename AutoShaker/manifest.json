@@ -1,0 +1,11 @@
+{
+  "Name": "AutoShaker",
+  "Author": "Jag3Dagster",
+  "Version": "0.1.0",
+  "Description": "Automatically shake bushes / trees as you walk by",
+  "UniqueID": "Jag3Dagster.AutoShaker",
+  "EntryDll": "AutoShaker.dll",
+  "MinimumApiVersion": "3.0.0",
+  "Dependencies": [ { "UniqueID": "spacechase0.GenericModConfigMenu" } ],
+  "UpdateKeys": []
+}
