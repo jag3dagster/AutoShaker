@@ -17,11 +17,11 @@ namespace AutoShaker
 			this.IsShakerActive = true;
 			this.ToggleShaker = SButton.H;
 
-			this.ShakeTrees = false;
+			this.ShakeTrees = true;
 			this.ShakeBushes = true;
 
 			this.UsePlayerMagnetism = false;
-			this.ShakeDistance = 2;
+			this.ShakeDistance = 1;
 		}
 	}
 }
