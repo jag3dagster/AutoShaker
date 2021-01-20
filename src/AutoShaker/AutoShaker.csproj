@@ -35,9 +35,6 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GenericModConfigMenu">
-      <HintPath>..\..\..\..\..\AppData\Roaming\Vortex\stardewvalley\mods\GenericModConfigMenu 1.2.1.zip-5098-1-2-1-1609895182\GenericModConfigMenu\GenericModConfigMenu.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
