@@ -39,7 +39,7 @@ NOTE: This includes trees with hazelnuts, coconuts, and golden coconuts
 2. *OPTIONAL* Install the latest version of [Generic Mod Config Menu](https://spacechase0.com/mods/stardew-valley/generic-mod-config-menu/)
     1. [Nexus Mirror](https://www.nexusmods.com/stardewvalley/mods/5098)
 3. Install this mod by unzipping the mod folder into 'Stardew Valley/Mods'
-4. Launch teh game using SMAPI
+4. Launch the game using SMAPI
 
 ### Compatibility
 * Compatible with...
