@@ -15,7 +15,7 @@ NOTE: This includes trees with hazelnuts, coconuts, and golden coconuts
     * *Default* - true
 * ToggleShaker
     * Which button will toggle the AutoShaker on and off when pressed while holding either Alt key
-    * *Default* - H
+    * *Default* - LeftAlt + H, RightAlt + H
 * ShakeTrees
     * Whether or not the AutoShaker should try and shake trees
     * *Default* - true
