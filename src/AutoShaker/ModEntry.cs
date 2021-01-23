@@ -33,7 +33,7 @@ namespace AutoShaker
 
 			helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
 			helper.Events.GameLoop.DayEnding += OnDayEnding;
-			helper.Events.Input.ButtonPressed += OnButtonPressed;
+			helper.Events.Input.ButtonsChanged += OnButtonsChanged;
 			helper.Events.GameLoop.GameLaunched += (_,__) => _config.RegisterModConfigMenu(helper, ModManifest);
 		}
 
@@ -153,9 +153,9 @@ namespace AutoShaker
 			Monitor.Log(statMessage, LogLevel.Info);
 		}
 
-		private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
+		private void OnButtonsChanged(object sender, ButtonsChangedEventArgs e)
 		{
-			if ((Helper.Input.IsDown(SButton.LeftAlt) || Helper.Input.IsDown(SButton.RightAlt)) && e.Button == SButton.H)
+			if (_config.ToggleShaker.JustPressed())
 			{
 				_config.IsShakerActive = !_config.IsShakerActive;
 				Helper.WriteConfig(_config);

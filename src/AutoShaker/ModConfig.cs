@@ -2,13 +2,14 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
+using StardewModdingAPI.Utilities;
 
 namespace AutoShaker
 {
 	internal class ModConfig
 	{
 		public bool IsShakerActive { get; set; }
-		public SButton ToggleShaker { get; set; }
+		public KeybindList ToggleShaker { get; set; }
 		public bool ShakeTrees { get; set; }
 		public bool ShakeBushes { get; set; }
 		public bool UsePlayerMagnetism { get; set; }
@@ -17,7 +18,9 @@ namespace AutoShaker
 		public void ResetToDefault()
 		{
 			IsShakerActive = true;
-			ToggleShaker = SButton.H;
+			ToggleShaker = new KeybindList(
+				new Keybind(SButton.LeftAlt, SButton.H),
+				new Keybind(SButton.RightAlt, SButton.H));
 
 			ShakeTrees = true;
 			ShakeBushes = true;
@@ -48,12 +51,17 @@ namespace AutoShaker
 				(val) => IsShakerActive = val);
 
 			// ToggleShaker
-			gmcmApi.RegisterSimpleOption(
+			//gmcmApi.RegisterSimpleOption(
+			//	manifest,
+			//	"Toggle Shaker Keybind",
+			//	"Keybinding to toggle the AutoShaker on and off.",
+			//	() => ToggleShaker,
+			//	(val) => ToggleShaker = val);
+
+			gmcmApi.RegisterLabel(
 				manifest,
-				"Toggle Shaker Keybind",
-				"Keybinding to toggle the AutoShaker on and off.",
-				() => ToggleShaker,
-				(val) => ToggleShaker = val);
+				"ToggleShaker Keybind Currently Unavailable",
+				"Changing the ToggleShaker keybind is currently only possible via the config.json file directly due to recent changes. This should be temporary.");
 
 			// ShakeTrees
 			gmcmApi.RegisterSimpleOption(
