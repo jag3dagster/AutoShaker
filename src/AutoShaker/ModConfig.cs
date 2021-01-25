@@ -10,7 +10,8 @@ namespace AutoShaker
 	{
 		public bool IsShakerActive { get; set; }
 		public KeybindList ToggleShaker { get; set; }
-		public bool ShakeTrees { get; set; }
+		public bool ShakeRegularTrees { get; set; }
+		public bool ShakeFruitTrees { get; set; }
 		public bool ShakeBushes { get; set; }
 		public bool UsePlayerMagnetism { get; set; }
 		public int ShakeDistance { get; set; }
@@ -22,7 +23,8 @@ namespace AutoShaker
 				new Keybind(SButton.LeftAlt, SButton.H),
 				new Keybind(SButton.RightAlt, SButton.H));
 
-			ShakeTrees = true;
+			ShakeRegularTrees = true;
+			ShakeFruitTrees = true;
 			ShakeBushes = true;
 
 			UsePlayerMagnetism = false;
@@ -48,28 +50,38 @@ namespace AutoShaker
 				"Shaker Is Active",
 				"Whether or not the AutoShaker mod is active.",
 				() => IsShakerActive,
-				(val) => IsShakerActive = val);
+				val => IsShakerActive = val);
 
 			// ToggleShaker
-			//gmcmApi.RegisterSimpleOption(
-			//	manifest,
-			//	"Toggle Shaker Keybind",
-			//	"Keybinding to toggle the AutoShaker on and off.",
-			//	() => ToggleShaker,
-			//	(val) => ToggleShaker = val);
+			{
+				//gmcmApi.RegisterSimpleOption(
+				//	manifest,
+				//	"Toggle Shaker Keybind",
+				//	"Keybinding to toggle the AutoShaker on and off.",
+				//	() => ToggleShaker,
+				//	val => ToggleShaker = val);
 
-			gmcmApi.RegisterLabel(
-				manifest,
-				"ToggleShaker Keybind Currently Unavailable",
-				"Changing the ToggleShaker keybind is currently only possible via the config.json file directly due to recent changes. This should be temporary.");
+				gmcmApi.RegisterLabel(
+					manifest,
+					"ToggleShaker Keybind Currently Unavailable",
+					"Changing the ToggleShaker keybind is currently only possible via the config.json file directly due to recent changes. This should be temporary.");
+			}
 
-			// ShakeTrees
+			// ShakeRegularTrees
 			gmcmApi.RegisterSimpleOption(
 				manifest,
-				"Shake Trees?",
-				"Whether or not the AutoShaker will shake trees that you walk by.",
-				() => ShakeTrees,
-				(val) => ShakeTrees = val);
+				"Shake Regular Trees?",
+				"Whether or not the AutoShaker will shake regular trees that you walk by for seeds.",
+				() => ShakeRegularTrees,
+				val => ShakeRegularTrees = val);
+
+			// ShakeFruitTrees
+			gmcmApi.RegisterSimpleOption(
+				manifest,
+				"Shake Fruit Trees?",
+				"Whether or not the AutoShaker will shake fruit trees that you walk by for fruit.",
+				() => ShakeFruitTrees,
+				val => ShakeFruitTrees = val);
 
 			// ShakeBushes
 			gmcmApi.RegisterSimpleOption(
@@ -77,7 +89,7 @@ namespace AutoShaker
 				"Shake Bushes?",
 				"Whether or not the AutoShaker will shake bushes that you walk by.",
 				() => ShakeBushes,
-				(val) => ShakeBushes = val);
+				val => ShakeBushes = val);
 
 			// UsePlayerMagnetism
 			gmcmApi.RegisterSimpleOption(
@@ -85,7 +97,7 @@ namespace AutoShaker
 				"Use Player Magnetism Distance?",
 				"Whether or not the AutoShaker will shake bushes at the same distance players can pick up items. Note: Overrides 'Shake Distance'",
 				() => UsePlayerMagnetism,
-				(val) => UsePlayerMagnetism = val);
+				val => UsePlayerMagnetism = val);
 
 			// ShakeDistance
 			gmcmApi.RegisterSimpleOption(
@@ -93,7 +105,7 @@ namespace AutoShaker
 				"Shake Distance",
 				"Distance to shake bushes when not using 'Player Magnetism.'",
 				() => ShakeDistance,
-				(val) => ShakeDistance = val);
+				val => ShakeDistance = val);
 		}
 	}
 

@@ -40,17 +40,16 @@ namespace AutoShaker
 		private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
 		{
 			if (!Game1.hasLoadedGame) return;
-			if (!_config.IsShakerActive) return;
+			if (!_config.IsShakerActive || (!_config.ShakeRegularTrees && !_config.ShakeFruitTrees && !_config.ShakeBushes)) return;
 			if (Game1.currentLocation == null || Game1.player == null) return;
 			if (Game1.CurrentEvent != null && (!Game1.CurrentEvent.playerControlSequence || !Game1.CurrentEvent.canPlayerUseTool())) return;
 			if (Game1.player.currentLocation.terrainFeatures.ToList().Count == 0 &&
 				Game1.player.currentLocation.largeTerrainFeatures.ToList().Count == 0) return;
 
-			
 			var playerTileLocationPoint = Game1.player.getTileLocationPoint();
 			var playerMagnetism = Game1.player.GetAppliedMagneticRadius();
 
-			if (_config.ShakeTrees)
+			if (_config.ShakeRegularTrees || _config.ShakeFruitTrees)
 			{
 				var trees = Game1.player.currentLocation.terrainFeatures.Pairs
 					.Select(p => p.Value)
@@ -65,6 +64,8 @@ namespace AutoShaker
 					switch (tree)
 					{
 						// Tree cases
+						case Tree _ when !_config.ShakeRegularTrees:
+							continue;
 						case Tree treeFeature when treeFeature.stump:
 							continue;
 						case Tree treeFeature when !treeFeature.hasSeed:
@@ -79,6 +80,8 @@ namespace AutoShaker
 							break;
 
 						// Fruit Tree cases
+						case FruitTree _ when !_config.ShakeFruitTrees:
+							continue;
 						case FruitTree fruitTree when fruitTree.stump:
 							continue;
 						case FruitTree fruitTree when fruitTree.fruitsOnTree.Value <= 0:
@@ -155,15 +158,18 @@ namespace AutoShaker
 
 		private void OnButtonsChanged(object sender, ButtonsChangedEventArgs e)
 		{
-			if (_config.ToggleShaker.JustPressed())
+			if (Game1.activeClickableMenu == null)
 			{
-				_config.IsShakerActive = !_config.IsShakerActive;
-				Helper.WriteConfig(_config);
+				if (_config.ToggleShaker.JustPressed())
+				{
+					_config.IsShakerActive = !_config.IsShakerActive;
+					Helper.WriteConfig(_config);
 
-				var message = "AutoShaker has been " + (_config.IsShakerActive ? "ACTIVATED" : "DEACTIVATED");
+					var message = "AutoShaker has been " + (_config.IsShakerActive ? "ACTIVATED" : "DEACTIVATED");
 
-				Monitor.Log(message, LogLevel.Info);
-				Game1.addHUDMessage(new HUDMessage(message, null));
+					Monitor.Log(message, LogLevel.Info);
+					Game1.addHUDMessage(new HUDMessage(message, null));
+				}
 			}
 		}
 
