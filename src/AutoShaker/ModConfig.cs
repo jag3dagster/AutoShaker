@@ -8,10 +8,25 @@ namespace AutoShaker
 {
 	internal class ModConfig
 	{
+		private const int MinFruitsReady = 1;
+		private const int MaxFruitsReady = 3;
+
+		private int _fruitsReadyToShake;
+
 		public bool IsShakerActive { get; set; }
 		public KeybindList ToggleShaker { get; set; }
 		public bool ShakeRegularTrees { get; set; }
 		public bool ShakeFruitTrees { get; set; }
+		public int FruitsReadyToShake
+		{
+			get => _fruitsReadyToShake;
+			set => _fruitsReadyToShake = 
+				value <= MinFruitsReady
+					? MinFruitsReady
+					: value >= MaxFruitsReady
+						? MaxFruitsReady
+						: value;
+		}
 		public bool ShakeBushes { get; set; }
 		public bool UsePlayerMagnetism { get; set; }
 		public int ShakeDistance { get; set; }
@@ -25,6 +40,7 @@ namespace AutoShaker
 
 			ShakeRegularTrees = true;
 			ShakeFruitTrees = true;
+			FruitsReadyToShake = MinFruitsReady;
 			ShakeBushes = true;
 
 			UsePlayerMagnetism = false;
@@ -82,6 +98,16 @@ namespace AutoShaker
 				"Whether or not the AutoShaker will shake fruit trees that you walk by for fruit.",
 				() => ShakeFruitTrees,
 				val => ShakeFruitTrees = val);
+
+			// FruitsReadyToShake
+			gmcmApi.RegisterClampedOption(
+				manifest,
+				"Minimum Fruits Ready to Shake",
+				"Minimum amount of fruits a Fruit Tree should have ready before the AutoShaker shakes the tree.",
+				() => FruitsReadyToShake,
+				val => FruitsReadyToShake = val,
+				MinFruitsReady,
+				MaxFruitsReady);
 
 			// ShakeBushes
 			gmcmApi.RegisterSimpleOption(

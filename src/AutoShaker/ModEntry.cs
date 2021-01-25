@@ -66,9 +66,9 @@ namespace AutoShaker
 						// Tree cases
 						case Tree _ when !_config.ShakeRegularTrees:
 							continue;
-						case Tree treeFeature when treeFeature.stump:
+						case Tree treeFeature when treeFeature.stump.Value:
 							continue;
-						case Tree treeFeature when !treeFeature.hasSeed:
+						case Tree treeFeature when !treeFeature.hasSeed.Value:
 							continue;
 						case Tree treeFeature when !treeFeature.isActionable():
 							continue;
@@ -82,9 +82,9 @@ namespace AutoShaker
 						// Fruit Tree cases
 						case FruitTree _ when !_config.ShakeFruitTrees:
 							continue;
-						case FruitTree fruitTree when fruitTree.stump:
+						case FruitTree fruitTree when fruitTree.stump.Value:
 							continue;
-						case FruitTree fruitTree when fruitTree.fruitsOnTree.Value <= 0:
+						case FruitTree fruitTree when fruitTree.fruitsOnTree.Value < _config.FruitsReadyToShake:
 							continue;
 						case FruitTree fruitTree when !fruitTree.isActionable():
 							continue;
@@ -115,7 +115,7 @@ namespace AutoShaker
 					switch (bush)
 					{
 						// Bush cases
-						case Bush bushFeature when bushFeature.townBush:
+						case Bush bushFeature when bushFeature.townBush.Value:
 							continue;
 						case Bush bushFeature when !bushFeature.isActionable():
 							continue;
