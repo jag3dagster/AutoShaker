@@ -16,9 +16,15 @@ NOTE: This includes trees with hazelnuts, coconuts, and golden coconuts
 * ToggleShaker
     * Which button will toggle the AutoShaker on and off when pressed while holding either Alt key
     * *Default* - LeftAlt + H, RightAlt + H
-* ShakeTrees
-    * Whether or not the AutoShaker should try and shake trees
+* ShakeRegularTrees
+    * Whether or not the AutoShaker should try and shake regular trees for seeds
     * *Default* - true
+* ShakeFruitTrees
+    * Whether or not the AutoShaker should try and shake fruit trees for fruit
+    * *Default* - true
+* FruitsReadyToShake
+    * Number of fruits (1-3) that need to be on a fruit tree before it is shaken
+    * *Default* - 1
 * ShakeBushes
     * Whether or not the AutoShaker should try and shake bushes
     * *Default* - true
@@ -50,6 +56,7 @@ NOTE: This includes trees with hazelnuts, coconuts, and golden coconuts
 
 ## Limitations
 ### Solo + Multiplayer
+* This mod is player specific, each player that wants to utilize it must have it installed
 * Any bushes that have the potential to have berries on them will be shaken during berry seasons whether or not they have berries on them
 
 ## Releases
