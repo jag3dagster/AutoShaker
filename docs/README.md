@@ -54,6 +54,9 @@ NOTE: This includes trees with hazelnuts, coconuts, and golden coconuts
 
 ## Releases
 Releases can be found on [GitHub](https://github.com/jag3dagster/AutoShaker/releases) and on the [Nexus Mod](https://www.nexusmods.com/stardewvalley/mods/7736) site
+### 1.3.0
+* Added the ability to specify the number of fruits (1-3) available on Fruit Tree before attempting to auto-shake it
+* Minor backend changes
 ### 1.2.0
 * Swapped config to have separate toggles for regular and fruit trees
 * Added a check to ensure a user isn't in a menu when the button(s) for toggling the autoshaker are pressed
