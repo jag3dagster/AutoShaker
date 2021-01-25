@@ -1,7 +1,5 @@
 **AutoShaker** is an open-source mod for [Stardew Valley](https://stardewvalley.net) that allows players to automatically shake trees and bushes simply by moving nearby to them.
 
-![AutoShaker Example Gif](https://i.imgur.com/86hgHtW.gif)
-
 ## Documentation
 ### Overview
 This mod checks for:
