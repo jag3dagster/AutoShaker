@@ -54,6 +54,14 @@ NOTE: This includes trees with hazelnuts, coconuts, and golden coconuts
 
 ## Releases
 Releases can be found on [GitHub](https://github.com/jag3dagster/AutoShaker/releases) and on the [Nexus Mod](https://www.nexusmods.com/stardewvalley/mods/7736) site
+### 1.2.0
+* Swapped config to have separate toggles for regular and fruit trees
+* Added a check to ensure a user isn't in a menu when the button(s) for toggling the autoshaker are pressed
+* Added some additional "early outs" when checking whether or not a tree or bush should be shaken
+### 1.1.0
+* Upgrading MinimumApiVerison to SMAPI 3.9.0
+* Swap from old single SButton to new KeybindList for ToggleShaker keybind
+   - Anyone who has a config.json file will no longer have to press an alt button to toggle the AutoShaker (unless they change their config.json file manually OR delete it and let it get regenerated the next time they launch Stardew Valley via SMAPI)
 ### 1.0.0
 * Initial release
 * Allows players to automatically shake trees and bushes by moving nearby to them
