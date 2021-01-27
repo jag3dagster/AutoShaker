@@ -109,8 +109,8 @@ namespace AutoShaker
 				{
 					var location = bush.tilePosition;
 
-					if (_shakenBushes.Contains(bush)) continue;
 					if (!IsInShakeRange(playerTileLocationPoint, location, playerMagnetism)) continue;
+					if (_shakenBushes.Contains(bush)) continue;
 
 					switch (bush)
 					{
@@ -119,7 +119,7 @@ namespace AutoShaker
 							continue;
 						case Bush bushFeature when !bushFeature.isActionable():
 							continue;
-						case Bush bushFeature when !bushFeature.inBloom(Game1.CurrentSeasonDisplayName, Game1.dayOfMonth):
+						case Bush bushFeature when !bushFeature.inBloom(Game1.currentSeason, Game1.dayOfMonth):
 							continue;
 						case Bush bushFeature:
 							bushFeature.performUseAction(location, Game1.player.currentLocation);
@@ -137,7 +137,7 @@ namespace AutoShaker
 
 		private void OnDayEnding(object sender, DayEndingEventArgs e)
 		{
-			var statMessage = $"{Game1.CurrentSeasonDisplayName}, day {Game1.dayOfMonth} stats: ";
+			var statMessage = $"{Game1.CurrentSeasonDisplayName} {Game1.dayOfMonth} stats: ";
 
 			if (_treesShaken == 0 && _fruitTressShaken == 0 && _shakenBushes.Count == 0)
 			{
