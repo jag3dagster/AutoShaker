@@ -44,7 +44,7 @@ namespace AutoShaker
 			ShakeBushes = true;
 
 			UsePlayerMagnetism = false;
-			ShakeDistance = 1;
+			ShakeDistance = 2;
 		}
 
 		public ModConfig()
