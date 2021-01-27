@@ -50,7 +50,7 @@ NOTE: This includes trees with hazelnuts, coconuts, and golden coconuts
 ### Compatibility
 * Compatible with...
     - Stardew Valley 1.5 or later
-    - SMAPI 3.0.0 or later
+    - SMAPI 3.9.0 or later
 * No known mod conflicts
     - If you find one please feel free to notify me here or on the [Nexus Mod](https://www.nexusmods.com/stardewvalley/mods/7736) site
 
