@@ -35,7 +35,7 @@ NOTE: This includes trees with hazelnuts, coconuts, and golden coconuts
 * ShakeDistance
     * Distance in tiles that the AutoShaker will look for things to shake
     * This value is ignored if *UsePlayerMagnetism* is set to **true**
-    * *Default* - 1
+    * *Default* - 2
 
 
 ### Install
@@ -61,6 +61,10 @@ NOTE: This includes trees with hazelnuts, coconuts, and golden coconuts
 
 ## Releases
 Releases can be found on [GitHub](https://github.com/jag3dagster/AutoShaker/releases) and on the [Nexus Mod](https://www.nexusmods.com/stardewvalley/mods/7736) site
+### 1.3.1
+* Fix for not shaking bushes when current language isn't set to English
+* Updated default ShakeDistance from 1 to 2
+* Minor backend changes
 ### 1.3.0
 * Added the ability to specify the number of fruits (1-3) available on Fruit Tree before attempting to auto-shake it
 * Minor backend changes
