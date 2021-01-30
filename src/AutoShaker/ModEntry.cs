@@ -39,6 +39,8 @@ namespace AutoShaker
 
 		private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
 		{
+			if (!Game1.game1?.IsActive ?? true) return;
+			if (Game1.gameMode.Equals(Game1.loadingMode)) return;
 			if (!Game1.hasLoadedGame) return;
 			if (!_config.IsShakerActive || (!_config.ShakeRegularTrees && !_config.ShakeFruitTrees && !_config.ShakeBushes)) return;
 			if (Game1.currentLocation == null || Game1.player == null) return;
@@ -137,23 +139,36 @@ namespace AutoShaker
 
 		private void OnDayEnding(object sender, DayEndingEventArgs e)
 		{
-			var statMessage = $"{Game1.CurrentSeasonDisplayName} {Game1.dayOfMonth} stats: ";
-
-			if (_treesShaken == 0 && _fruitTressShaken == 0 && _shakenBushes.Count == 0)
+			if (_config.IsShakerActive)
 			{
-				statMessage += "Nothing shaken today.";
+				var statMessage = $"{Utility.getDateString()}: ";
+
+				if (_treesShaken == 0 && _fruitTressShaken == 0 && _shakenBushes.Count == 0)
+				{
+					statMessage += "Nothing shaken today.";
+				}
+				else
+				{
+					var stats = new List<string>();
+
+					if (_config.ShakeRegularTrees) stats.Add($"[{_treesShaken}] Trees shaken");
+					if (_config.ShakeFruitTrees) stats.Add($"[{_fruitTressShaken}] Fruit Trees shaken");
+					if (_config.ShakeBushes) stats.Add($"[{_shakenBushes.Count}] Bushes shaken");
+
+					if (stats.Count > 0) statMessage += String.Join("; ", stats);
+
+					Monitor.Log("Resetting daily counts...");
+					_shakenBushes.Clear();
+					_treesShaken = 0;
+					_fruitTressShaken = 0;
+				}
+
+				Monitor.Log(statMessage, LogLevel.Info);
 			}
 			else
 			{
-				statMessage += $"[{_treesShaken}] Trees shaken; [{_fruitTressShaken}] Fruit Trees shaken; [{_shakenBushes.Count}] Bushes shaken";
-
-				Monitor.Log("Resetting daily counts...");
-				_shakenBushes.Clear();
-				_treesShaken = 0;
-				_fruitTressShaken = 0;
+				Monitor.Log("AutoShaken is deactivated; nothing was nor will be shaken until it is reactivated.", LogLevel.Warn);
 			}
-
-			Monitor.Log(statMessage, LogLevel.Info);
 		}
 
 		private void OnButtonsChanged(object sender, ButtonsChangedEventArgs e)
