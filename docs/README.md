@@ -61,6 +61,10 @@ NOTE: This includes trees with hazelnuts, coconuts, and golden coconuts
 
 ## Releases
 Releases can be found on [GitHub](https://github.com/jag3dagster/AutoShaker/releases) and on the [Nexus Mod](https://www.nexusmods.com/stardewvalley/mods/7736) site
+### 1.3.2
+* Fixes a NullReferenceException thrown when a second user is joining a split-screen instance
+* Updated the way the End-Of-Day messages are built
+* Minor backend changes
 ### 1.3.1
 * Fix for not shaking bushes when current language isn't set to English
 * Updated default ShakeDistance from 1 to 2
