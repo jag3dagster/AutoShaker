@@ -3,7 +3,7 @@
 ## Documentation
 ### Overview
 This mod checks for:
-* Bushes that are currently blooming with berries
+* Bushes that are currently blooming with berries or tea leaves
 * Fruit trees that currently have fruit on them
 * Trees that have a seed available to be shaken down
 
@@ -25,6 +25,9 @@ NOTE: This includes trees with hazelnuts, coconuts, and golden coconuts
 * FruitsReadyToShake
     * Number of fruits (1-3) that need to be on a fruit tree before it is shaken
     * *Default* - 1
+* ShakeTeaBushes
+    * Whether or not the AutoShaker should try and shake tea bushes
+    * *Default* - true
 * ShakeBushes
     * Whether or not the AutoShaker should try and shake bushes
     * *Default* - true
