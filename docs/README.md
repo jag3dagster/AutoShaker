@@ -64,6 +64,8 @@ NOTE: This includes trees with hazelnuts, coconuts, and golden coconuts
 
 ## Releases
 Releases can be found on [GitHub](https://github.com/jag3dagster/AutoShaker/releases) and on the [Nexus Mod](https://www.nexusmods.com/stardewvalley/mods/7736) site
+### 1.4.0
+* Added the ability to shake Tea Bushes for their Tea Leaves
 ### 1.3.2
 * Fixes a NullReferenceException thrown when a second user is joining a split-screen instance
 * Updated the way the End-Of-Day messages are built
