@@ -48,10 +48,12 @@ namespace AutoShaker
 			var playerTileLocationPoint = Game1.player.getTileLocationPoint();
 			var playerMagnetism = Game1.player.GetAppliedMagneticRadius();
 
-			if (_config.ShakeRegularTrees || _config.ShakeFruitTrees || _config.ShakeTeaBushes)
+            var radius = _config.UsePlayerMagnetism ? playerMagnetism / Game1.tileSize : _config.ShakeDistance;
+
+            if (_config.ShakeRegularTrees || _config.ShakeFruitTrees || _config.ShakeTeaBushes)
 			{
 
-                foreach (Vector2 vec in GetTilesToCheck(playerTileLocationPoint, playerMagnetism))
+                foreach (Vector2 vec in GetTilesToCheck(playerTileLocationPoint, radius))
                 {
                     if (Game1.currentLocation.terrainFeatures.TryGetValue(vec, out var feature)
                         && feature is Tree or FruitTree or Bush)
@@ -119,7 +121,7 @@ namespace AutoShaker
                     if (bush is not Bush) continue;
 					var location = bush.tilePosition;
 
-					if (!IsInShakeRange(playerTileLocationPoint, location, playerMagnetism)) continue;
+					if (!IsInShakeRange(playerTileLocationPoint, location, radius)) continue;
 					if (_shakenBushes.Contains(bush)) continue;
 
 					switch (bush)
@@ -194,21 +196,13 @@ namespace AutoShaker
 			}
 		}
 
-		private bool IsInShakeRange(Point playerLocation, Vector2 bushLocation, int playerMagnetism)
-		{
-            var pickUpDistance = _config.UsePlayerMagnetism ? playerMagnetism / Game1.tileSize : _config.ShakeDistance;
+		private bool IsInShakeRange(Point playerLocation, Vector2 bushLocation, int radius)
+		    => Math.Abs(bushLocation.X - playerLocation.X) <= radius && Math.Abs(bushLocation.Y - playerLocation.Y) <= radius;
 
-            var inRange = Math.Abs(bushLocation.X - playerLocation.X) <= pickUpDistance && Math.Abs(bushLocation.Y - playerLocation.Y) <= pickUpDistance;
-
-			return inRange;
-		}
-
-        private IEnumerable<Vector2> GetTilesToCheck(Point playerLocation, int playerMagnetism)
+        private IEnumerable<Vector2> GetTilesToCheck(Point playerLocation, int radius)
         {
-            var pickUpDistance = _config.UsePlayerMagnetism ? playerMagnetism / Game1.tileSize: _config.ShakeDistance;
-
-            for (int x = Math.Max(playerLocation.X - pickUpDistance, 0); x <= playerLocation.X + pickUpDistance; x++)
-                for (int y = Math.Max(playerLocation.Y - pickUpDistance, 0); y <= playerLocation.Y + pickUpDistance; y++)
+            for (int x = Math.Max(playerLocation.X - radius, 0); x <= playerLocation.X + radius; x++)
+                for (int y = Math.Max(playerLocation.Y - radius, 0); y <= playerLocation.Y + radius; y++)
                     yield return new Vector2(x, y);
 
             yield break;
