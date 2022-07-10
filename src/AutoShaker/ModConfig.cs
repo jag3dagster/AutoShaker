@@ -20,12 +20,7 @@ namespace AutoShaker
 		public int FruitsReadyToShake
 		{
 			get => _fruitsReadyToShake;
-			set => _fruitsReadyToShake = 
-				value <= MinFruitsReady
-					? MinFruitsReady
-					: value >= MaxFruitsReady
-						? MaxFruitsReady
-						: value;
+            set => _fruitsReadyToShake = Math.Clamp(value, MinFruitsReady, MaxFruitsReady);
 		}
 		public bool ShakeTeaBushes { get; set; }
 		public bool ShakeBushes { get; set; }
