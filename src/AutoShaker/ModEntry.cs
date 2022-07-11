@@ -28,6 +28,7 @@ namespace AutoShaker
 		/// <param name="helper">Provides simplified APIs for writing mods.</param>
 		public override void Entry(IModHelper helper)
 		{
+            I18n.Init(helper.Translation);
 			_config = helper.ReadConfig<ModConfig>();
 
 			helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
@@ -50,9 +51,8 @@ namespace AutoShaker
 
             var radius = _config.UsePlayerMagnetism ? playerMagnetism / Game1.tileSize : _config.ShakeDistance;
 
-            if (_config.ShakeRegularTrees || _config.ShakeFruitTrees || _config.ShakeTeaBushes)
-			{
-
+            if (Game1.player.currentLocation.terrainFeatures.Count() > 0)
+            {
                 foreach (Vector2 vec in GetTilesToCheck(playerTileLocationPoint, radius))
                 {
                     if (Game1.currentLocation.terrainFeatures.TryGetValue(vec, out var feature)
@@ -112,7 +112,7 @@ namespace AutoShaker
                         }
                     }
                 }
-			}
+            }
 
 			if (_config.ShakeBushes)
 			{
