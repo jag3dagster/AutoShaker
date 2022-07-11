@@ -121,16 +121,15 @@ namespace AutoShaker
 					if (feature is not Bush bush) continue;
 					var location = bush.tilePosition;
 
-                    if (!IsInShakeRange(playerTileLocationPoint, location, radius)) continue;
-                    if (_shakenBushes.Contains(bush)) continue;
+					if (!IsInShakeRange(playerTileLocationPoint, location, radius) || _shakenBushes.Contains(bush)) continue;
 
-                    if (!bush.townBush.Value && bush.isActionable() && bush.inBloom(Game1.currentSeason, Game1.dayOfMonth))
-                    {
-                        bush.performUseAction(location, Game1.currentLocation);
-                        _shakenBushes.Add(bush);
-                    }
-                }
-            }
+					if (!bush.townBush.Value && bush.isActionable() && bush.inBloom(Game1.currentSeason, Game1.dayOfMonth))
+					{
+						bush.performUseAction(location, Game1.currentLocation);
+						_shakenBushes.Add(bush);
+					}
+				}
+			}
 		}
 
 		private void OnDayEnding(object sender, DayEndingEventArgs e)
@@ -172,7 +171,10 @@ namespace AutoShaker
 				if (_config.ToggleShaker.JustPressed())
 				{
 					_config.IsShakerActive = !_config.IsShakerActive;
-                    Task.Run(() => Helper.WriteConfig(_config)).ContinueWith((t) => this.Monitor.Log(t.Status == TaskStatus.RanToCompletion ? "Config saved successfully!" : $"Saving config unsuccessful {t.Status}"));
+					Task.Run(() => Helper.WriteConfig(_config)).ContinueWith((t) =>
+						this.Monitor.Log(t.Status == TaskStatus.RanToCompletion
+							? "Config saved successfully!"
+							: $"Saving config unsuccessful {t.Status}"));
 
 					var message = "AutoShaker has been " + (_config.IsShakerActive ? "ACTIVATED" : "DEACTIVATED");
 
