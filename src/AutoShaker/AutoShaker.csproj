@@ -8,7 +8,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <TranslatonClassBuilder_CreateBackup>true</TranslatonClassBuilder_CreateBackup>
+    <TranslationClassBuilder_CreateBackup>true</TranslationClassBuilder_CreateBackup>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.0.1" />

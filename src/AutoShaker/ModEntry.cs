@@ -116,9 +116,9 @@ namespace AutoShaker
 
 			if (_config.ShakeBushes)
 			{
-				foreach (var bush in Game1.player.currentLocation.largeTerrainFeatures)
+				foreach (var feature in Game1.player.currentLocation.largeTerrainFeatures)
 				{
-					if (bush is not Bush) continue;
+					if (feature is not Bush bush) continue;
 					var location = bush.tilePosition;
 
                     if (!IsInShakeRange(playerTileLocationPoint, location, radius)) continue;
