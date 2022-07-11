@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -121,30 +121,16 @@ namespace AutoShaker
 					if (bush is not Bush) continue;
 					var location = bush.tilePosition;
 
-					if (!IsInShakeRange(playerTileLocationPoint, location, radius)) continue;
-					if (_shakenBushes.Contains(bush)) continue;
+                    if (!IsInShakeRange(playerTileLocationPoint, location, radius)) continue;
+                    if (_shakenBushes.Contains(bush)) continue;
 
-					switch (bush)
-					{
-						// Large Bush cases
-						case Bush bushFeature when bushFeature.townBush.Value:
-							continue;
-						case Bush bushFeature when !bushFeature.isActionable():
-							continue;
-						case Bush bushFeature when !bushFeature.inBloom(Game1.currentSeason, Game1.dayOfMonth):
-							continue;
-						case Bush bushFeature:
-							bushFeature.performUseAction(location, Game1.player.currentLocation);
-							_shakenBushes.Add(bushFeature);
-							break;
-
-						// This should never happen
-						default:
-							Monitor.Log("I am an unknown large terrain feature, ignore me I guess...", LogLevel.Debug);
-							break;
-					}
-				}
-			}
+                    if (!bush.townBush.Value && bush.isActionable() && bush.inBloom(Game1.currentSeason, Game1.dayOfMonth))
+                    {
+                        bush.performUseAction(location, Game1.currentLocation);
+                        _shakenBushes.Add(bush);
+                    }
+                }
+            }
 		}
 
 		private void OnDayEnding(object sender, DayEndingEventArgs e)
@@ -186,7 +172,7 @@ namespace AutoShaker
 				if (_config.ToggleShaker.JustPressed())
 				{
 					_config.IsShakerActive = !_config.IsShakerActive;
-					Helper.WriteConfig(_config);
+                    Task.Run(() => Helper.WriteConfig(_config)).ContinueWith((t) => this.Monitor.Log(t.Status == TaskStatus.RanToCompletion ? "Config saved successfully!" : $"Saving config unsuccessful {t.Status}"));
 
 					var message = "AutoShaker has been " + (_config.IsShakerActive ? "ACTIVATED" : "DEACTIVATED");
 

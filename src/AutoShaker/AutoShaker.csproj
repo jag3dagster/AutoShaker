@@ -7,6 +7,9 @@
     <None Remove="i18n\default.json" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <TranslatonClassBuilder_CreateBackup>true</TranslatonClassBuilder_CreateBackup>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.0.1" />
     <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.1" />
