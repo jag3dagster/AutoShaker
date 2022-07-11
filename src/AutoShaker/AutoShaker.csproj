@@ -1,11 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <Version>1.4.0</Version>
+    <Version>1.5.0</Version>
   </PropertyGroup>
-  <ItemGroup>
-    <None Remove="i18n\default.json" />
-  </ItemGroup>
 
   <PropertyGroup>
     <TranslationClassBuilder_CreateBackup>true</TranslationClassBuilder_CreateBackup>
