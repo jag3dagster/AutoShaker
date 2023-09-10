@@ -11,19 +11,38 @@ namespace AutoShaker
 
 		private int _fruitsReadyToShake;
 
+		// General
 		public bool IsShakerActive { get; set; }
 		public KeybindList ToggleShaker { get; set; }
-		public bool ShakeRegularTrees { get; set; }
-		public bool ShakeFruitTrees { get; set; }
+		public bool UsePlayerMagnetism { get; set; }
+		public int ShakeDistance { get; set; }
+
+		// Regular Trees
+		public bool ShakeOakTrees { get; set; }
+		public bool ShakeMapleTrees { get; set; }
+		public bool ShakePineTrees { get; set; }
+		public bool ShakeMahoganyTrees { get; set; }
+		public bool ShakePalmTrees { get; set; }
+
+		// Fruit Trees
 		public int FruitsReadyToShake
 		{
 			get => _fruitsReadyToShake;
 			set => _fruitsReadyToShake = Math.Clamp(value, MinFruitsReady, MaxFruitsReady);
 		}
-		public bool ShakeTeaBushes { get; set; }
+		public bool ShakeAppleTrees { get; set; }
+		public bool ShakeApricotTrees { get; set; }
+		public bool ShakeBananaTrees { get; set; }
+		public bool ShakeCherryTrees { get; set; }
+		public bool ShakeMangoTrees { get; set; }
+		public bool ShakeOrangeTrees { get; set; }
+		public bool ShakePeachTrees { get; set; }
+		public bool ShakePomegranateTrees { get; set; }
+
+		// Bushes
 		public bool ShakeBushes { get; set; }
-		public bool UsePlayerMagnetism { get; set; }
-		public int ShakeDistance { get; set; }
+		public bool ShakeTeaBushes { get; set; }
+		public bool ShakeWalnutBushes { get; set; }
 
 		public void ResetToDefault()
 		{
@@ -32,14 +51,31 @@ namespace AutoShaker
 				new Keybind(SButton.LeftAlt, SButton.H),
 				new Keybind(SButton.RightAlt, SButton.H));
 
-			ShakeRegularTrees = true;
-			ShakeFruitTrees = true;
-			ShakeTeaBushes = true;
-			FruitsReadyToShake = MinFruitsReady;
-			ShakeBushes = true;
-
 			UsePlayerMagnetism = false;
 			ShakeDistance = 2;
+
+			// Regular Trees
+			ShakeOakTrees = true;
+			ShakeMapleTrees = true;
+			ShakePineTrees = true;
+			ShakeMahoganyTrees = true;
+			ShakePalmTrees = true;
+
+			// Fruit Trees
+			FruitsReadyToShake = MinFruitsReady;
+			ShakeAppleTrees = true;
+			ShakeApricotTrees = true;
+			ShakeBananaTrees = true;
+			ShakeCherryTrees = true;
+			ShakeMangoTrees = true;
+			ShakeOrangeTrees = true;
+			ShakePeachTrees = true;
+			ShakePomegranateTrees = true;
+
+			// Bushes
+			ShakeBushes = true;
+			ShakeTeaBushes = true;
+			ShakeWalnutBushes = false;
 		}
 
 		public ModConfig()
@@ -54,6 +90,13 @@ namespace AutoShaker
 			var gmcmApi = helper.ModRegistry.GetApi<IGenericModConfigMenu>("spacechase0.GenericModConfigMenu");
 
 			gmcmApi.Register(manifest, ResetToDefault, () => helper.WriteConfig(this));
+
+			/* General */
+
+			gmcmApi.AddSectionTitle(
+				mod: manifest,
+				text: I18n.GeneralSection_Name,
+				tooltip: null);
 
 			// IsShakerActive
 			gmcmApi.AddBoolOption(
@@ -71,48 +114,6 @@ namespace AutoShaker
 				getValue: () => ToggleShaker,
 				setValue: val => ToggleShaker = val);
 
-			// ShakeRegularTrees
-			gmcmApi.AddBoolOption(
-				mod: manifest,
-				name: I18n.ShakeRegularTrees_Name,
-				tooltip: I18n.ShakeRegularTrees_Description,
-				getValue: () => ShakeRegularTrees,
-				setValue: val => ShakeRegularTrees = val);
-
-			// ShakeFruitTrees
-			gmcmApi.AddBoolOption(
-				mod: manifest,
-				name: I18n.ShakeFruitTrees_Name,
-				tooltip: I18n.ShakeFruitTrees_Description,
-				getValue: () => ShakeFruitTrees,
-				setValue: val => ShakeFruitTrees = val);
-
-			// FruitsReadyToShake
-			gmcmApi.AddNumberOption(
-				mod: manifest,
-				name: I18n.FruitsReadyToShake_Name,
-				tooltip: I18n.FruitsReadyToShake_Description,
-				getValue: () => FruitsReadyToShake,
-				setValue: val => FruitsReadyToShake = val,
-				min: MinFruitsReady,
-				max: MaxFruitsReady);
-
-			// ShakeTeaBushes
-			gmcmApi.AddBoolOption(
-				mod: manifest,
-				name: I18n.ShakeTeaBushes_Name,
-				tooltip: I18n.ShakeTeaBushes_Description,
-				getValue: () => ShakeTeaBushes,
-				setValue: val => ShakeTeaBushes = val);
-
-			// ShakeBushes
-			gmcmApi.AddBoolOption(
-				mod: manifest,
-				name: I18n.ShakeBushes_Name,
-				tooltip: I18n.ShakeBushes_Description,
-				getValue: () => ShakeBushes,
-				setValue: val => ShakeBushes = val);
-
 			// UsePlayerMagnetism
 			gmcmApi.AddBoolOption(
 				mod: manifest,
@@ -128,6 +129,165 @@ namespace AutoShaker
 				tooltip: I18n.ShakeDistance_Description,
 				getValue: () => ShakeDistance,
 				setValue: val => ShakeDistance = val);
+
+			/* Regular Trees */
+
+			gmcmApi.AddSectionTitle(
+				mod: manifest,
+				text: I18n.RegularTreeSection_Name,
+				tooltip: null);
+
+			// ShakeMahoganyTrees
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.ShakeMahoganyTrees_Name,
+				tooltip: I18n.ShakeMahoganyTrees_Description,
+				getValue: () => ShakeMahoganyTrees,
+				setValue: val => ShakeMahoganyTrees = val);
+
+			// ShakeMapleTrees
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.ShakeMapleTrees_Name,
+				tooltip: I18n.ShakeMapleTrees_Description,
+				getValue: () => ShakeMapleTrees,
+				setValue: val => ShakeMapleTrees = val);
+
+			// ShakeOakTrees
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.ShakeOakTrees_Name,
+				tooltip: I18n.ShakeOakTrees_Description,
+				getValue: () => ShakeOakTrees,
+				setValue: val => ShakeOakTrees = val);
+
+			// ShakePalmTrees
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.ShakePalmTrees_Name,
+				tooltip: I18n.ShakePalmTrees_Description,
+				getValue: () => ShakePalmTrees,
+				setValue: val => ShakePalmTrees = val);
+
+			// ShakePineTrees
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.ShakePineTrees_Name,
+				tooltip: I18n.ShakePineTrees_Description,
+				getValue: () => ShakePineTrees,
+				setValue: val => ShakePineTrees = val);
+
+			/* Fruit Trees */
+
+			gmcmApi.AddSectionTitle(
+				mod: manifest,
+				text: I18n.FruitTreeSection_Name,
+				tooltip: null); ;
+
+			// FruitsReadyToShake
+			gmcmApi.AddNumberOption(
+				mod: manifest,
+				name: I18n.FruitsReadyToShake_Name,
+				tooltip: I18n.FruitsReadyToShake_Description,
+				getValue: () => FruitsReadyToShake,
+				setValue: val => FruitsReadyToShake = val,
+				min: MinFruitsReady,
+				max: MaxFruitsReady);
+
+			// ShakeAppleTrees
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.ShakeAppleTrees_Name,
+				tooltip: I18n.ShakeAppleTrees_Description,
+				getValue: () => ShakeAppleTrees,
+				setValue: val => ShakeAppleTrees = val);
+
+			// ShakeApricotTrees
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.ShakeApricotTrees_Name,
+				tooltip: I18n.ShakeApricotTrees_Description,
+				getValue: () => ShakeApricotTrees,
+				setValue: val => ShakeApricotTrees = val);
+
+			// ShakeBananaTrees
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.ShakeBananaTrees_Name,
+				tooltip: I18n.ShakeBananaTrees_Description,
+				getValue: () => ShakeBananaTrees,
+				setValue: val => ShakeBananaTrees = val);
+
+			// ShakeCherryTrees
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.ShakeCherryTrees_Name,
+				tooltip: I18n.ShakeCherryTrees_Description,
+				getValue: () => ShakeCherryTrees,
+				setValue: val => ShakeCherryTrees = val);
+
+			// ShakeMangoTrees
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.ShakeMangoTrees_Name,
+				tooltip: I18n.ShakeMangoTrees_Description,
+				getValue: () => ShakeMangoTrees,
+				setValue: val => ShakeMangoTrees = val);
+
+			// ShakeOrangeTrees
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.ShakeOrangeTrees_Name,
+				tooltip: I18n.ShakeOrangeTrees_Description,
+				getValue: () => ShakeOrangeTrees,
+				setValue: val => ShakeOrangeTrees = val);
+
+			// ShakePeachTrees
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.ShakePeachTrees_Name,
+				tooltip: I18n.ShakePeachTrees_Description,
+				getValue: () => ShakePeachTrees,
+				setValue: val => ShakePeachTrees = val);
+
+			// ShakePomegranateTrees
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.ShakePomegranateTrees_Name,
+				tooltip: I18n.ShakePomegranateTrees_Description,
+				getValue: () => ShakePomegranateTrees,
+				setValue: val => ShakePomegranateTrees = val);
+
+			/* Bushes */
+
+			gmcmApi.AddSectionTitle(
+				mod: manifest,
+				text: I18n.BushesSection_Name,
+				tooltip: null);
+
+			// ShakeBushes
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.ShakeBushes_Name,
+				tooltip: I18n.ShakeBushes_Description,
+				getValue: () => ShakeBushes,
+				setValue: val => ShakeBushes = val);
+
+			// ShakeTeaBushes
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.ShakeTeaBushes_Name,
+				tooltip: I18n.ShakeTeaBushes_Description,
+				getValue: () => ShakeTeaBushes,
+				setValue: val => ShakeTeaBushes = val);
+
+			// ShakeWalnutBushes
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.ShakeWalnutBushes_Name,
+				tooltip: I18n.ShakeWalnutBushes_Description,
+				getValue: () => ShakeWalnutBushes,
+				setValue: val => ShakeWalnutBushes = val);
 		}
 	}
 
