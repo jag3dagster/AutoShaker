@@ -20,6 +20,8 @@ namespace AutoShaker
 
 		private ModConfig _config;
 
+		private Vector2 previousTilePosition;
+
 		private readonly HashSet<TerrainFeature> _ignoredFeatures = new();
 		private readonly HashSet<TerrainFeature> _shakenFeatures = new();
 
@@ -55,6 +57,7 @@ namespace AutoShaker
 			_config = helper.ReadConfig<ModConfig>();
 
 			helper.Events.GameLoop.OneSecondUpdateTicked += OnUpdateTicked;
+			helper.Events.GameLoop.DayStarted += OnDayStarted;
 			helper.Events.GameLoop.DayEnding += OnDayEnding;
 			helper.Events.Input.ButtonsChanged += OnButtonsChanged;
 			helper.Events.GameLoop.GameLaunched += (_,_) => _config.RegisterModConfigMenu(helper, ModManifest);
@@ -65,10 +68,12 @@ namespace AutoShaker
 			if (!Context.IsWorldReady || !Context.IsPlayerFree) return;
 			if (!ShakeEnabled()) return;
 			if (Game1.currentLocation == null || Game1.player == null) return;
+			if (!Game1.player.getTileLocation().Equals(previousTilePosition)) return;
 			if (Game1.CurrentEvent != null && (!Game1.CurrentEvent.playerControlSequence || !Game1.CurrentEvent.canPlayerUseTool())) return;
 			if (Game1.player.currentLocation.terrainFeatures.Count() == 0 &&
 				Game1.player.currentLocation.largeTerrainFeatures.Count == 0) return;
 
+			previousTilePosition = Game1.player.getTileLocation();
 			var playerTileLocationPoint = Game1.player.getTileLocationPoint();
 			var playerMagnetism = Game1.player.GetAppliedMagneticRadius();
 			var radius = _config.UsePlayerMagnetism ? playerMagnetism / Game1.tileSize : _config.ShakeDistance;
@@ -343,6 +348,11 @@ namespace AutoShaker
 					}
 				}
 			}
+		}
+
+		private void OnDayStarted(object sender, DayStartedEventArgs e)
+		{
+			previousTilePosition = Game1.player.getTileLocation();
 		}
 
 		private void OnDayEnding(object sender, DayEndingEventArgs e)
