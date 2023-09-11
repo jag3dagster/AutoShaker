@@ -16,9 +16,6 @@
   "FruitsReadyToShake.Description": "能触发自动摇树时，每棵果树至少要有多少果实。",
 
 
-  "ShakeBushes.Name": "要摇灌木丛吗？",
-  "ShakeBushes.Description": "是否会摇动您走过的灌木丛。",
-
   "ShakeTeaBushes.Name": "要摇茶树吗?",
   "ShakeTeaBushes.Description": "是否会摇动您走过的茶丛以获取茶叶。"
 }

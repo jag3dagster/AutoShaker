@@ -40,7 +40,8 @@ namespace AutoShaker
 		public bool ShakePomegranateTrees { get; set; }
 
 		// Bushes
-		public bool ShakeBushes { get; set; }
+		public bool ShakeSalmonberries { get; set; }
+		public bool ShakeBlackberries { get; set; }
 		public bool ShakeTeaBushes { get; set; }
 		public bool ShakeWalnutBushes { get; set; }
 
@@ -73,7 +74,8 @@ namespace AutoShaker
 			ShakePomegranateTrees = true;
 
 			// Bushes
-			ShakeBushes = true;
+			ShakeSalmonberries = true;
+			ShakeBlackberries = true;
 			ShakeTeaBushes = true;
 			ShakeWalnutBushes = false;
 		}
@@ -265,13 +267,21 @@ namespace AutoShaker
 				text: I18n.BushesSection_Name,
 				tooltip: null);
 
-			// ShakeBushes
+			// ShakeSalmonberries
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: I18n.ShakeBushes_Name,
-				tooltip: I18n.ShakeBushes_Description,
-				getValue: () => ShakeBushes,
-				setValue: val => ShakeBushes = val);
+				name: I18n.ShakeSalmonberries_Name,
+				tooltip: I18n.ShakeSalmonberries_Description,
+				getValue: () => ShakeSalmonberries,
+				setValue: val => ShakeSalmonberries = val);
+
+			// ShakeBlackberries
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.ShakeBlackberries_Name,
+				tooltip: I18n.ShakeBlackberries_Description,
+				getValue: () => ShakeBlackberries,
+				setValue: val => ShakeBlackberries = val);
 
 			// ShakeTeaBushes
 			gmcmApi.AddBoolOption(

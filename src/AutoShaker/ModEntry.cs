@@ -54,13 +54,13 @@ namespace AutoShaker
 			I18n.Init(helper.Translation);
 			_config = helper.ReadConfig<ModConfig>();
 
-			helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
+			helper.Events.GameLoop.OneSecondUpdateTicked += OnUpdateTicked;
 			helper.Events.GameLoop.DayEnding += OnDayEnding;
 			helper.Events.Input.ButtonsChanged += OnButtonsChanged;
 			helper.Events.GameLoop.GameLaunched += (_,_) => _config.RegisterModConfigMenu(helper, ModManifest);
 		}
 
-		private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+		private void OnUpdateTicked(object sender, OneSecondUpdateTickedEventArgs e)
 		{
 			if (!Context.IsWorldReady || !Context.IsPlayerFree) return;
 			if (!ShakeEnabled()) return;
@@ -322,7 +322,7 @@ namespace AutoShaker
 				}
 			}
 
-			if (_config.ShakeBushes || _config.ShakeTeaBushes || _config.ShakeWalnutBushes)
+			if (_config.ShakeSalmonberries || _config.ShakeBlackberries || _config.ShakeTeaBushes || _config.ShakeWalnutBushes)
 			{
 				foreach (var feature in Game1.player.currentLocation.largeTerrainFeatures)
 				{
@@ -373,7 +373,7 @@ namespace AutoShaker
 
 			// Bushes
 			{
-				if (_forageableBushesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _forageableBushesShaken, "Forageable bushes"));
+				if (_forageableBushesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _forageableBushesShaken, Game1.currentSeason.Equals("spring") ? "Salmonberry bushes" : "Blackberry bushes"));
 				if (_teaBushesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _teaBushesShaken, "Tea bushes"));
 				if (_walnutBushesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _walnutBushesShaken, "Walnut bushes"));
 			}
@@ -432,6 +432,7 @@ namespace AutoShaker
 
 			if (bush.townBush.Value) toIgnore = true;
 			if (!bush.inBloom(Game1.currentSeason, Game1.dayOfMonth)) toIgnore = true;
+			if (bush.tileSheetOffset.Value != 1) toIgnore = true;
 
 			if (!bush.isActionable())
 			{
@@ -451,9 +452,20 @@ namespace AutoShaker
 				case 0:
 				case 1:
 				case 2:
-					if (!_config.ShakeBushes)
+					var season = Game1.currentSeason;
+
+					if (!season.Equals("spring") && !season.Equals("fall")) return false;
+
+					if (season.Equals("spring") && !_config.ShakeSalmonberries)
 					{
-						Monitor.LogOnce(String.Format(disabledConfigString, "Forageable bushes", I18n.ShakeBushes_Name()), LogLevel.Debug);
+						Monitor.LogOnce(String.Format(disabledConfigString, "Salmonberry bushes", I18n.ShakeSalmonberries_Name()), LogLevel.Debug);
+						_ignoredFeatures.Add(bush);
+						return false;
+					}
+
+					if (season.Equals("fall") && !_config.ShakeBlackberries)
+					{
+						Monitor.LogOnce(String.Format(disabledConfigString, "Blackberry bushes", I18n.ShakeBlackberries_Name()), LogLevel.Debug);
 						_ignoredFeatures.Add(bush);
 						return false;
 					}
@@ -516,7 +528,8 @@ namespace AutoShaker
 			enabled |= _config.ShakeMangoTrees;
 
 			// Bushes
-			enabled |= _config.ShakeBushes;
+			enabled |= _config.ShakeSalmonberries;
+			enabled |= _config.ShakeBlackberries;
 			enabled |= _config.ShakeTeaBushes;
 			enabled |= _config.ShakeWalnutBushes;
 

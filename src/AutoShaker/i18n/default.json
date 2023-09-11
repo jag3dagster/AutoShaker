@@ -64,8 +64,11 @@
 
   "BushesSection.Name": "Bushes Options",
 
-  "ShakeBushes.Name": "Shake Forageable Bushes?",
-  "ShakeBushes.Description": "Whether or not the AutoShaker will shake bushes that you walk by for Forageable Fruit.",
+  "ShakeSalmonberries.Name": "Shake Salmonberry Bushes?",
+  "ShakeSalmonberries.Description": "Whether or not the AutoShaker will shake bushes that you walk by for Salmonberries.",
+
+  "ShakeBlackberries.Name": "Shake Blackberry Bushes?",
+  "ShakeBlackberries.Description": "Whether or not the AutoShaker will shake bushes that you walk by for Blackberries.",
 
   "ShakeTeaBushes.Name": "Shake Tea Bushes?",
   "ShakeTeaBushes.Description": "Whether or not the AutoShaker will shake Tea bushes that you walk by for Tea Leaves.",
