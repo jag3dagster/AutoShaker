@@ -56,25 +56,25 @@ namespace AutoShaker
 			I18n.Init(helper.Translation);
 			_config = helper.ReadConfig<ModConfig>();
 
-			helper.Events.GameLoop.OneSecondUpdateTicked += OnUpdateTicked;
+			helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
 			helper.Events.GameLoop.DayStarted += OnDayStarted;
 			helper.Events.GameLoop.DayEnding += OnDayEnding;
 			helper.Events.Input.ButtonsChanged += OnButtonsChanged;
 			helper.Events.GameLoop.GameLaunched += (_,_) => _config.RegisterModConfigMenu(helper, ModManifest);
 		}
 
-		private void OnUpdateTicked(object sender, OneSecondUpdateTickedEventArgs e)
+		private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
 		{
 			if (!Context.IsWorldReady || !Context.IsPlayerFree) return;
 			if (!ShakeEnabled()) return;
 			if (Game1.currentLocation == null || Game1.player == null) return;
-			if (!Game1.player.getTileLocation().Equals(previousTilePosition)) return;
+			if (Game1.player.Tile.Equals(previousTilePosition)) return;
 			if (Game1.CurrentEvent != null && (!Game1.CurrentEvent.playerControlSequence || !Game1.CurrentEvent.canPlayerUseTool())) return;
 			if (Game1.player.currentLocation.terrainFeatures.Count() == 0 &&
 				Game1.player.currentLocation.largeTerrainFeatures.Count == 0) return;
 
-			previousTilePosition = Game1.player.getTileLocation();
-			var playerTileLocationPoint = Game1.player.getTileLocationPoint();
+			previousTilePosition = Game1.player.Tile;
+			var playerTileLocationPoint = Game1.player.TilePoint;
 			var playerMagnetism = Game1.player.GetAppliedMagneticRadius();
 			var radius = _config.UsePlayerMagnetism ? playerMagnetism / Game1.tileSize : _config.ShakeDistance;
 
@@ -87,7 +87,7 @@ namespace AutoShaker
 						&& !_ignoredFeatures.Contains(feature)
 						&& !_shakenFeatures.Contains(feature))
 					{
-						var featureTileLocation = feature.currentTileLocation;
+						var featureTileLocation = feature.Tile;
 						var toIgnore = false;
 
 						switch (feature)
@@ -112,8 +112,8 @@ namespace AutoShaker
 								switch (treeFeature.treeType.Value)
 								{
 									// Oak Tree
-									case 1:
-									case 4: // Winter
+									case "1":
+									case "4": // Winter
 										if (!_config.ShakeOakTrees)
 										{
 											Monitor.LogOnce(String.Format(disabledConfigString, "Oak trees", I18n.ShakeOakTrees_Name()), LogLevel.Debug);
@@ -124,8 +124,8 @@ namespace AutoShaker
 										break;
 
 									// Maple Tree
-									case 2:
-									case 5: // Winter
+									case "2":
+									case "5": // Winter
 										if (!_config.ShakeMapleTrees)
 										{
 											Monitor.LogOnce(String.Format(disabledConfigString, "Maple trees", I18n.ShakeMapleTrees_Name()), LogLevel.Debug);
@@ -136,7 +136,7 @@ namespace AutoShaker
 										break;
 
 									// Pine Tree
-									case 3:
+									case "3":
 										if (!_config.ShakePineTrees)
 										{
 											Monitor.LogOnce(String.Format(disabledConfigString, "Pine trees", I18n.ShakePineTrees_Name()), LogLevel.Debug);
@@ -147,7 +147,7 @@ namespace AutoShaker
 										break;
 
 									// Mahogany Tree
-									case 8:
+									case "8":
 										if (!_config.ShakeMahoganyTrees)
 										{
 											Monitor.LogOnce(String.Format(disabledConfigString, "Mahogany trees", I18n.ShakeMahoganyTrees_Name()), LogLevel.Debug);
@@ -158,8 +158,8 @@ namespace AutoShaker
 										break;
 
 									// Palm Tree
-									case 6: // Desert
-									case 9: // Island
+									case "6": // Desert
+									case "9": // Island
 										if (!_config.ShakePalmTrees)
 										{
 											Monitor.LogOnce(String.Format(disabledConfigString, "Palm trees", I18n.ShakePalmTrees_Name()), LogLevel.Debug);
@@ -175,7 +175,7 @@ namespace AutoShaker
 										continue;
 								}
 
-								treeFeature.performUseAction(featureTileLocation, Game1.player.currentLocation);
+								treeFeature.performUseAction(featureTileLocation);
 								_shakenFeatures.Add(treeFeature);
 								break;
 
@@ -184,7 +184,7 @@ namespace AutoShaker
 								if (fruitTree.stump.Value) toIgnore = true;
 								if (fruitTree.growthStage.Value < 4) toIgnore = true;
 
-								if (fruitTree.fruitsOnTree.Value < _config.FruitsReadyToShake)
+								if (fruitTree.fruit.Count < _config.FruitsReadyToShake)
 								{
 									Monitor.LogOnce($"Fruit trees will not be shaken until they have the mnumber of fruits available specified by the [{I18n.FruitsReadyToShake_Name()}] config option. Expected Number of Fruits: [{_config.FruitsReadyToShake}]", LogLevel.Debug);
 									toIgnore = true;
@@ -192,8 +192,8 @@ namespace AutoShaker
 
 								if (!fruitTree.isActionable())
 								{
-									Monitor.Log($"A fruit tree of type [{fruitTree.treeType.Value}] was marked as not actionable. This shouldn't be possible.", LogLevel.Warn);
-									Monitor.Log($"Type: [{fruitTree.treeType.Value}]; Location: [{fruitTree.currentLocation.Name}]; Tile Location: [{fruitTree.currentTileLocation}]; Fruit Count: [{fruitTree.fruitsOnTree.Value}]; Fruit Index: [{fruitTree.indexOfFruit.Value}]", LogLevel.Debug);
+									Monitor.Log($"A fruit tree of type [{fruitTree.treeId.Value}] was marked as not actionable. This shouldn't be possible.", LogLevel.Warn);
+									Monitor.Log($"Type: [{fruitTree.treeId.Value}]; Location: [{fruitTree.Location.Name}]; Tile Location: [{fruitTree.Tile}]; Fruit Count: [{fruitTree.fruit.Count}]; Fruit Indices: [{String.Join(",", fruitTree.fruit)}]", LogLevel.Debug);
 								}
 
 								if (toIgnore)
@@ -202,10 +202,10 @@ namespace AutoShaker
 									continue;
 								}
 
-								switch (fruitTree.treeType.Value)
+								switch (fruitTree.treeId.Value)
 								{
 									// Cherry Tree
-									case 0:
+									case "0":
 										if (!_config.ShakeCherryTrees)
 										{
 											Monitor.LogOnce(String.Format(disabledConfigString, "Cherry trees", I18n.ShakeCherryTrees_Name()), LogLevel.Debug);
@@ -217,7 +217,7 @@ namespace AutoShaker
 										break;
 
 									// Apricot Tree
-									case 1:
+									case "1":
 										if (!_config.ShakeApricotTrees)
 										{
 											Monitor.LogOnce(String.Format(disabledConfigString, "Apricot trees", I18n.ShakeApricotTrees_Name()), LogLevel.Debug);
@@ -229,7 +229,7 @@ namespace AutoShaker
 										break;
 
 									// Orange Tree
-									case 2:
+									case "2":
 										if (!_config.ShakeOrangeTrees)
 										{
 											Monitor.LogOnce(String.Format(disabledConfigString, "Orange trees", I18n.ShakeOrangeTrees_Name()), LogLevel.Debug);
@@ -241,7 +241,7 @@ namespace AutoShaker
 										break;
 
 									// Peach Tree
-									case 3:
+									case "3":
 										if (!_config.ShakePeachTrees)
 										{
 											Monitor.LogOnce(String.Format(disabledConfigString, "Peach trees", I18n.ShakePeachTrees_Name()), LogLevel.Debug);
@@ -253,7 +253,7 @@ namespace AutoShaker
 										break;
 
 									// Pomegranate Tree
-									case 4:
+									case "4":
 										if (!_config.ShakePomegranateTrees)
 										{
 											Monitor.LogOnce(String.Format(disabledConfigString, "Pomegranate trees", I18n.ShakePomegranateTrees_Name()), LogLevel.Debug);
@@ -265,7 +265,7 @@ namespace AutoShaker
 										break;
 
 									// Apple Tree
-									case 5:
+									case "5":
 										if (!_config.ShakeAppleTrees)
 										{
 											Monitor.LogOnce(String.Format(disabledConfigString, "Apple trees", I18n.ShakeAppleTrees_Name()), LogLevel.Debug);
@@ -277,7 +277,7 @@ namespace AutoShaker
 										break;
 
 									// Banana Tree
-									case 7:
+									case "7":
 										if (!_config.ShakeBananaTrees)
 										{
 											Monitor.LogOnce(String.Format(disabledConfigString, "Banana trees", I18n.ShakeBananaTrees_Name()), LogLevel.Debug);
@@ -289,7 +289,7 @@ namespace AutoShaker
 										break;
 
 									// Mango Tree
-									case 8:
+									case "8":
 										if (!_config.ShakeMangoTrees)
 										{
 											Monitor.LogOnce(String.Format(disabledConfigString, "Mango trees", I18n.ShakeMangoTrees_Name()), LogLevel.Debug);
@@ -301,12 +301,12 @@ namespace AutoShaker
 										break;
 
 									default:
-										Monitor.Log($"Unknown Fruit Tree type: [{fruitTree.treeType.Value}]", LogLevel.Warn);
+										Monitor.Log($"Unknown Fruit Tree type: [{fruitTree.treeId.Value}]", LogLevel.Warn);
 										_ignoredFeatures.Add(fruitTree);
 										continue;
 								}
 
-								fruitTree.performUseAction(featureTileLocation, Game1.player.currentLocation);
+								fruitTree.performUseAction(featureTileLocation);
 								_shakenFeatures.Add(fruitTree);
 								break;
 
@@ -314,7 +314,7 @@ namespace AutoShaker
 							case Bush bushFeature:
 								if (!CheckBush(bushFeature)) continue;
 
-								bushFeature.performUseAction(featureTileLocation, Game1.player.currentLocation);
+								bushFeature.performUseAction(featureTileLocation);
 								_shakenFeatures.Add(bushFeature);
 								break;
 
@@ -333,7 +333,7 @@ namespace AutoShaker
 				{
 					if (feature is not Bush bush) continue;
 
-					var location = bush.tilePosition;
+					var location = bush.Tile;
 
 					if (!IsInShakeRange(playerTileLocationPoint, location, radius)
 						|| _shakenFeatures.Contains(bush) || _ignoredFeatures.Contains(bush))
@@ -343,7 +343,7 @@ namespace AutoShaker
 
 					if (CheckBush(bush))
 					{
-						bush.performUseAction(location, Game1.player.currentLocation);
+						bush.performUseAction(location);
 						_shakenFeatures.Add(feature);
 					}
 				}
@@ -352,7 +352,7 @@ namespace AutoShaker
 
 		private void OnDayStarted(object sender, DayStartedEventArgs e)
 		{
-			previousTilePosition = Game1.player.getTileLocation();
+			previousTilePosition = Game1.player.Tile;
 		}
 
 		private void OnDayEnding(object sender, DayEndingEventArgs e)
@@ -431,7 +431,7 @@ namespace AutoShaker
 					var message = "AutoShaker has been " + (_config.IsShakerActive ? "ACTIVATED" : "DEACTIVATED");
 
 					Monitor.Log(message, LogLevel.Info);
-					Game1.addHUDMessage(new HUDMessage(message, null));
+					Game1.addHUDMessage(new HUDMessage(message));
 				}
 			}
 		}
@@ -441,13 +441,13 @@ namespace AutoShaker
 			var toIgnore = false;
 
 			if (bush.townBush.Value) toIgnore = true;
-			if (!bush.inBloom(Game1.currentSeason, Game1.dayOfMonth)) toIgnore = true;
+			if (!bush.inBloom()) toIgnore = true;
 			if (bush.tileSheetOffset.Value != 1) toIgnore = true;
 
 			if (!bush.isActionable())
 			{
 				Monitor.Log($"A bush feature of size [{bush.size.Value}] was marked as not actionable. This shouldn't be possible.", LogLevel.Warn);
-				Monitor.Log($"Size: [{bush.size.Value}]; Location: [{bush.currentLocation.Name}]; Tile Location: [{bush.currentTileLocation}]; Town Bush: [{bush.townBush.Value}]", LogLevel.Debug);
+				Monitor.Log($"Size: [{bush.size.Value}]; Location: [{bush.Location.Name}]; Tile Location: [{bush.Tile}]; Town Bush: [{bush.townBush.Value}]", LogLevel.Debug);
 			}
 
 			if (toIgnore)
