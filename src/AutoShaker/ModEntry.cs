@@ -78,251 +78,249 @@ namespace AutoShaker
 			var playerMagnetism = Game1.player.GetAppliedMagneticRadius();
 			var radius = _config.UsePlayerMagnetism ? playerMagnetism / Game1.tileSize : _config.ShakeDistance;
 
-			if (Game1.player.currentLocation.terrainFeatures.Count() > 0)
+			foreach (Vector2 vec in GetTilesToCheck(playerTileLocationPoint, radius))
 			{
-				foreach (Vector2 vec in GetTilesToCheck(playerTileLocationPoint, radius))
+				if (Game1.currentLocation.terrainFeatures.TryGetValue(vec, out var feature)
+					&& feature is Tree or FruitTree or Bush
+					&& !_ignoredFeatures.Contains(feature)
+					&& !_shakenFeatures.Contains(feature))
 				{
-					if (Game1.currentLocation.terrainFeatures.TryGetValue(vec, out var feature)
-						&& feature is Tree or FruitTree or Bush
-						&& !_ignoredFeatures.Contains(feature)
-						&& !_shakenFeatures.Contains(feature))
+					var featureTileLocation = feature.Tile;
+					var toIgnore = false;
+
+					switch (feature)
 					{
-						var featureTileLocation = feature.Tile;
-						var toIgnore = false;
+						// Tree Cases
+						case Tree treeFeature:
+							if (treeFeature.stump.Value) toIgnore = true;
+							if (treeFeature.growthStage.Value < 5 || !treeFeature.hasSeed.Value) toIgnore = true;
+							if (Game1.player.ForagingLevel < 1) toIgnore = true;
 
-						switch (feature)
-						{
-							// Tree Cases
-							case Tree treeFeature:
-								if (treeFeature.stump.Value) toIgnore = true;
-								if (treeFeature.growthStage.Value < 5 || !treeFeature.hasSeed.Value) toIgnore = true;
+							if (!treeFeature.isActionable())
+							{
+								Monitor.Log($"Tree of type [{treeFeature.treeType.Value}] not shaken because the game deemed it was not actionable. It is likely tapped or not mature yet.", LogLevel.Trace);
+								toIgnore = true;
+							}
 
-								if (!treeFeature.isActionable())
-								{
-									Monitor.Log($"Tree of type [{treeFeature.treeType.Value}] not shaken because the game deemed it was not actionable. It is likely tapped or not mature yet.", LogLevel.Trace);
-									toIgnore = true;
-								}
+							if (toIgnore)
+							{
+								_ignoredFeatures.Add(treeFeature);
+								continue;
+							}
 
-								if (toIgnore)
-								{
+							switch (treeFeature.treeType.Value)
+							{
+								// Oak Tree
+								case "1":
+								case "4": // Winter
+									if (!_config.ShakeOakTrees)
+									{
+										Monitor.LogOnce(String.Format(disabledConfigString, "Oak trees", I18n.ShakeOakTrees_Name()), LogLevel.Debug);
+										continue;
+									}
+
+									_oakTreesShaken += 1;
+									break;
+
+								// Maple Tree
+								case "2":
+								case "5": // Winter
+									if (!_config.ShakeMapleTrees)
+									{
+										Monitor.LogOnce(String.Format(disabledConfigString, "Maple trees", I18n.ShakeMapleTrees_Name()), LogLevel.Debug);
+										continue;
+									}
+
+									_mapleTreesShaken += 1;
+									break;
+
+								// Pine Tree
+								case "3":
+									if (!_config.ShakePineTrees)
+									{
+										Monitor.LogOnce(String.Format(disabledConfigString, "Pine trees", I18n.ShakePineTrees_Name()), LogLevel.Debug);
+										continue;
+									}
+
+									_pineTreesShaken += 1;
+									break;
+
+								// Mahogany Tree
+								case "8":
+									if (!_config.ShakeMahoganyTrees)
+									{
+										Monitor.LogOnce(String.Format(disabledConfigString, "Mahogany trees", I18n.ShakeMahoganyTrees_Name()), LogLevel.Debug);
+										continue;
+									}
+
+									_mahoganyTreesShaken += 1;
+									break;
+
+								// Palm Tree
+								case "6": // Desert
+								case "9": // Island
+									if (!_config.ShakePalmTrees)
+									{
+										Monitor.LogOnce(String.Format(disabledConfigString, "Palm trees", I18n.ShakePalmTrees_Name()), LogLevel.Debug);
+										continue;
+									}
+
+									_palmTreesShaken += 1;
+									break;
+
+								default:
+									Monitor.Log($"Unknown Tree type: [{treeFeature.treeType.Value}]", LogLevel.Warn);
 									_ignoredFeatures.Add(treeFeature);
 									continue;
-								}
+							}
 
-								switch (treeFeature.treeType.Value)
-								{
-									// Oak Tree
-									case "1":
-									case "4": // Winter
-										if (!_config.ShakeOakTrees)
-										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Oak trees", I18n.ShakeOakTrees_Name()), LogLevel.Debug);
-											continue;
-										}
+							treeFeature.performUseAction(featureTileLocation);
+							_shakenFeatures.Add(treeFeature);
+							break;
 
-										_oakTreesShaken += 1;
-										break;
+						// Fruit Tree Cases
+						case FruitTree fruitTree:
+							if (fruitTree.stump.Value) toIgnore = true;
+							if (fruitTree.growthStage.Value < 4) toIgnore = true;
 
-									// Maple Tree
-									case "2":
-									case "5": // Winter
-										if (!_config.ShakeMapleTrees)
-										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Maple trees", I18n.ShakeMapleTrees_Name()), LogLevel.Debug);
-											continue;
-										}
+							if (fruitTree.fruit.Count < _config.FruitsReadyToShake)
+							{
+								Monitor.LogOnce($"Fruit trees will not be shaken until they have the mnumber of fruits available specified by the [{I18n.FruitsReadyToShake_Name()}] config option. Expected Number of Fruits: [{_config.FruitsReadyToShake}]", LogLevel.Debug);
+								toIgnore = true;
+							}
 
-										_mapleTreesShaken += 1;
-										break;
+							if (!fruitTree.isActionable())
+							{
+								Monitor.Log($"A fruit tree of type [{fruitTree.treeId.Value}] was marked as not actionable. This shouldn't be possible.", LogLevel.Warn);
+								Monitor.Log($"Type: [{fruitTree.treeId.Value}]; Location: [{fruitTree.Location.Name}]; Tile Location: [{fruitTree.Tile}]; Fruit Count: [{fruitTree.fruit.Count}]; Fruit Indices: [{String.Join(",", fruitTree.fruit)}]", LogLevel.Debug);
+							}
 
-									// Pine Tree
-									case "3":
-										if (!_config.ShakePineTrees)
-										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Pine trees", I18n.ShakePineTrees_Name()), LogLevel.Debug);
-											continue;
-										}
+							if (toIgnore)
+							{
+								_ignoredFeatures.Add(fruitTree);
+								continue;
+							}
 
-										_pineTreesShaken += 1;
-										break;
-
-									// Mahogany Tree
-									case "8":
-										if (!_config.ShakeMahoganyTrees)
-										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Mahogany trees", I18n.ShakeMahoganyTrees_Name()), LogLevel.Debug);
-											continue;
-										}
-
-										_mahoganyTreesShaken += 1;
-										break;
-
-									// Palm Tree
-									case "6": // Desert
-									case "9": // Island
-										if (!_config.ShakePalmTrees)
-										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Palm trees", I18n.ShakePalmTrees_Name()), LogLevel.Debug);
-											continue;
-										}
-
-										_palmTreesShaken += 1;
-										break;
-
-									default:
-										Monitor.Log($"Unknown Tree type: [{treeFeature.treeType.Value}]", LogLevel.Warn);
-										_ignoredFeatures.Add(treeFeature);
-										continue;
-								}
-
-								treeFeature.performUseAction(featureTileLocation);
-								_shakenFeatures.Add(treeFeature);
-								break;
-
-							// Fruit Tree Cases
-							case FruitTree fruitTree:
-								if (fruitTree.stump.Value) toIgnore = true;
-								if (fruitTree.growthStage.Value < 4) toIgnore = true;
-
-								if (fruitTree.fruit.Count < _config.FruitsReadyToShake)
-								{
-									Monitor.LogOnce($"Fruit trees will not be shaken until they have the mnumber of fruits available specified by the [{I18n.FruitsReadyToShake_Name()}] config option. Expected Number of Fruits: [{_config.FruitsReadyToShake}]", LogLevel.Debug);
-									toIgnore = true;
-								}
-
-								if (!fruitTree.isActionable())
-								{
-									Monitor.Log($"A fruit tree of type [{fruitTree.treeId.Value}] was marked as not actionable. This shouldn't be possible.", LogLevel.Warn);
-									Monitor.Log($"Type: [{fruitTree.treeId.Value}]; Location: [{fruitTree.Location.Name}]; Tile Location: [{fruitTree.Tile}]; Fruit Count: [{fruitTree.fruit.Count}]; Fruit Indices: [{String.Join(",", fruitTree.fruit)}]", LogLevel.Debug);
-								}
-
-								if (toIgnore)
-								{
-									_ignoredFeatures.Add(fruitTree);
-									continue;
-								}
-
-								switch (fruitTree.treeId.Value)
-								{
-									// Cherry Tree
-									case "0":
-										if (!_config.ShakeCherryTrees)
-										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Cherry trees", I18n.ShakeCherryTrees_Name()), LogLevel.Debug);
-											_ignoredFeatures.Add(fruitTree);
-											continue;
-										}
-
-										_cherryTreesShaken += 1;
-										break;
-
-									// Apricot Tree
-									case "1":
-										if (!_config.ShakeApricotTrees)
-										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Apricot trees", I18n.ShakeApricotTrees_Name()), LogLevel.Debug);
-											_ignoredFeatures.Add(fruitTree);
-											continue;
-										}
-
-										_apricotTreesShaken += 1;
-										break;
-
-									// Orange Tree
-									case "2":
-										if (!_config.ShakeOrangeTrees)
-										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Orange trees", I18n.ShakeOrangeTrees_Name()), LogLevel.Debug);
-											_ignoredFeatures.Add(fruitTree);
-											continue;
-										}
-
-										_orangeTreesShaken += 1;
-										break;
-
-									// Peach Tree
-									case "3":
-										if (!_config.ShakePeachTrees)
-										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Peach trees", I18n.ShakePeachTrees_Name()), LogLevel.Debug);
-											_ignoredFeatures.Add(fruitTree);
-											continue;
-										}
-
-										_peachTreesShaken += 1;
-										break;
-
-									// Pomegranate Tree
-									case "4":
-										if (!_config.ShakePomegranateTrees)
-										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Pomegranate trees", I18n.ShakePomegranateTrees_Name()), LogLevel.Debug);
-											_ignoredFeatures.Add(fruitTree);
-											continue;
-										}
-
-										_pomegranateTreesShaken += 1;
-										break;
-
-									// Apple Tree
-									case "5":
-										if (!_config.ShakeAppleTrees)
-										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Apple trees", I18n.ShakeAppleTrees_Name()), LogLevel.Debug);
-											_ignoredFeatures.Add(fruitTree);
-											continue;
-										}
-
-										_appleTreesShaken += 1;
-										break;
-
-									// Banana Tree
-									case "7":
-										if (!_config.ShakeBananaTrees)
-										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Banana trees", I18n.ShakeBananaTrees_Name()), LogLevel.Debug);
-											_ignoredFeatures.Add(fruitTree);
-											continue;
-										}
-
-										_bananaTreesShaken += 1;
-										break;
-
-									// Mango Tree
-									case "8":
-										if (!_config.ShakeMangoTrees)
-										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Mango trees", I18n.ShakeMangoTrees_Name()), LogLevel.Debug);
-											_ignoredFeatures.Add(fruitTree);
-											continue;
-										}
-
-										_mangoTreesShaken += 1;
-										break;
-
-									default:
-										Monitor.Log($"Unknown Fruit Tree type: [{fruitTree.treeId.Value}]", LogLevel.Warn);
+							switch (fruitTree.treeId.Value)
+							{
+								// Cherry Tree
+								case "0":
+									if (!_config.ShakeCherryTrees)
+									{
+										Monitor.LogOnce(String.Format(disabledConfigString, "Cherry trees", I18n.ShakeCherryTrees_Name()), LogLevel.Debug);
 										_ignoredFeatures.Add(fruitTree);
 										continue;
-								}
+									}
 
-								fruitTree.performUseAction(featureTileLocation);
-								_shakenFeatures.Add(fruitTree);
-								break;
+									_cherryTreesShaken += 1;
+									break;
 
-							// Bush Cases
-							case Bush bushFeature:
-								if (!CheckBush(bushFeature)) continue;
+								// Apricot Tree
+								case "1":
+									if (!_config.ShakeApricotTrees)
+									{
+										Monitor.LogOnce(String.Format(disabledConfigString, "Apricot trees", I18n.ShakeApricotTrees_Name()), LogLevel.Debug);
+										_ignoredFeatures.Add(fruitTree);
+										continue;
+									}
 
-								bushFeature.performUseAction(featureTileLocation);
-								_shakenFeatures.Add(bushFeature);
-								break;
+									_apricotTreesShaken += 1;
+									break;
 
-							// This should never happen
-							default:
-								Monitor.Log("I am an unknown terrain feature, ignore me I guess...", LogLevel.Debug);
-								break;
-						}
+								// Orange Tree
+								case "2":
+									if (!_config.ShakeOrangeTrees)
+									{
+										Monitor.LogOnce(String.Format(disabledConfigString, "Orange trees", I18n.ShakeOrangeTrees_Name()), LogLevel.Debug);
+										_ignoredFeatures.Add(fruitTree);
+										continue;
+									}
+
+									_orangeTreesShaken += 1;
+									break;
+
+								// Peach Tree
+								case "3":
+									if (!_config.ShakePeachTrees)
+									{
+										Monitor.LogOnce(String.Format(disabledConfigString, "Peach trees", I18n.ShakePeachTrees_Name()), LogLevel.Debug);
+										_ignoredFeatures.Add(fruitTree);
+										continue;
+									}
+
+									_peachTreesShaken += 1;
+									break;
+
+								// Pomegranate Tree
+								case "4":
+									if (!_config.ShakePomegranateTrees)
+									{
+										Monitor.LogOnce(String.Format(disabledConfigString, "Pomegranate trees", I18n.ShakePomegranateTrees_Name()), LogLevel.Debug);
+										_ignoredFeatures.Add(fruitTree);
+										continue;
+									}
+
+									_pomegranateTreesShaken += 1;
+									break;
+
+								// Apple Tree
+								case "5":
+									if (!_config.ShakeAppleTrees)
+									{
+										Monitor.LogOnce(String.Format(disabledConfigString, "Apple trees", I18n.ShakeAppleTrees_Name()), LogLevel.Debug);
+										_ignoredFeatures.Add(fruitTree);
+										continue;
+									}
+
+									_appleTreesShaken += 1;
+									break;
+
+								// Banana Tree
+								case "7":
+									if (!_config.ShakeBananaTrees)
+									{
+										Monitor.LogOnce(String.Format(disabledConfigString, "Banana trees", I18n.ShakeBananaTrees_Name()), LogLevel.Debug);
+										_ignoredFeatures.Add(fruitTree);
+										continue;
+									}
+
+									_bananaTreesShaken += 1;
+									break;
+
+								// Mango Tree
+								case "8":
+									if (!_config.ShakeMangoTrees)
+									{
+										Monitor.LogOnce(String.Format(disabledConfigString, "Mango trees", I18n.ShakeMangoTrees_Name()), LogLevel.Debug);
+										_ignoredFeatures.Add(fruitTree);
+										continue;
+									}
+
+									_mangoTreesShaken += 1;
+									break;
+
+								default:
+									Monitor.Log($"Unknown Fruit Tree type: [{fruitTree.treeId.Value}]", LogLevel.Warn);
+									_ignoredFeatures.Add(fruitTree);
+									continue;
+							}
+
+							fruitTree.performUseAction(featureTileLocation);
+							_shakenFeatures.Add(fruitTree);
+							break;
+
+						// Bush Cases
+						case Bush bushFeature:
+							if (!CheckBush(bushFeature)) continue;
+
+							bushFeature.performUseAction(featureTileLocation);
+							_shakenFeatures.Add(bushFeature);
+							break;
+
+						// This should never happen
+						default:
+							Monitor.Log("I am an unknown terrain feature, ignore me I guess...", LogLevel.Debug);
+							break;
 					}
 				}
 			}
