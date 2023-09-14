@@ -1,10 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Version>1.5.0</Version>
+    <AssemblyName>AutoShaker</AssemblyName>
+    <BaseManifest>new</BaseManifest>
+
+    <UniqueId>Jag3Dagster.AutoShaker</UniqueId>
+    <Name>AutoShaker</Name>
+    <Authors>Jag3Dagster</Authors>
+    <Description>Automatically shake trees and bushes as you walk around.</Description>
+    <Version>2.1.0</Version>
+    <UpdateKeys>Nexus:7736;github:jag3dagster/AutoShaker</UpdateKeys>
+    <MinimumApiVersion>auto</MinimumApiVersion>
+
+    <MinimumApiVersion_Behavior>Update</MinimumApiVersion_Behavior>
+    <Dependencies_AlwaysIncludeRequire>true</Dependencies_AlwaysIncludeRequire>
   </PropertyGroup>
 
   <ItemGroup>
+    <SMAPIDependency Include="spacechase0.GenericModConfigMenu" Required="false" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Leclair.Stardew.ModManifestBuilder" Version="2.1.0" />
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.1.1" />
     <PackageReference Include="Pathoschild.Stardew.ModTranslationClassBuilder" Version="2.0.1" />
   </ItemGroup>
