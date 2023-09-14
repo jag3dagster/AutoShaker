@@ -14,6 +14,8 @@
   "ShakeDistance.Description": "Distance to shake bushes when not using 'Player Magnetism.'",
 
 
+  "RegularTreePage.Name": "Seed Trees",
+
   "RegularTreeSection.Name": "Seed Tree Options",
 
   "ShakeMahoganyTrees.Name": "Shake Mahogany Trees?",
@@ -31,6 +33,8 @@
   "ShakePineTrees.Name": "Shake Pine Trees?",
   "ShakePineTrees.Description": "Whether or not the AutoShaker will shake Pine trees that you walk by for Pine Cones.",
 
+
+  "FruitTreePage.Name": "Fruit Trees",
 
   "FruitTreeSection.Name": "Fruit Tree Options",
 
@@ -62,6 +66,8 @@
   "ShakePomegranateTrees.Description": "Whether or not the AutoShaker will shake Pomegranate trees that you walk by for Pomegranates",
 
 
+  "BushesPage.Name": "Bushes",
+
   "BushesSection.Name": "Bushes Options",
 
   "ShakeSalmonberries.Name": "Shake Salmonberry Bushes?",
@@ -74,5 +80,13 @@
   "ShakeTeaBushes.Description": "Whether or not the AutoShaker will shake Tea bushes that you walk by for Tea Leaves.",
 
   "ShakeWalnutBushes.Name": "Shake Golden Walnut Bushes?",
-  "ShakeWalnutBushes.Description": "Whether or not the AutoShaker will shake Walnut bushes that you walk by for Golden Walnuts."
+  "ShakeWalnutBushes.Description": "Whether or not the AutoShaker will shake Walnut bushes that you walk by for Golden Walnuts.",
+
+
+  "ForageablesPage.Name": "Forageables",
+
+  "ForageablesSection.Name": "[EXPERIMENTAL] Forageables Options",
+
+  "PullForageables.Name": "Pull Forageable Items?",
+  "PullForageables.Description": "Whether or not the AutoShaker will pull forageables that you walk by."
 }

@@ -338,7 +338,7 @@ namespace AutoShaker
 
 					var location = bush.Tile;
 
-					if (!IsInShakeRange(playerTileLocationPoint, location, radius)
+					if (!IsInRange(playerTileLocationPoint, location, radius)
 						|| _shakenFeatures.Contains(bush) || _ignoredFeatures.Contains(bush))
 					{
 						continue;
@@ -348,6 +348,51 @@ namespace AutoShaker
 					{
 						bush.performUseAction(location);
 						_shakenFeatures.Add(feature);
+					}
+				}
+			}
+
+			if (_config.PullForageables)
+			{
+				foreach (var objPair in Game1.player.currentLocation.Objects.Pairs)
+				{
+					var loc = objPair.Key;
+					var obj = objPair.Value;
+
+					if (!IsInRange(playerTileLocationPoint, loc, radius)) continue;
+
+					if (obj.isForage() && obj.IsSpawnedObject && !obj.questItem.Value)
+					{
+						var random = new Random((int)Game1.uniqueIDForThisGame / 2 + (int)Game1.stats.DaysPlayed + (int)loc.X + (int)loc.Y * 777);
+						var playerProfessions = Game1.player.professions;
+						var playerForaging = Game1.player.ForagingLevel;
+
+						if (playerProfessions.Contains(16))
+						{
+							obj.Quality = 4;
+						}
+						else if (random.NextDouble() < (double)((float)playerForaging / 30))
+						{
+							obj.Quality = 2;
+						}
+						else if (random.NextDouble() < (double)((float)playerForaging / 15))
+						{
+							obj.Quality = 1;
+						}
+
+						Game1.player.currentLocation.removeObject(loc, showDestroyedObject: false);
+
+						loc *= 64.0f;
+
+						Game1.player.gainExperience(2, 7);
+						Game1.createItemDebris(obj.getOne(), loc, -1, null, -1);
+						Game1.stats.ItemsForaged += 1;
+
+						if (playerProfessions.Contains(13) && random.NextDouble() < 0.2)
+						{
+							Game1.createItemDebris(obj.getOne(), loc, -1, null, -1);
+							Game1.player.gainExperience(2, 7);
+						}
 					}
 				}
 			}
@@ -520,7 +565,7 @@ namespace AutoShaker
 			return true;
 		}
 
-		private static bool IsInShakeRange(Point playerLocation, Vector2 bushLocation, int radius)
+		private static bool IsInRange(Point playerLocation, Vector2 bushLocation, int radius)
 			=> Math.Abs(bushLocation.X - playerLocation.X) <= radius && Math.Abs(bushLocation.Y - playerLocation.Y) <= radius;
 
 		private static IEnumerable<Vector2> GetTilesToCheck(Point playerLocation, int radius)

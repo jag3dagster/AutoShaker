@@ -53,6 +53,9 @@ namespace AutoShaker
 
 		public bool AnyBushEnabled { get; set; }
 
+		// Forageables
+		public bool PullForageables { get; set;  }
+
 		public void ResetToDefault()
 		{
 			IsShakerActive = true;
@@ -94,6 +97,9 @@ namespace AutoShaker
 			ShakeWalnutBushes = false;
 
 			AnyBushEnabled = true;
+
+			// Forageables
+			PullForageables = true;
 		}
 
 		public ModConfig()
@@ -152,7 +158,41 @@ namespace AutoShaker
 				getValue: () => ShakeDistance,
 				setValue: val => ShakeDistance = val);
 
+			gmcmApi.AddSectionTitle(
+				mod: manifest,
+				text: () => "Category Sections");
+
+			gmcmApi.AddPageLink(
+				mod: manifest,
+				pageId: "AutoShaker.RegularTreesPage",
+				text: () => "Regular Trees >");
+
+			gmcmApi.AddPageLink(
+				mod: manifest,
+				pageId: "AutoShaker.ForageablesPage",
+				text: () => "Forageables >");
+
+			gmcmApi.AddPageLink(
+				mod: manifest,
+				pageId: "AutoShaker.FruitTreesPage",
+				text: () => "Fruit Trees >");
+
+			gmcmApi.AddPageLink(
+				mod: manifest,
+				pageId: "AutoShaker.BushesPage",
+				text: () => "Regular Trees >");
+
 			/* Regular Trees */
+
+			gmcmApi.AddPage(
+				mod: manifest,
+				pageId: "AutoShaker.RegularTreesPage",
+				pageTitle: I18n.RegularTreePage_Name);
+
+			gmcmApi.AddPageLink(
+				mod: manifest,
+				pageId: "",
+				text: () => "Go back");
 
 			gmcmApi.AddSectionTitle(
 				mod: manifest,
@@ -225,6 +265,11 @@ namespace AutoShaker
 				});
 
 			/* Fruit Trees */
+
+			gmcmApi.AddPage(
+				mod: manifest,
+				pageId: "AutoShaker.FruitTreePage",
+				pageTitle: I18n.FruitTreePage_Name);
 
 			gmcmApi.AddSectionTitle(
 				mod: manifest,
@@ -348,6 +393,11 @@ namespace AutoShaker
 
 			/* Bushes */
 
+			gmcmApi.AddPage(
+				mod: manifest,
+				pageId: "AutoShaker.BushesPage",
+				pageTitle: I18n.BushesPage_Name);
+
 			gmcmApi.AddSectionTitle(
 				mod: manifest,
 				text: I18n.BushesSection_Name,
@@ -404,6 +454,31 @@ namespace AutoShaker
 					ShakeWalnutBushes = val;
 					UpdateEnabled();
 				});
+
+			/* Forageables */
+
+			gmcmApi.AddPage(
+				mod: manifest,
+				pageId: "AutoShaker.ForageablesPage",
+				pageTitle: I18n.ForageablesPage_Name);
+
+			gmcmApi.AddSectionTitle(
+				mod: manifest,
+				text: I18n.ForageablesSection_Name,
+				tooltip: null);
+
+			// PullForageables
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				fieldId: "AutoShaker.PullForageables",
+				name: I18n.PullForageables_Name,
+				tooltip: I18n.PullForageables_Description,
+				getValue: () => PullForageables,
+				setValue: val =>
+				{
+					PullForageables = val;
+					UpdateEnabled();
+				});
 		}
 
 		public void UpdateEnabled()
@@ -428,7 +503,7 @@ namespace AutoShaker
 				|| ShakeTeaBushes
 				|| ShakeWalnutBushes;
 
-			AnyShakeEnabled = AnyRegularTreeEnabled || AnyFruitTreeEnabled || AnyBushEnabled;
+			AnyShakeEnabled = AnyRegularTreeEnabled || AnyFruitTreeEnabled || AnyBushEnabled || PullForageables;
 		}
 	}
 
@@ -487,5 +562,39 @@ namespace AutoShaker
 		/// <param name="tooltip">The tooltip text shown when the cursor hovers on the field, or <c>null</c> to disable the tooltip.</param>
 		/// <param name="fieldId">The unique field ID for use with <see cref="OnFieldChanged"/>, or <c>null</c> to auto-generate a randomized ID.</param>
 		void AddKeybindList(IManifest mod, Func<KeybindList> getValue, Action<KeybindList> setValue, Func<string> name, Func<string>? tooltip = null, string? fieldId = null);
+
+		/****
+		** Multi-page management
+		****/
+
+		/// <summary>Start a new page in the mod's config UI, or switch to that page if it already exists. All options registered after this will be part of that page.</summary>
+		/// <param name="mod">The mod's manifest.</param>
+		/// <param name="pageId">The unique page ID.</param>
+		/// <param name="pageTitle">The page title shown in its UI, or <c>null</c> to show the <paramref name="pageId"/> value.</param>
+		/// <remarks>You must also call <see cref="AddPageLink"/> to make the page accessible. This is only needed to set up a multi-page config UI. If you don't call this method, all options will be part of the mod's main config UI instead.</remarks>
+		void AddPage(IManifest mod, string pageId, Func<string> pageTitle = null);
+
+		/// <summary>Add a link to a page added via <see cref="AddPage"/> at the current position in the form.</summary>
+		/// <param name="mod">The mod's manifest.</param>
+		/// <param name="pageId">The unique ID of the page to open when the link is clicked.</param>
+		/// <param name="text">The link text shown in the form.</param>
+		/// <param name="tooltip">The tooltip text shown when the cursor hovers on the link, or <c>null</c> to disable the tooltip.</param>
+		void AddPageLink(IManifest mod, string pageId, Func<string> text, Func<string> tooltip = null);
+
+		/****
+        ** Advanced
+        ****/
+
+		/// <summary>Register a method to notify when any option registered by this mod is edited through the config UI.</summary>
+		/// <param name="mod">The mod's manifest.</param>
+		/// <param name="onChange">The method to call with the option's unique field ID and new value.</param>
+		/// <remarks>Options use a randomized ID by default; you'll likely want to specify the <c>fieldId</c> argument when adding options if you use this.</remarks>
+		void OnFieldChanged(IManifest mod, Action<string, object> onChange);
+
+		/// <summary>Get the currently-displayed mod config menu, if any.</summary>
+		/// <param name="mod">The manifest of the mod whose config menu is being shown, or <c>null</c> if not applicable.</param>
+		/// <param name="page">The page ID being shown for the current config menu, or <c>null</c> if not applicable. This may be <c>null</c> even if a mod config menu is shown (e.g. because the mod doesn't have pages).</param>
+		/// <returns>Returns whether a mod config menu is being shown.</returns>
+		bool TryGetCurrentMenu(out IManifest mod, out string page);
 	}
 }
