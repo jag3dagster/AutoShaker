@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,7 +54,10 @@ namespace AutoShaker
 		public override void Entry(IModHelper helper)
 		{
 			I18n.Init(helper.Translation);
+
 			_config = helper.ReadConfig<ModConfig>();
+			_config.UpdateEnabled();
+			helper.WriteConfig(_config);
 
 			helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
 			helper.Events.GameLoop.DayStarted += OnDayStarted;
@@ -66,7 +69,7 @@ namespace AutoShaker
 		private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
 		{
 			if (!Context.IsWorldReady || !Context.IsPlayerFree) return;
-			if (!ShakeEnabled()) return;
+			if (!_config.IsShakerActive || !_config.AnyShakeEnabled) return;
 			if (Game1.currentLocation == null || Game1.player == null) return;
 			if (Game1.player.Tile.Equals(previousTilePosition)) return;
 			if (Game1.CurrentEvent != null && (!Game1.CurrentEvent.playerControlSequence || !Game1.CurrentEvent.canPlayerUseTool())) return;
@@ -92,6 +95,7 @@ namespace AutoShaker
 					{
 						// Tree Cases
 						case Tree treeFeature:
+							if (!_config.AnyRegularTreeEnabled) continue;
 							if (treeFeature.stump.Value) toIgnore = true;
 							if (treeFeature.growthStage.Value < 5 || !treeFeature.hasSeed.Value) toIgnore = true;
 							if (Game1.player.ForagingLevel < 1) toIgnore = true;
@@ -180,6 +184,7 @@ namespace AutoShaker
 
 						// Fruit Tree Cases
 						case FruitTree fruitTree:
+							if (!_config.AnyFruitTreeEnabled) continue;
 							if (fruitTree.stump.Value) toIgnore = true;
 							if (fruitTree.growthStage.Value < 4) toIgnore = true;
 
@@ -325,7 +330,7 @@ namespace AutoShaker
 				}
 			}
 
-			if (_config.ShakeSalmonberries || _config.ShakeBlackberries || _config.ShakeTeaBushes || _config.ShakeWalnutBushes)
+			if (_config.AnyBushEnabled)
 			{
 				foreach (var feature in Game1.player.currentLocation.largeTerrainFeatures)
 				{
@@ -438,6 +443,7 @@ namespace AutoShaker
 		{
 			var toIgnore = false;
 
+			if (!_config.AnyBushEnabled) return false;
 			if (bush.townBush.Value) toIgnore = true;
 			if (!bush.inBloom()) toIgnore = true;
 			if (bush.tileSheetOffset.Value != 1) toIgnore = true;
@@ -512,36 +518,6 @@ namespace AutoShaker
 			}
 
 			return true;
-		}
-
-		private bool ShakeEnabled()
-		{
-			var enabled = false;
-
-			// Regular Trees
-			enabled |= _config.ShakeOakTrees;
-			enabled |= _config.ShakeMapleTrees;
-			enabled |= _config.ShakePineTrees;
-			enabled |= _config.ShakeMahoganyTrees;
-			enabled |= _config.ShakePalmTrees;
-
-			// Fruit Trees
-			enabled |= _config.ShakeCherryTrees;
-			enabled |= _config.ShakeApricotTrees;
-			enabled |= _config.ShakeOrangeTrees;
-			enabled |= _config.ShakePeachTrees;
-			enabled |= _config.ShakePomegranateTrees;
-			enabled |= _config.ShakeAppleTrees;
-			enabled |= _config.ShakeBananaTrees;
-			enabled |= _config.ShakeMangoTrees;
-
-			// Bushes
-			enabled |= _config.ShakeSalmonberries;
-			enabled |= _config.ShakeBlackberries;
-			enabled |= _config.ShakeTeaBushes;
-			enabled |= _config.ShakeWalnutBushes;
-
-			return _config.IsShakerActive && enabled;
 		}
 
 		private static bool IsInShakeRange(Point playerLocation, Vector2 bushLocation, int radius)
