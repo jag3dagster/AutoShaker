@@ -13,10 +13,20 @@
   "ShakeDistance.Name": "Shake Distance",
   "ShakeDistance.Description": "Distance to shake bushes when not using 'Player Magnetism.'",
 
+  "LinkSection.Name": "Toggle Option Categories",
+  "LinkSection.RegularTrees": "Seed Tree Toggles >",
+  "LinkSection.FruitTrees": "Fruit Tree Toggles >",
+  "LinkSection.Bushes": "Bush Toggles >",
+  "LinkSection.Forageables": "Forageable Toggles >",
+  "LinkSection.BackToMain": "@ Main Menu",
+
 
   "RegularTreePage.Name": "Seed Trees",
 
-  "RegularTreeSection.Name": "Seed Tree Options",
+  "RegularTreeSection.Name": "Seed Tree Toggles",
+
+  "ShakeAllRegularTrees.Name": "Toggle All Seed Trees",
+  "ShakeAllRegularTrees.Description": "Toggle shaking of ALL Seed trees, including Palm trees.",
 
   "ShakeMahoganyTrees.Name": "Shake Mahogany Trees?",
   "ShakeMahoganyTrees.Description": "Whether or not the AutoShaker will shake Mahogany trees that you walk by for Mahogany Seeds.",
@@ -36,10 +46,13 @@
 
   "FruitTreePage.Name": "Fruit Trees",
 
-  "FruitTreeSection.Name": "Fruit Tree Options",
+  "FruitTreeSection.Name": "Fruit Tree Toggles",
 
   "FruitsReadyToShake.Name": "Minimum Fruits Ready to Shake",
   "FruitsReadyToShake.Description": "Minimum amount of fruits a Fruit Tree should have ready before the AutoShaker shakes the tree.",
+
+  "ShakeAllFruitTrees.Name": "Toggle All Fruit Trees",
+  "ShakeAllFruitTrees.Description": "Toggle shaking of ALL Fruit trees.",
 
   "ShakeAppleTrees.Name": "Shake Apple Trees?",
   "ShakeAppleTrees.Description": "Whether or not the AutoShaker will shake Apple trees that you walk by for Apples.",
@@ -68,7 +81,10 @@
 
   "BushesPage.Name": "Bushes",
 
-  "BushesSection.Name": "Bushes Options",
+  "BushesSection.Name": "Bushes Toggles",
+
+  "ShakeAllBushes.Name": "Toggle All Bushes",
+  "ShakeAllBushes.Description": "Toggle shaking of ALL Bushes.",
 
   "ShakeSalmonberries.Name": "Shake Salmonberry Bushes?",
   "ShakeSalmonberries.Description": "Whether or not the AutoShaker will shake bushes that you walk by for Salmonberries.",
@@ -85,7 +101,10 @@
 
   "ForageablesPage.Name": "Forageables",
 
-  "ForageablesSection.Name": "[EXPERIMENTAL] Forageables Options",
+  "ForageablesSection.Name": "[EXPERIMENTAL] Forageables Toggles",
+
+  "PullAllForageables.Name": "Toggle All Forageables",
+  "PullAllForageables.Description": "Toggle pulling of ALL Forageables.",
 
   "PullForageables.Name": "Pull Forageable Items?",
   "PullForageables.Description": "Whether or not the AutoShaker will pull forageables that you walk by."

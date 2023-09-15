@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
@@ -8,6 +11,8 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.TerrainFeatures;
 
+using Object = StardewValley.Object;
+
 namespace AutoShaker
 {
 	/// <summary>
@@ -15,8 +20,8 @@ namespace AutoShaker
 	/// </summary>
 	public class ModEntry : Mod
 	{
-		static readonly string disabledConfigString = "{0} are not being shaken due to the [{1}] config option being disabled.";
-		static readonly string eodStatMessage = Environment.NewLine + "[{0}] {1} shaken";
+		static readonly string disabledConfigString = "{0} are not being interacted with due to the [{1}] config option being disabled.";
+		static readonly string eodStatMessage = Environment.NewLine + "\t[{0}] {1} shaken";
 
 		private ModConfig _config;
 
@@ -26,11 +31,13 @@ namespace AutoShaker
 		private readonly HashSet<TerrainFeature> _shakenFeatures = new();
 
 		// Bushes
+		private bool _anyBushesShaken;
 		private int _forageableBushesShaken;
 		private int _teaBushesShaken;
 		private int _walnutBushesShaken;
 
 		// Regular Trees
+		private bool _anyRegularTreeShaken;
 		private int _oakTreesShaken;
 		private int _mapleTreesShaken;
 		private int _pineTreesShaken;
@@ -38,6 +45,7 @@ namespace AutoShaker
 		private int _palmTreesShaken;
 
 		// Fruit Trees
+		private bool _anyFruitTreeShaken;
 		private int _cherryTreesShaken;
 		private int _apricotTreesShaken;
 		private int _orangeTreesShaken;
@@ -84,7 +92,7 @@ namespace AutoShaker
 			foreach (Vector2 vec in GetTilesToCheck(playerTileLocationPoint, radius))
 			{
 				if (Game1.currentLocation.terrainFeatures.TryGetValue(vec, out var feature)
-					&& feature is Tree or FruitTree or Bush
+					&& feature is Tree or FruitTree or Bush or HoeDirt
 					&& !_ignoredFeatures.Contains(feature)
 					&& !_shakenFeatures.Contains(feature))
 				{
@@ -180,6 +188,7 @@ namespace AutoShaker
 
 							treeFeature.performUseAction(featureTileLocation);
 							_shakenFeatures.Add(treeFeature);
+							_anyRegularTreeShaken = true;
 							break;
 
 						// Fruit Tree Cases
@@ -213,7 +222,6 @@ namespace AutoShaker
 									if (!_config.ShakeCherryTrees)
 									{
 										Monitor.LogOnce(String.Format(disabledConfigString, "Cherry trees", I18n.ShakeCherryTrees_Name()), LogLevel.Debug);
-										_ignoredFeatures.Add(fruitTree);
 										continue;
 									}
 
@@ -225,7 +233,6 @@ namespace AutoShaker
 									if (!_config.ShakeApricotTrees)
 									{
 										Monitor.LogOnce(String.Format(disabledConfigString, "Apricot trees", I18n.ShakeApricotTrees_Name()), LogLevel.Debug);
-										_ignoredFeatures.Add(fruitTree);
 										continue;
 									}
 
@@ -237,7 +244,6 @@ namespace AutoShaker
 									if (!_config.ShakeOrangeTrees)
 									{
 										Monitor.LogOnce(String.Format(disabledConfigString, "Orange trees", I18n.ShakeOrangeTrees_Name()), LogLevel.Debug);
-										_ignoredFeatures.Add(fruitTree);
 										continue;
 									}
 
@@ -249,7 +255,6 @@ namespace AutoShaker
 									if (!_config.ShakePeachTrees)
 									{
 										Monitor.LogOnce(String.Format(disabledConfigString, "Peach trees", I18n.ShakePeachTrees_Name()), LogLevel.Debug);
-										_ignoredFeatures.Add(fruitTree);
 										continue;
 									}
 
@@ -261,7 +266,6 @@ namespace AutoShaker
 									if (!_config.ShakePomegranateTrees)
 									{
 										Monitor.LogOnce(String.Format(disabledConfigString, "Pomegranate trees", I18n.ShakePomegranateTrees_Name()), LogLevel.Debug);
-										_ignoredFeatures.Add(fruitTree);
 										continue;
 									}
 
@@ -273,7 +277,6 @@ namespace AutoShaker
 									if (!_config.ShakeAppleTrees)
 									{
 										Monitor.LogOnce(String.Format(disabledConfigString, "Apple trees", I18n.ShakeAppleTrees_Name()), LogLevel.Debug);
-										_ignoredFeatures.Add(fruitTree);
 										continue;
 									}
 
@@ -285,7 +288,6 @@ namespace AutoShaker
 									if (!_config.ShakeBananaTrees)
 									{
 										Monitor.LogOnce(String.Format(disabledConfigString, "Banana trees", I18n.ShakeBananaTrees_Name()), LogLevel.Debug);
-										_ignoredFeatures.Add(fruitTree);
 										continue;
 									}
 
@@ -297,7 +299,6 @@ namespace AutoShaker
 									if (!_config.ShakeMangoTrees)
 									{
 										Monitor.LogOnce(String.Format(disabledConfigString, "Mango trees", I18n.ShakeMangoTrees_Name()), LogLevel.Debug);
-										_ignoredFeatures.Add(fruitTree);
 										continue;
 									}
 
@@ -312,6 +313,7 @@ namespace AutoShaker
 
 							fruitTree.performUseAction(featureTileLocation);
 							_shakenFeatures.Add(fruitTree);
+							_anyFruitTreeShaken = true;
 							break;
 
 						// Bush Cases
@@ -320,11 +322,89 @@ namespace AutoShaker
 
 							bushFeature.performUseAction(featureTileLocation);
 							_shakenFeatures.Add(bushFeature);
+							_anyBushesShaken = true;
 							break;
 
 						// This should never happen
 						default:
 							Monitor.Log("I am an unknown terrain feature, ignore me I guess...", LogLevel.Debug);
+							break;
+
+						case HoeDirt hoeDirtFeature:
+							if (!_config.PullSpringOnions && !_config.PullGinger) continue;
+
+							var whichCrop = hoeDirtFeature.crop?.whichForageCrop.Value;
+							if (whichCrop == null) toIgnore = true;
+
+							if (toIgnore)
+							{
+								Monitor.LogOnce($"Ignored {whichCrop}; {hoeDirtFeature?.crop?.indexOfHarvest.Value}", LogLevel.Debug);
+								_ignoredFeatures.Add(hoeDirtFeature);
+								continue;
+							}
+
+							Vector2 tile;
+
+							switch (whichCrop)
+							{
+								// Spring Onion
+								case "1":
+									if (!_config.PullSpringOnions)
+									{
+										Monitor.LogOnce(String.Format(disabledConfigString, "Spring Onions", "Pull Spring Onions"), LogLevel.Debug);
+										continue;
+									}
+
+									tile = hoeDirtFeature.Tile;
+									var xTile = (int) tile.X;
+									var yTile = (int) tile.Y;
+									var obj = ItemRegistry.Create<Object>("(O)399");
+									var random = Utility.CreateDaySaveRandom(xTile * 1000, yTile * 2000);
+
+									if (Game1.player.professions.Contains(16))
+									{
+										obj.Quality = 4;
+									}
+									else if (random.NextDouble() < (double) ((float) Game1.player.ForagingLevel / 30f))
+									{
+										obj.Quality = 2;
+									}
+									else if (random.NextDouble() < (double) ((float) Game1.player.ForagingLevel / 15f))
+									{
+										obj.Quality = 1;
+									}
+
+									Monitor.Log($"regrow {hoeDirtFeature.crop.RegrowsAfterHarvest()}");
+
+									Game1.stats.ItemsForaged += (uint) obj.Stack;
+
+									hoeDirtFeature.destroyCrop(false);
+									Game1.playSound("harvest"); // hoeHit? sandyStep? dirtyHit?
+
+									tile *= 64.0f;
+
+									Game1.player.gainExperience(2, 3);
+									Game1.createItemDebris(obj.getOne(), tile, -1, null, -1);
+									break;
+
+								// Ginger
+								case "2":
+									if (!_config.PullGinger)
+									{
+										Monitor.LogOnce(String.Format(disabledConfigString, "Ginger Roots", "Pull Ginger Roots"), LogLevel.Debug);
+										continue;
+									}
+
+									tile = hoeDirtFeature.Tile;
+									hoeDirtFeature.crop.hitWithHoe((int) tile.X, (int) tile.Y, hoeDirtFeature.Location, hoeDirtFeature);
+									hoeDirtFeature.destroyCrop(false);
+									break;
+
+								default:
+									Monitor.Log($"No good case: {whichCrop}");
+									continue;
+							}
+
 							break;
 					}
 				}
@@ -348,12 +428,18 @@ namespace AutoShaker
 					{
 						bush.performUseAction(location);
 						_shakenFeatures.Add(feature);
+						_anyBushesShaken = true;
 					}
 				}
 			}
 
-			if (_config.PullForageables)
+			if (_config.AnyForageablesEnabled)
 			{
+				//if (Game1.player.currentLocation.NameOrUniqueName.Equals("Forest") && _config.PullSpringOnions)
+				//{
+				//	Crop
+				//}
+
 				foreach (var objPair in Game1.player.currentLocation.Objects.Pairs)
 				{
 					var loc = objPair.Key;
@@ -363,7 +449,8 @@ namespace AutoShaker
 
 					if (obj.isForage() && obj.IsSpawnedObject && !obj.questItem.Value)
 					{
-						var random = new Random((int)Game1.uniqueIDForThisGame / 2 + (int)Game1.stats.DaysPlayed + (int)loc.X + (int)loc.Y * 777);
+						Monitor.Log($"Name: {obj.Name}; Display Name: {obj.DisplayName}; Type: {obj.Type}; Item Id: {obj.ItemId}; Qualified Item Id: {obj.QualifiedItemId}", LogLevel.Info);
+						var random = Utility.CreateDaySaveRandom((int) loc.X, (int) loc.Y * 777f);
 						var playerProfessions = Game1.player.professions;
 						var playerForaging = Game1.player.ForagingLevel;
 
@@ -381,6 +468,7 @@ namespace AutoShaker
 						}
 
 						Game1.player.currentLocation.removeObject(loc, showDestroyedObject: false);
+						Game1.playSound("harvest");
 
 						loc *= 64.0f;
 
@@ -405,11 +493,13 @@ namespace AutoShaker
 
 		private void OnDayEnding(object sender, DayEndingEventArgs e)
 		{
-			StringBuilder statMessage = new(Utility.getDateString());
+			StringBuilder statMessage = new($"{Environment.NewLine}{Utility.getDateString()}");
 			statMessage.Append(':');
 
 			// Regular Trees
+			if (_anyRegularTreeShaken)
 			{
+				statMessage.Append($"{Environment.NewLine}Seed Trees:");
 				if (_mahoganyTreesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _mahoganyTreesShaken, "Mahogany trees"));
 				if (_mapleTreesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _mapleTreesShaken, "Maple trees"));
 				if (_oakTreesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _oakTreesShaken, "Oak trees"));
@@ -418,7 +508,9 @@ namespace AutoShaker
 			}
 
 			// Fruit Trees
+			if (_anyFruitTreeShaken)
 			{
+				statMessage.Append($"{Environment.NewLine}Fruit Trees:");
 				if (_appleTreesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _appleTreesShaken, "Apple trees"));
 				if (_apricotTreesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _apricotTreesShaken, "Apricot trees"));
 				if (_bananaTreesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _bananaTreesShaken, "Banana trees"));
@@ -430,7 +522,9 @@ namespace AutoShaker
 			}
 
 			// Bushes
+			if (_anyBushesShaken)
 			{
+				statMessage.Append($"{Environment.NewLine}Bushes:");
 				if (_forageableBushesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _forageableBushesShaken, Game1.currentSeason.Equals("spring") ? "Salmonberry bushes" : "Blackberry bushes"));
 				if (_teaBushesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _teaBushesShaken, "Tea bushes"));
 				if (_walnutBushesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _walnutBushesShaken, "Walnut bushes"));
@@ -441,12 +535,14 @@ namespace AutoShaker
 			// Reset
 			Monitor.Log("Resetting daily counts...", LogLevel.Trace);
 
+			_anyRegularTreeShaken = false;
 			_mahoganyTreesShaken = 0;
 			_mapleTreesShaken = 0;
 			_oakTreesShaken = 0;
 			_palmTreesShaken = 0;
 			_pineTreesShaken = 0;
 
+			_anyFruitTreeShaken = false;
 			_appleTreesShaken = 0;
 			_apricotTreesShaken = 0;
 			_bananaTreesShaken = 0;
@@ -456,6 +552,7 @@ namespace AutoShaker
 			_peachTreesShaken = 0;
 			_pomegranateTreesShaken = 0;
 
+			_anyBushesShaken = false;
 			_forageableBushesShaken = 0;
 			_teaBushesShaken = 0;
 			_walnutBushesShaken = 0;
@@ -515,17 +612,15 @@ namespace AutoShaker
 
 					if (!season.Equals("spring") && !season.Equals("fall")) return false;
 
-					if (season.Equals("spring") && !_config.ShakeSalmonberries)
+					if (season.Equals("spring") && !_config.ShakeSalmonberriesBushes)
 					{
 						Monitor.LogOnce(String.Format(disabledConfigString, "Salmonberry bushes", I18n.ShakeSalmonberries_Name()), LogLevel.Debug);
-						_ignoredFeatures.Add(bush);
 						return false;
 					}
 
-					if (season.Equals("fall") && !_config.ShakeBlackberries)
+					if (season.Equals("fall") && !_config.ShakeBlackberriesBushes)
 					{
 						Monitor.LogOnce(String.Format(disabledConfigString, "Blackberry bushes", I18n.ShakeBlackberries_Name()), LogLevel.Debug);
-						_ignoredFeatures.Add(bush);
 						return false;
 					}
 
@@ -537,7 +632,6 @@ namespace AutoShaker
 					if (!_config.ShakeTeaBushes)
 					{
 						Monitor.LogOnce(String.Format(disabledConfigString, "Tea bushes", I18n.ShakeTeaBushes_Name()), LogLevel.Debug);
-						_ignoredFeatures.Add(bush);
 						return false;
 					}
 
@@ -549,7 +643,6 @@ namespace AutoShaker
 					if (!_config.ShakeWalnutBushes)
 					{
 						Monitor.LogOnce(String.Format(disabledConfigString, "Walnut bushes", I18n.ShakeWalnutBushes_Name()), LogLevel.Debug);
-						_ignoredFeatures.Add(bush);
 						return false;
 					}
 

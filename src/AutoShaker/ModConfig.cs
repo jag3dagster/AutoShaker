@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 
@@ -20,11 +20,11 @@ namespace AutoShaker
 		public bool AnyShakeEnabled { get; set; }
 
 		// Regular Trees
-		public bool ShakeOakTrees { get; set; }
-		public bool ShakeMapleTrees { get; set; }
-		public bool ShakePineTrees { get; set; }
 		public bool ShakeMahoganyTrees { get; set; }
+		public bool ShakeMapleTrees { get; set; }
+		public bool ShakeOakTrees { get; set; }
 		public bool ShakePalmTrees { get; set; }
+		public bool ShakePineTrees { get; set; }
 
 		public bool AnyRegularTreeEnabled { get; set; }
 
@@ -46,8 +46,8 @@ namespace AutoShaker
 		public bool AnyFruitTreeEnabled { get; set; }
 
 		// Bushes
-		public bool ShakeSalmonberries { get; set; }
-		public bool ShakeBlackberries { get; set; }
+		public bool ShakeSalmonberriesBushes { get; set; }
+		public bool ShakeBlackberriesBushes { get; set; }
 		public bool ShakeTeaBushes { get; set; }
 		public bool ShakeWalnutBushes { get; set; }
 
@@ -55,6 +55,11 @@ namespace AutoShaker
 
 		// Forageables
 		public bool PullForageables { get; set;  }
+		public bool PullGinger { get; set; }
+		public bool PullSpringOnions { get; set; }
+		public bool PullWildHorseradishes { get; set; }
+
+		public bool AnyForageablesEnabled { get; set; }
 
 		public void ResetToDefault()
 		{
@@ -91,8 +96,8 @@ namespace AutoShaker
 			AnyFruitTreeEnabled = true;
 
 			// Bushes
-			ShakeSalmonberries = true;
-			ShakeBlackberries = true;
+			ShakeSalmonberriesBushes = true;
+			ShakeBlackberriesBushes = true;
 			ShakeTeaBushes = true;
 			ShakeWalnutBushes = false;
 
@@ -100,6 +105,10 @@ namespace AutoShaker
 
 			// Forageables
 			PullForageables = true;
+			PullGinger = true;
+			PullSpringOnions = true;
+
+			AnyForageablesEnabled = true;
 		}
 
 		public ModConfig()
@@ -114,6 +123,7 @@ namespace AutoShaker
 			var gmcmApi = helper.ModRegistry.GetApi<IGenericModConfigMenu>("spacechase0.GenericModConfigMenu");
 
 			gmcmApi.Register(manifest, ResetToDefault, () => helper.WriteConfig(this));
+			//gmcmApi.OnFieldChanged(manifest, OnOptionChanged);
 
 			/* General */
 
@@ -158,29 +168,27 @@ namespace AutoShaker
 				getValue: () => ShakeDistance,
 				setValue: val => ShakeDistance = val);
 
-			gmcmApi.AddSectionTitle(
-				mod: manifest,
-				text: () => "Category Sections");
+			/* Page Links Section */
 
 			gmcmApi.AddPageLink(
 				mod: manifest,
 				pageId: "AutoShaker.RegularTreesPage",
-				text: () => "Regular Trees >");
-
-			gmcmApi.AddPageLink(
-				mod: manifest,
-				pageId: "AutoShaker.ForageablesPage",
-				text: () => "Forageables >");
+				text: I18n.LinkSection_RegularTrees);
 
 			gmcmApi.AddPageLink(
 				mod: manifest,
 				pageId: "AutoShaker.FruitTreesPage",
-				text: () => "Fruit Trees >");
+				text: I18n.LinkSection_FruitTrees);
 
 			gmcmApi.AddPageLink(
 				mod: manifest,
 				pageId: "AutoShaker.BushesPage",
-				text: () => "Regular Trees >");
+				text: I18n.LinkSection_Bushes);
+
+			gmcmApi.AddPageLink(
+				mod: manifest,
+				pageId: "AutoShaker.ForageablesPage",
+				text: I18n.LinkSection_Forageables);
 
 			/* Regular Trees */
 
@@ -188,11 +196,6 @@ namespace AutoShaker
 				mod: manifest,
 				pageId: "AutoShaker.RegularTreesPage",
 				pageTitle: I18n.RegularTreePage_Name);
-
-			gmcmApi.AddPageLink(
-				mod: manifest,
-				pageId: "",
-				text: () => "Go back");
 
 			gmcmApi.AddSectionTitle(
 				mod: manifest,
@@ -264,11 +267,16 @@ namespace AutoShaker
 					UpdateEnabled();
 				});
 
+			gmcmApi.AddPageLink(
+				mod: manifest,
+				pageId: "",
+				text: I18n.LinkSection_BackToMain);
+
 			/* Fruit Trees */
 
 			gmcmApi.AddPage(
 				mod: manifest,
-				pageId: "AutoShaker.FruitTreePage",
+				pageId: "AutoShaker.FruitTreesPage",
 				pageTitle: I18n.FruitTreePage_Name);
 
 			gmcmApi.AddSectionTitle(
@@ -391,6 +399,11 @@ namespace AutoShaker
 					UpdateEnabled();
 				});
 
+			gmcmApi.AddPageLink(
+				mod: manifest,
+				pageId: "",
+				text: I18n.LinkSection_BackToMain);
+
 			/* Bushes */
 
 			gmcmApi.AddPage(
@@ -409,10 +422,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ShakeSalmonberries",
 				name: I18n.ShakeSalmonberries_Name,
 				tooltip: I18n.ShakeSalmonberries_Description,
-				getValue: () => ShakeSalmonberries,
+				getValue: () => ShakeSalmonberriesBushes,
 				setValue: val =>
 				{
-					ShakeSalmonberries = val;
+					ShakeSalmonberriesBushes = val;
 					UpdateEnabled();
 				});
 
@@ -422,10 +435,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ShakeBlackberries",
 				name: I18n.ShakeBlackberries_Name,
 				tooltip: I18n.ShakeBlackberries_Description,
-				getValue: () => ShakeBlackberries,
+				getValue: () => ShakeBlackberriesBushes,
 				setValue: val =>
 				{
-					ShakeBlackberries = val;
+					ShakeBlackberriesBushes = val;
 					UpdateEnabled();
 				});
 
@@ -455,6 +468,11 @@ namespace AutoShaker
 					UpdateEnabled();
 				});
 
+			gmcmApi.AddPageLink(
+				mod: manifest,
+				pageId: "",
+				text: I18n.LinkSection_BackToMain);
+
 			/* Forageables */
 
 			gmcmApi.AddPage(
@@ -479,6 +497,11 @@ namespace AutoShaker
 					PullForageables = val;
 					UpdateEnabled();
 				});
+
+			gmcmApi.AddPageLink(
+				mod: manifest,
+				pageId: "",
+				text: I18n.LinkSection_BackToMain);
 		}
 
 		public void UpdateEnabled()
@@ -498,12 +521,14 @@ namespace AutoShaker
 				|| ShakePeachTrees
 				|| ShakePomegranateTrees;
 
-			AnyBushEnabled = ShakeSalmonberries
-				|| ShakeBlackberries
+			AnyBushEnabled = ShakeSalmonberriesBushes
+				|| ShakeBlackberriesBushes
 				|| ShakeTeaBushes
 				|| ShakeWalnutBushes;
 
-			AnyShakeEnabled = AnyRegularTreeEnabled || AnyFruitTreeEnabled || AnyBushEnabled || PullForageables;
+			AnyForageablesEnabled = PullForageables;
+
+			AnyShakeEnabled = AnyRegularTreeEnabled || AnyFruitTreeEnabled || AnyBushEnabled || AnyForageablesEnabled;
 		}
 	}
 
