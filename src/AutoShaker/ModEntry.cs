@@ -81,8 +81,9 @@ namespace AutoShaker
 			if (Game1.currentLocation == null || Game1.player == null) return;
 			if (Game1.player.Tile.Equals(previousTilePosition)) return;
 			if (Game1.CurrentEvent != null && (!Game1.CurrentEvent.playerControlSequence || !Game1.CurrentEvent.canPlayerUseTool())) return;
-			if (Game1.player.currentLocation.terrainFeatures.Count() == 0 &&
-				Game1.player.currentLocation.largeTerrainFeatures.Count == 0) return;
+			if (Game1.player.currentLocation.terrainFeatures.Count() == 0
+				&& Game1.player.currentLocation.largeTerrainFeatures.Count == 0
+				&& Game1.player.currentLocation.Objects.Count() == 0) return;
 
 			previousTilePosition = Game1.player.Tile;
 			var playerTileLocationPoint = Game1.player.TilePoint;
@@ -379,7 +380,7 @@ namespace AutoShaker
 									Game1.stats.ItemsForaged += (uint) obj.Stack;
 
 									hoeDirtFeature.destroyCrop(false);
-									Game1.playSound("harvest"); // hoeHit? sandyStep? dirtyHit?
+									Game1.playSound("harvest");
 
 									tile *= 64.0f;
 
@@ -435,11 +436,6 @@ namespace AutoShaker
 
 			if (_config.AnyForageablesEnabled)
 			{
-				//if (Game1.player.currentLocation.NameOrUniqueName.Equals("Forest") && _config.PullSpringOnions)
-				//{
-				//	Crop
-				//}
-
 				foreach (var objPair in Game1.player.currentLocation.Objects.Pairs)
 				{
 					var loc = objPair.Key;
@@ -449,7 +445,6 @@ namespace AutoShaker
 
 					if (obj.isForage() && obj.IsSpawnedObject && !obj.questItem.Value)
 					{
-						Monitor.Log($"Name: {obj.Name}; Display Name: {obj.DisplayName}; Type: {obj.Type}; Item Id: {obj.ItemId}; Qualified Item Id: {obj.QualifiedItemId}", LogLevel.Info);
 						var random = Utility.CreateDaySaveRandom((int) loc.X, (int) loc.Y * 777f);
 						var playerProfessions = Game1.player.professions;
 						var playerForaging = Game1.player.ForagingLevel;

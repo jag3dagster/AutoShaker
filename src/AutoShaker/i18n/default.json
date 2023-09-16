@@ -81,7 +81,7 @@
 
   "BushesPage.Name": "Bushes",
 
-  "BushesSection.Name": "Bushes Toggles",
+  "BushesSection.Name": "Bush Toggles",
 
   "ShakeAllBushes.Name": "Toggle All Bushes",
   "ShakeAllBushes.Description": "Toggle shaking of ALL Bushes.",
@@ -101,7 +101,7 @@
 
   "ForageablesPage.Name": "Forageables",
 
-  "ForageablesSection.Name": "[EXPERIMENTAL] Forageables Toggles",
+  "ForageablesSection.Name": "[EXPERIMENTAL] Forageable Toggles",
 
   "PullAllForageables.Name": "Toggle All Forageables",
   "PullAllForageables.Description": "Toggle pulling of ALL Forageables.",
