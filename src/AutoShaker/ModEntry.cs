@@ -1,14 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing.Printing;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.CompilerServices;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoShaker.Helpers;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Extensions;
+using StardewValley.GameData.Locations;
+using StardewValley.Internal;
 using StardewValley.TerrainFeatures;
 
 using Object = StardewValley.Object;
@@ -30,30 +32,8 @@ namespace AutoShaker
 		private readonly HashSet<TerrainFeature> _ignoredFeatures = new();
 		private readonly HashSet<TerrainFeature> _shakenFeatures = new();
 
-		// Bushes
-		private bool _anyBushesShaken;
-		private int _forageableBushesShaken;
-		private int _teaBushesShaken;
-		private int _walnutBushesShaken;
-
-		// Regular Trees
-		private bool _anyRegularTreeShaken;
-		private int _oakTreesShaken;
-		private int _mapleTreesShaken;
-		private int _pineTreesShaken;
-		private int _mahoganyTreesShaken;
-		private int _palmTreesShaken;
-
-		// Fruit Trees
-		private bool _anyFruitTreeShaken;
-		private int _cherryTreesShaken;
-		private int _apricotTreesShaken;
-		private int _orangeTreesShaken;
-		private int _peachTreesShaken;
-		private int _pomegranateTreesShaken;
-		private int _appleTreesShaken;
-		private int _bananaTreesShaken;
-		private int _mangoTreesShaken;
+		private Dictionary<string, Dictionary<string, int>> _trackingCounts;
+		private int _forageablesCount = 0;
 
 		/// <summary>
 		/// The mod entry point, called after the mod is first loaded.
@@ -67,11 +47,73 @@ namespace AutoShaker
 			_config.UpdateEnabled();
 			helper.WriteConfig(_config);
 
+			_trackingCounts = new(StringComparer.OrdinalIgnoreCase)
+			{
+				{ "Seed Trees", new() },
+				{ "Fruit Trees", new() },
+				{ "Bushes", new() },
+				{ "forageables", new() }
+			};
+
 			helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
 			helper.Events.GameLoop.DayStarted += OnDayStarted;
 			helper.Events.GameLoop.DayEnding += OnDayEnding;
 			helper.Events.Input.ButtonsChanged += OnButtonsChanged;
+			helper.Events.Player.Warped += OnPlayerWarped;
 			helper.Events.GameLoop.GameLaunched += (_,_) => _config.RegisterModConfigMenu(helper, ModManifest);
+		}
+
+		private void OnPlayerWarped(object sender, WarpedEventArgs e)
+		{
+			var loc = e.NewLocation;
+			var objs = loc.Objects.Pairs;
+
+			foreach (var objPair in objs)
+			{
+				var vec = objPair.Key;
+				var x = (int)vec.X;
+				var y = (int)vec.Y;
+				var obj = objPair.Value;
+
+				if (obj.QualifiedItemId == "(O)590")
+				{
+					var random = Utility.CreateDaySaveRandom(x * 2000, y);
+					var dict = Game1.content.Load<Dictionary<string, LocationData>>("Data\\Locations");
+					var locData = loc.GetLocationData();
+					var context = new ItemQueryContext(loc, Game1.player, random);
+					IEnumerable<ArtifactSpotDropData> enumerable = dict["Default"].ArtifactSpots;
+					if (locData != null && locData.ArtifactSpots?.Count > 0)
+					{
+						enumerable = enumerable.Concat(locData.ArtifactSpots);
+					}
+
+					enumerable = enumerable.OrderBy((ArtifactSpotDropData p) => p.Precedence);
+					foreach (var drop in enumerable)
+					{
+						if (!random.NextBool(drop.Chance) || (drop.Condition != null && !GameStateQuery.CheckConditions(drop.Condition, loc, Game1.player, null, null, random)))
+						{
+							continue;
+						}
+
+						var item = ItemQueryResolver.TryResolveRandomItem(drop, context, avoidRepeat: false, null, null, null, delegate (string query, string error)
+						{
+							Monitor.Log("error on query resolve");
+						});
+
+						if (item == null)
+						{
+							continue;
+						}
+
+						Monitor.Log($"[{x}, {y}] {item.QualifiedItemId}", LogLevel.Info);
+
+						if (!drop.ContinueOnDrop)
+						{
+							break;
+						}
+					}
+				}
+			}
 		}
 
 		private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
@@ -132,7 +174,7 @@ namespace AutoShaker
 										continue;
 									}
 
-									_oakTreesShaken += 1;
+									_trackingCounts["Seed Trees"].AddOrIncrement("Oak trees");
 									break;
 
 								// Maple Tree
@@ -144,7 +186,7 @@ namespace AutoShaker
 										continue;
 									}
 
-									_mapleTreesShaken += 1;
+									_trackingCounts["Seed Trees"].AddOrIncrement("Maple trees");
 									break;
 
 								// Pine Tree
@@ -155,7 +197,7 @@ namespace AutoShaker
 										continue;
 									}
 
-									_pineTreesShaken += 1;
+									_trackingCounts["Seed Trees"].AddOrIncrement("Pine trees");
 									break;
 
 								// Mahogany Tree
@@ -166,7 +208,7 @@ namespace AutoShaker
 										continue;
 									}
 
-									_mahoganyTreesShaken += 1;
+									_trackingCounts["Seed Trees"].AddOrIncrement("Mahogany trees");
 									break;
 
 								// Palm Tree
@@ -178,7 +220,7 @@ namespace AutoShaker
 										continue;
 									}
 
-									_palmTreesShaken += 1;
+									_trackingCounts["Seed Trees"].AddOrIncrement("Palm trees");
 									break;
 
 								default:
@@ -189,7 +231,6 @@ namespace AutoShaker
 
 							treeFeature.performUseAction(featureTileLocation);
 							_shakenFeatures.Add(treeFeature);
-							_anyRegularTreeShaken = true;
 							break;
 
 						// Fruit Tree Cases
@@ -226,7 +267,7 @@ namespace AutoShaker
 										continue;
 									}
 
-									_cherryTreesShaken += 1;
+									_trackingCounts["Fruit Trees"].AddOrIncrement("Cherry trees");
 									break;
 
 								// Apricot Tree
@@ -237,7 +278,7 @@ namespace AutoShaker
 										continue;
 									}
 
-									_apricotTreesShaken += 1;
+									_trackingCounts["Fruit Trees"].AddOrIncrement("Apricot trees");
 									break;
 
 								// Orange Tree
@@ -248,7 +289,7 @@ namespace AutoShaker
 										continue;
 									}
 
-									_orangeTreesShaken += 1;
+									_trackingCounts["Fruit Trees"].AddOrIncrement("Orange trees");
 									break;
 
 								// Peach Tree
@@ -259,7 +300,7 @@ namespace AutoShaker
 										continue;
 									}
 
-									_peachTreesShaken += 1;
+									_trackingCounts["Fruit Trees"].AddOrIncrement("Peach trees");
 									break;
 
 								// Pomegranate Tree
@@ -270,7 +311,7 @@ namespace AutoShaker
 										continue;
 									}
 
-									_pomegranateTreesShaken += 1;
+									_trackingCounts["Fruit Trees"].AddOrIncrement("Pomegranate trees");
 									break;
 
 								// Apple Tree
@@ -281,7 +322,7 @@ namespace AutoShaker
 										continue;
 									}
 
-									_appleTreesShaken += 1;
+									_trackingCounts["Fruit Trees"].AddOrIncrement("Apple trees");
 									break;
 
 								// Banana Tree
@@ -292,7 +333,7 @@ namespace AutoShaker
 										continue;
 									}
 
-									_bananaTreesShaken += 1;
+									_trackingCounts["Fruit Trees"].AddOrIncrement("Banana trees");
 									break;
 
 								// Mango Tree
@@ -303,7 +344,7 @@ namespace AutoShaker
 										continue;
 									}
 
-									_mangoTreesShaken += 1;
+									_trackingCounts["Fruit Trees"].AddOrIncrement("Mango trees");
 									break;
 
 								default:
@@ -314,7 +355,6 @@ namespace AutoShaker
 
 							fruitTree.performUseAction(featureTileLocation);
 							_shakenFeatures.Add(fruitTree);
-							_anyFruitTreeShaken = true;
 							break;
 
 						// Bush Cases
@@ -323,7 +363,6 @@ namespace AutoShaker
 
 							bushFeature.performUseAction(featureTileLocation);
 							_shakenFeatures.Add(bushFeature);
-							_anyBushesShaken = true;
 							break;
 
 						// This should never happen
@@ -332,7 +371,7 @@ namespace AutoShaker
 							break;
 
 						case HoeDirt hoeDirtFeature:
-							if (!_config.PullSpringOnions && !_config.PullGinger) continue;
+							if (!_config.PullSpringOnions && !_config.DigGinger) continue;
 
 							var whichCrop = hoeDirtFeature.crop?.whichForageCrop.Value;
 							if (whichCrop == null) toIgnore = true;
@@ -390,7 +429,7 @@ namespace AutoShaker
 
 								// Ginger
 								case "2":
-									if (!_config.PullGinger)
+									if (!_config.DigGinger)
 									{
 										Monitor.LogOnce(String.Format(disabledConfigString, "Ginger Roots", "Pull Ginger Roots"), LogLevel.Debug);
 										continue;
@@ -429,7 +468,6 @@ namespace AutoShaker
 					{
 						bush.performUseAction(location);
 						_shakenFeatures.Add(feature);
-						_anyBushesShaken = true;
 					}
 				}
 			}
@@ -486,43 +524,26 @@ namespace AutoShaker
 			previousTilePosition = Game1.player.Tile;
 		}
 
+		// $TODO - Update to I18n.
 		private void OnDayEnding(object sender, DayEndingEventArgs e)
 		{
-			StringBuilder statMessage = new($"{Environment.NewLine}{Utility.getDateString()}");
-			statMessage.Append(':');
+			StringBuilder statMessage = new($"{Environment.NewLine}{Utility.getDateString()}:{Environment.NewLine}");
+			statMessage.AppendLine($"[{_shakenFeatures.Count}] Total Interactions");
 
-			// Regular Trees
-			if (_anyRegularTreeShaken)
+			foreach (var category in _trackingCounts)
 			{
-				statMessage.Append($"{Environment.NewLine}Seed Trees:");
-				if (_mahoganyTreesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _mahoganyTreesShaken, "Mahogany trees"));
-				if (_mapleTreesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _mapleTreesShaken, "Maple trees"));
-				if (_oakTreesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _oakTreesShaken, "Oak trees"));
-				if (_palmTreesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _palmTreesShaken, "Palm trees"));
-				if (_pineTreesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _pineTreesShaken, "Pine trees"));
-			}
+				if (category.Value.Count > 0)
+				{
+					statMessage.AppendLine($"{category.Key}:");
 
-			// Fruit Trees
-			if (_anyFruitTreeShaken)
-			{
-				statMessage.Append($"{Environment.NewLine}Fruit Trees:");
-				if (_appleTreesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _appleTreesShaken, "Apple trees"));
-				if (_apricotTreesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _apricotTreesShaken, "Apricot trees"));
-				if (_bananaTreesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _bananaTreesShaken, "Banana trees"));
-				if (_cherryTreesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _cherryTreesShaken, "Cherry trees"));
-				if (_mangoTreesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _mangoTreesShaken, "Mango trees"));
-				if (_orangeTreesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _orangeTreesShaken, "Orange trees"));
-				if (_peachTreesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _peachTreesShaken, "Peach trees"));
-				if (_pomegranateTreesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _pomegranateTreesShaken, "Pomegranate trees"));
-			}
+					foreach (var interactable in category.Value)
+					{
+						if (interactable.Value <= 0) Monitor.Log($"Invalid forageable value for {interactable.Key}: {interactable.Value}. How did we get here?", LogLevel.Warn);
+						statMessage.AppendLine(String.Format(eodStatMessage, interactable.Value, interactable.Key));
+					}
+				}
 
-			// Bushes
-			if (_anyBushesShaken)
-			{
-				statMessage.Append($"{Environment.NewLine}Bushes:");
-				if (_forageableBushesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _forageableBushesShaken, Game1.currentSeason.Equals("spring") ? "Salmonberry bushes" : "Blackberry bushes"));
-				if (_teaBushesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _teaBushesShaken, "Tea bushes"));
-				if (_walnutBushesShaken > 0) statMessage.Append(String.Format(eodStatMessage, _walnutBushesShaken, "Walnut bushes"));
+				category.Value.Clear();
 			}
 
 			Monitor.Log(statMessage.ToString(), LogLevel.Info);
@@ -530,30 +551,9 @@ namespace AutoShaker
 			// Reset
 			Monitor.Log("Resetting daily counts...", LogLevel.Trace);
 
-			_anyRegularTreeShaken = false;
-			_mahoganyTreesShaken = 0;
-			_mapleTreesShaken = 0;
-			_oakTreesShaken = 0;
-			_palmTreesShaken = 0;
-			_pineTreesShaken = 0;
-
-			_anyFruitTreeShaken = false;
-			_appleTreesShaken = 0;
-			_apricotTreesShaken = 0;
-			_bananaTreesShaken = 0;
-			_cherryTreesShaken = 0;
-			_mangoTreesShaken = 0;
-			_orangeTreesShaken = 0;
-			_peachTreesShaken = 0;
-			_pomegranateTreesShaken = 0;
-
-			_anyBushesShaken = false;
-			_forageableBushesShaken = 0;
-			_teaBushesShaken = 0;
-			_walnutBushesShaken = 0;
-
 			_ignoredFeatures.Clear();
 			_shakenFeatures.Clear();
+			_forageablesCount = 0;
 		}
 
 		private void OnButtonsChanged(object sender, ButtonsChangedEventArgs e)
@@ -619,7 +619,7 @@ namespace AutoShaker
 						return false;
 					}
 
-					_forageableBushesShaken += 1;
+					_trackingCounts["Bushes"].AddOrIncrement(season.Equals("spring") ? "Salmonberry bushes" : "Blackberry bushes");
 					break;
 
 				// Tea Bushes
@@ -630,7 +630,7 @@ namespace AutoShaker
 						return false;
 					}
 
-					_teaBushesShaken += 1;
+					_trackingCounts["Bushes"].AddOrIncrement("Tea bushes");
 					break;
 
 				// Walnut Bushes
@@ -641,7 +641,7 @@ namespace AutoShaker
 						return false;
 					}
 
-					_walnutBushesShaken += 1;
+					_trackingCounts["Bushes"].AddOrIncrement("Walnut bushes");
 					break;
 
 				default:

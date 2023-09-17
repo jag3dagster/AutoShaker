@@ -1,111 +1,222 @@
 ﻿{
-  "GeneralSection.Name": "General Options",
+  "GeneralSection.Text": "General Options",
 
   "IsShakerActive.Name": "Shaker Is Active",
-  "IsShakerActive.Description": "Whether or not the AutoShaker mod is active.",
+  "IsShakerActive.Tooltip": "Whether or not the AutoShaker mod is active.",
 
   "ToggleShaker.Name": "Toggle Shaker Keybind",
-  "ToggleShaker.Description": "Keybinding to toggle the AutoShaker on and off.",
+  "ToggleShaker.Tooltip": "Keybinding to toggle the AutoShaker on and off.",
 
   "UsePlayerMagnetism.Name": "Use Player Magnetism Distance?",
-  "UsePlayerMagnetism.Description": "Whether or not the AutoShaker will shake bushes at the same distance players can pick up items. Note: Overrides 'Shake Distance'",
+  "UsePlayerMagnetism.Tooltip": "Whether or not the AutoShaker will shake bushes at the same distance players can pick up items. Note: Overrides '{{shakeDistanceName}}'",
 
   "ShakeDistance.Name": "Shake Distance",
-  "ShakeDistance.Description": "Distance to shake bushes when not using 'Player Magnetism.'",
+  "ShakeDistance.Tooltip": "Distance to shake bushes when '{{playerMagnetismName}}' is disabled.",
 
-  "LinkSection.Name": "Toggle Option Categories",
-  "LinkSection.RegularTrees": "Seed Tree Toggles >",
-  "LinkSection.FruitTrees": "Fruit Tree Toggles >",
-  "LinkSection.Bushes": "Bush Toggles >",
-  "LinkSection.Forageables": "Forageable Toggles >",
-  "LinkSection.BackToMain": "@ Main Menu",
+  "LinkSection.Text": "Toggle Option Category Pages",
+  "LinkSection.Link.RegularTrees": "Seed Tree Toggles >",
+  "LinkSection.Link.FruitTrees": "Fruit Tree Toggles >",
+  "LinkSection.Link.Bushes": "Bush Toggles >",
+  "LinkSection.Link.Forageables": "Forageable Toggles >",
+  "LinkSection.Link.BackToMain": "@ Main Menu",
 
 
-  "RegularTreePage.Name": "Seed Trees",
+  "RegularTreePage.Title": "Seed Trees",
 
-  "RegularTreeSection.Name": "Seed Tree Toggles",
-
-  "ShakeAllRegularTrees.Name": "Toggle All Seed Trees",
-  "ShakeAllRegularTrees.Description": "Toggle shaking of ALL Seed trees, including Palm trees.",
+  "RegularTreeSection.Text": "Seed Tree Toggles",
 
   "ShakeMahoganyTrees.Name": "Shake Mahogany Trees?",
-  "ShakeMahoganyTrees.Description": "Whether or not the AutoShaker will shake Mahogany trees that you walk by for Mahogany Seeds.",
+  "ShakeMahoganyTrees.Tooltip": "Whether or not the AutoShaker will shake Mahogany trees that you walk by for Mahogany Seeds.",
 
   "ShakeMapleTrees.Name": "Shake Maple Trees?",
-  "ShakeMapleTrees.Description": "Whether or not the AutoShaker will shake Maple trees that you walk by for Maple Seeds and Hazelnuts.",
+  "ShakeMapleTrees.Tooltip": "Whether or not the AutoShaker will shake Maple trees that you walk by for Maple Seeds and Hazelnuts. NOTE: This is separate from forageable Hazelnuts.",
 
   "ShakeOakTrees.Name": "Shake Oak Trees?",
-  "ShakeOakTrees.Description": "Whether or not the AutoShaker will shake Oak trees that you walk by for Acorns.",
+  "ShakeOakTrees.Tooltip": "Whether or not the AutoShaker will shake Oak trees that you walk by for Acorns.",
 
   "ShakePalmTrees.Name": "Shake Palm Trees?",
-  "ShakePalmTrees.Description": "Whether or not the AutoShaker will shake Palm trees that you walk by for Coconuts.",
+  "ShakePalmTrees.Tooltip": "Whether or not the AutoShaker will shake Palm trees that you walk by for Coconuts.",
 
   "ShakePineTrees.Name": "Shake Pine Trees?",
-  "ShakePineTrees.Description": "Whether or not the AutoShaker will shake Pine trees that you walk by for Pine Cones.",
+  "ShakePineTrees.Tooltip": "Whether or not the AutoShaker will shake Pine trees that you walk by for Pine Cones.",
 
 
-  "FruitTreePage.Name": "Fruit Trees",
+  "FruitTreePage.Title": "Fruit Trees",
 
-  "FruitTreeSection.Name": "Fruit Tree Toggles",
+  "FruitTreeSection.Text": "Fruit Tree Toggles",
 
   "FruitsReadyToShake.Name": "Minimum Fruits Ready to Shake",
-  "FruitsReadyToShake.Description": "Minimum amount of fruits a Fruit Tree should have ready before the AutoShaker shakes the tree.",
-
-  "ShakeAllFruitTrees.Name": "Toggle All Fruit Trees",
-  "ShakeAllFruitTrees.Description": "Toggle shaking of ALL Fruit trees.",
+  "FruitsReadyToShake.Tooltip": "Minimum amount of fruits a Fruit Tree should have ready before the AutoShaker shakes the tree.",
 
   "ShakeAppleTrees.Name": "Shake Apple Trees?",
-  "ShakeAppleTrees.Description": "Whether or not the AutoShaker will shake Apple trees that you walk by for Apples.",
+  "ShakeAppleTrees.Tooltip": "Whether or not the AutoShaker will shake Apple trees that you walk by for Apples.",
 
   "ShakeApricotTrees.Name": "Shake Apricot Trees?",
-  "ShakeApricotTrees.Description": "Whether or not the AutoShaker will shake Apricot trees that you walk by for Apricots.",
+  "ShakeApricotTrees.Tooltip": "Whether or not the AutoShaker will shake Apricot trees that you walk by for Apricots.",
 
   "ShakeBananaTrees.Name": "Shake Banana Trees?",
-  "ShakeBananaTrees.Description": "Whether or not the AutoShaker will shake Banana trees that you walk by for Bananas.",
+  "ShakeBananaTrees.Tooltip": "Whether or not the AutoShaker will shake Banana trees that you walk by for Bananas.",
 
   "ShakeCherryTrees.Name": "Shake Cherry Trees?",
-  "ShakeCherryTrees.Description": "Whether or not the AutoShaker will shake Cherry trees that you walk by for Cherries.",
+  "ShakeCherryTrees.Tooltip": "Whether or not the AutoShaker will shake Cherry trees that you walk by for Cherries.",
 
   "ShakeMangoTrees.Name": "Shake Mango Trees?",
-  "ShakeMangoTrees.Description": "Whether or not the AutoShaker will shake Mango trees that you walk by for Mangos.",
+  "ShakeMangoTrees.Tooltip": "Whether or not the AutoShaker will shake Mango trees that you walk by for Mangos.",
 
   "ShakeOrangeTrees.Name": "Shake Orange Trees?",
-  "ShakeOrangeTrees.Description": "Whether or not the AutoShaker will shake Orange trees that you walk by for Oranges.",
+  "ShakeOrangeTrees.Tooltip": "Whether or not the AutoShaker will shake Orange trees that you walk by for Oranges.",
 
   "ShakePeachTrees.Name": "Shake Peach Trees?",
-  "ShakePeachTrees.Description": "Whether or not the AutoShaker will shake Peach trees that you walk by for Peaches.",
+  "ShakePeachTrees.Tooltip": "Whether or not the AutoShaker will shake Peach trees that you walk by for Peaches.",
 
   "ShakePomegranateTrees.Name": "Shake Pomegranate Trees?",
-  "ShakePomegranateTrees.Description": "Whether or not the AutoShaker will shake Pomegranate trees that you walk by for Pomegranates",
+  "ShakePomegranateTrees.Tooltip": "Whether or not the AutoShaker will shake Pomegranate trees that you walk by for Pomegranates",
 
 
-  "BushesPage.Name": "Bushes",
+  "BushesPage.Title": "Bushes",
 
-  "BushesSection.Name": "Bush Toggles",
-
-  "ShakeAllBushes.Name": "Toggle All Bushes",
-  "ShakeAllBushes.Description": "Toggle shaking of ALL Bushes.",
+  "BushesSection.Text": "Bush Toggles",
 
   "ShakeSalmonberries.Name": "Shake Salmonberry Bushes?",
-  "ShakeSalmonberries.Description": "Whether or not the AutoShaker will shake bushes that you walk by for Salmonberries.",
+  "ShakeSalmonberries.Tooltip": "Whether or not the AutoShaker will shake bushes that you walk by for Salmonberries.",
 
   "ShakeBlackberries.Name": "Shake Blackberry Bushes?",
-  "ShakeBlackberries.Description": "Whether or not the AutoShaker will shake bushes that you walk by for Blackberries.",
+  "ShakeBlackberries.Tooltip": "Whether or not the AutoShaker will shake bushes that you walk by for Blackberries.",
 
   "ShakeTeaBushes.Name": "Shake Tea Bushes?",
-  "ShakeTeaBushes.Description": "Whether or not the AutoShaker will shake Tea bushes that you walk by for Tea Leaves.",
+  "ShakeTeaBushes.Tooltip": "Whether or not the AutoShaker will shake Tea bushes that you walk by for Tea Leaves.",
 
   "ShakeWalnutBushes.Name": "Shake Golden Walnut Bushes?",
-  "ShakeWalnutBushes.Description": "Whether or not the AutoShaker will shake Walnut bushes that you walk by for Golden Walnuts.",
+  "ShakeWalnutBushes.Tooltip": "Whether or not the AutoShaker will shake Walnut bushes that you walk by for Golden Walnuts.",
 
 
-  "ForageablesPage.Name": "Forageables",
+  "ForageablesPage.Title": "Forageables",
 
-  "ForageablesSection.Name": "[EXPERIMENTAL] Forageable Toggles",
+  "ForageablesSection.Text": "Forageable Toggles",
 
-  "PullAllForageables.Name": "Toggle All Forageables",
-  "PullAllForageables.Description": "Toggle pulling of ALL Forageables.",
 
-  "PullForageables.Name": "Pull Forageable Items?",
-  "PullForageables.Description": "Whether or not the AutoShaker will pull forageables that you walk by."
+  "SpringSection.Text": "Spring Forageable Toggles",
+
+  "PullDaffodils.Name": "Pull Up Daffodils?",
+  "PullDaffodils.Tooltip": "Whether or not the AutoShaker will pull up Daffodils that you walk by.",
+
+  "PullDandelions.Name": "Pull Up Dandelions?",
+  "PullDandelions.Tooltip": "Whether or not the AutoShaker will pull up Dandelions that you walk by.",
+
+  "PullLeeks.Name": "Pull Up Leeks?",
+  "PullLeeks.Tooltip": "Whether or not the AutoShaker will pull up Leeks that you walk by.",
+
+  "PullSpringOnions.Name": "Pull Up Spring Onions?",
+  "PullSpringOnions.Tooltip": "Whether or not the AutoShaker will pull up Spring Onions that you walk by.",
+
+  "PullWildHorseradishes.Name": "Pull Up Wild Horseradishes?",
+  "PullWildHorseradishes.Tooltip": "Whether or not the AutoShaker will pull up Wild Horseradishes that you walk by.",
+
+
+  "SummerSection.Text": "Summer Forageable Toggles",
+
+  "PullGrapes.Name": "Pull Up Grapes?",
+  "PullGrapes.Tooltip": "Whether or not the AutoShaker will pull up Grapes that you walk by.",
+
+  "PullSpiceBerries.Name": "Pull Up Spice Berries?",
+  "PullSpiceBerries.Tooltip": "Whether or not the AutoShaker will pull up Spice Berries that you walk by.",
+
+  "PullSweetPeas.Name": "Pull Up Sweet Peas?",
+  "PullSweetPeas.Tooltip": "Whether or not the AutoShaker will pull up Sweet Peas that you walk by.",
+
+
+  "FallSection.Text": "Fall Forageable Toggles",
+
+  "PullHazelnuts.Name": "Pull Up Hazelnuts?",
+  "PullHazelnuts.Tooltip": "Whether or not the AutoShaker will pull up Hazelnuts that you walk by. NOTE: This is separate from Hazelnuts that come from shaking Maple Trees.",
+
+  "PullWildPlums.Name": "Pull Up Wild Plums?",
+  "PullWildPlums.Tooltip": "Whether or not the AutoShaker will pull up Wild Plums that you walk by.",
+
+
+  "WinterSection.Text": "Winter Forageable Toggles",
+
+  "PullCrocuses.Name": "Pull Up Crocuses?",
+  "PullCrocuses.Tooltip": "Whether or not the AutoShaker will pull up Crocuses that you walk by.",
+
+  "PullCrystalFruits.Name": "Pull Up Crystal Fruits?",
+  "PullCrystalFruits.Tooltip": "Whether or not the AutoShaker will pull up Crystal Fruits that you walk by.",
+
+  "PullHolly.Name": "Pull Up Holly?",
+  "PullHolly.Tooltip": "Whether or not the AutoShaker will pull up Holly that you walk by.",
+
+  "DigSnowYams.Name": "Dig Up Snow Yams?",
+  "DigSnowYams.Tooltip": "Whether or not the AutoShaker will dig up Snow Yams that you walk by. NOTE: This only checks Artifact Spots, a.k.a 'worms', 'stems', or 'twigs', and will only dig up the spot if it holds a Snow Yam.",
+
+  "DigWinterRoots.Name": "Dig Up Winter Roots?",
+  "DigWinterRoots.Tooltip": "Whether or not the AutoShaker will dig up Winter Roots that you walk by. NOTE: This only checks Artifact Spots, a.k.a 'worms', 'stems', or 'twigs', and will only dig up the spot if it holds a Winter Root.",
+
+
+  "MushroomSection.Text": "Mushroom Toggles",
+
+  "PullChanterelles.Name": "Pull Up Chanterelle Mushrooms?",
+  "PullChanterelles.Tooltip": "Whether or not the AutoShaker will pull up Chanterelle mushrooms that you walk by.",
+
+  "PullCommonMushrooms.Name": "Pull Up Common Mushrooms?",
+  "PullCommonMushrooms.Tooltip": "Whether or not the AutoShaker will pull up Common Mushrooms that you walk by.",
+
+  "PullMagmaCaps.Name": "Pull Up Magma Caps?",
+  "PullMagmaCaps.Tooltip": "Whether or not the AutoShaker will pull up Magma Caps that you walk by.",
+
+  "PullMorels.Name": "Pull Up Morel Mushrooms?",
+  "PullMorels.Tooltip": "Whether or not the AutoShaker will pull up Morel mushrooms that you walk by.",
+
+  "PullPurpleMushrooms.Name": "Pull Up Purple Mushrooms?",
+  "PullPurpleMushrooms.Tooltip": "Whether or not the AutoShaker will pull up Purple Mushrooms that you walk by.",
+
+  "PullRedMushrooms.Name": "Pull Up Red Mushrooms?",
+  "PullRedMushrooms.Tooltip": "Whether or not the AutoShaker will pull up Red Mushrooms that you walk by.",
+
+
+  "BeachSection.Text": "Beach Forageable Toggles",
+
+  "PullClams.Name": "Pull Up Clams?",
+  "PullClams.Tooltip": "Whether or not the AutoShaker will pull up Clams that you walk by.",
+
+  "PullCockles.Name": "Pull Up Cockles?",
+  "PullCockles.Tooltip": "Whether or not the AutoShaker will pull up Cockles that you walk by.",
+
+  "PullCoral.Name": "Pull Up Coral?",
+  "PullCoral.Tooltip": "Whether or not the AutoShaker will pull up Coral that you walk by.",
+
+  "PullMussels.Name": "Pull Up Mussels?",
+  "PullMussels.Tooltip": "Whether or not the AutoShaker will pull up Mussels that you walk by.",
+
+  "PullNautilusShells.Name": "Pull Up Nautilus Shells?",
+  "PullNautilusShells.Tooltip": "Whether or not the AutoShaker will pull up Nautilus Shells that you walk by.",
+
+  "PullOysters.Name": "Pull Up Oysters?",
+  "PullOysters.Tooltip": "Whether or not the AutoShaker will pull up Oysters that you walk by.",
+
+  "PullRainbowShells.Name": "Pull Up Rainbow Shells?",
+  "PullRainbowShells.Tooltip": "Whether or not the AutoShaker will pull up Rainbow Shells that you walk by.",
+
+  "PullSeaUrchins.Name": "Pull Up Sea Urchins?",
+  "PullSeaUrchins.Tooltip": "Whether or not the AutoShaker will pull up Sea Urchins that you walk by.",
+
+  "PullSeaweed.Name": "Pull Up Seaweed?",
+  "PullSeaweed.Tooltip": "Whether or not the AutoShaker will pull up Seaweed that you walk by.",
+
+
+  "CaveSection.Text": "Cave Forageable Toggles",
+
+  "PullFiddleheadFerns.Name": "Pull Up Fiddlehead Ferns?",
+  "PullFiddleheadFerns.Tooltip": "Whether or not the AutoShaker will pull up Fiddlehead Ferns that you walk by.",
+
+
+  "DesertSection.Text": "Desert Forageable Toggles",
+
+  "PullCactusFruits.Name": "Pull Up Cactus Fruits?",
+  "PullCactusFruits.Tooltip": "Whether or not the AutoShaker will pull up Cactus Fruits that you walk by.",
+
+
+  "IslandSection.Text": "Island Forageable Toggles",
+
+  "DigGinger.Name": "Dig Up Ginger Roots?",
+  "DigGinger.Tooltip": "Whether or not the AutoShaker will dig up Ginger roots that you walk by."
 }

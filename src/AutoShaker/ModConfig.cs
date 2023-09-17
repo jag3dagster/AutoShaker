@@ -54,10 +54,56 @@ namespace AutoShaker
 		public bool AnyBushEnabled { get; set; }
 
 		// Forageables
-		public bool PullForageables { get; set;  }
-		public bool PullGinger { get; set; }
+		// Spring
+		public bool PullDaffodils { get; set; }
+		public bool PullDandelions { get; set; }
+		public bool PullLeeks { get; set; }
 		public bool PullSpringOnions { get; set; }
 		public bool PullWildHorseradishes { get; set; }
+
+		// Summer
+		public bool PullGrapes { get; set; }
+		public bool PullSpiceBerries { get; set; }
+		public bool PullSweetPeas { get; set; }
+
+		// Fall
+		public bool PullHazelnuts { get; set; }
+		public bool PullWildPlums { get; set; }
+
+		// Winter
+		public bool PullCrocuses { get; set; }
+		public bool PullCrystalFruits { get; set; }
+		public bool PullHolly { get; set; }
+		public bool DigSnowYams { get; set; }
+		public bool DigWinterRoots { get; set; }
+
+		// Mushrooms
+		public bool PullChanterelles { get; set; }
+		public bool PullCommonMushrooms { get; set; }
+		public bool PullMagmaCaps { get; set; }
+		public bool PullMorels { get; set; }
+		public bool PullPurpleMushrooms { get; set; }
+		public bool PullRedMushrooms { get; set; }
+		
+		// Beach
+		public bool PullClams { get; set; }
+		public bool PullCockles { get; set; }
+		public bool PullCoral { get; set; }
+		public bool PullMussels { get; set; }
+		public bool PullNautilusShells { get; set; }
+		public bool PullOysters { get; set; }
+		public bool PullRainbowShells { get; set; }
+		public bool PullSeaUrchins { get; set; }
+		public bool PullSeaweed { get; set; }
+
+		// Cave
+		public bool PullFiddleheadFerns { get; set; }
+
+		// Desert
+		public bool PullCactusFruits { get; set; }
+
+		// Island
+		public bool DigGinger { get; set; }
 
 		public bool AnyForageablesEnabled { get; set; }
 
@@ -104,11 +150,58 @@ namespace AutoShaker
 			AnyBushEnabled = true;
 
 			// Forageables
-			PullForageables = true;
-			PullGinger = true;
-			PullSpringOnions = true;
+			// Spring
+			PullDaffodils = false;
+			PullDandelions = false;
+			PullLeeks = false;
+			PullSpringOnions = false;
+			PullWildHorseradishes = false;
 
-			AnyForageablesEnabled = true;
+			// Summer
+			PullGrapes = false;
+			PullSpiceBerries = false;
+			PullSweetPeas = false;
+
+			// Fall
+			PullHazelnuts = false;
+			PullWildPlums = false;
+
+			// Winter
+			PullCrocuses = false;
+			PullCrystalFruits = false;
+			PullHolly = false;
+			DigSnowYams = false;
+			DigWinterRoots = false;
+
+			// Mushrooms
+			PullChanterelles = false;
+			PullCommonMushrooms = false;
+			PullMagmaCaps = false;
+			PullMorels = false;
+			PullPurpleMushrooms = false;
+			PullRedMushrooms = false;
+
+			// Beach
+			PullClams = false;
+			PullCockles = false;
+			PullCoral = false;
+			PullMussels = false;
+			PullNautilusShells = false;
+			PullOysters = false;
+			PullRainbowShells = false;
+			PullSeaUrchins = false;
+			PullSeaweed = false;
+
+			// Caves
+			PullFiddleheadFerns = false;
+
+			// Desert
+			PullCactusFruits = false;
+
+			// Island
+			DigGinger = false;
+
+			AnyForageablesEnabled = false;
 		}
 
 		public ModConfig()
@@ -129,15 +222,14 @@ namespace AutoShaker
 
 			gmcmApi.AddSectionTitle(
 				mod: manifest,
-				text: I18n.GeneralSection_Name,
-				tooltip: null);
+				text: I18n.GeneralSection_Text);
 
 			// IsShakerActive
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.IsShakerActive",
 				name: I18n.IsShakerActive_Name,
-				tooltip: I18n.IsShakerActive_Description,
+				tooltip: I18n.IsShakerActive_Tooltip,
 				getValue: () => IsShakerActive,
 				setValue: val => IsShakerActive = val);
 
@@ -146,7 +238,7 @@ namespace AutoShaker
 				mod: manifest,
 				fieldId: "AutoShaker.ToggleShaker",
 				name: I18n.ToggleShaker_Name,
-				tooltip: I18n.ToggleShaker_Description ,
+				tooltip: I18n.ToggleShaker_Tooltip ,
 				getValue: () => ToggleShaker,
 				setValue: val => ToggleShaker = val);
 
@@ -155,7 +247,7 @@ namespace AutoShaker
 				mod: manifest,
 				fieldId: "AutoShaker.UsePlayerMagnetism",
 				name: I18n.UsePlayerMagnetism_Name,
-				tooltip: I18n.UsePlayerMagnetism_Description,
+				tooltip: () => I18n.UsePlayerMagnetism_Tooltip(I18n.ShakeDistance_Name()),
 				getValue: () => UsePlayerMagnetism,
 				setValue: val => UsePlayerMagnetism = val);
 
@@ -164,7 +256,7 @@ namespace AutoShaker
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeDistance",
 				name: I18n.ShakeDistance_Name,
-				tooltip: I18n.ShakeDistance_Description,
+				tooltip: () => I18n.ShakeDistance_Tooltip(I18n.UsePlayerMagnetism_Name()),
 				getValue: () => ShakeDistance,
 				setValue: val => ShakeDistance = val);
 
@@ -173,41 +265,40 @@ namespace AutoShaker
 			gmcmApi.AddPageLink(
 				mod: manifest,
 				pageId: "AutoShaker.RegularTreesPage",
-				text: I18n.LinkSection_RegularTrees);
+				text: I18n.LinkSection_Link_RegularTrees);
 
 			gmcmApi.AddPageLink(
 				mod: manifest,
 				pageId: "AutoShaker.FruitTreesPage",
-				text: I18n.LinkSection_FruitTrees);
+				text: I18n.LinkSection_Link_FruitTrees);
 
 			gmcmApi.AddPageLink(
 				mod: manifest,
 				pageId: "AutoShaker.BushesPage",
-				text: I18n.LinkSection_Bushes);
+				text: I18n.LinkSection_Link_Bushes);
 
 			gmcmApi.AddPageLink(
 				mod: manifest,
 				pageId: "AutoShaker.ForageablesPage",
-				text: I18n.LinkSection_Forageables);
+				text: I18n.LinkSection_Link_Forageables);
 
 			/* Regular Trees */
 
 			gmcmApi.AddPage(
 				mod: manifest,
 				pageId: "AutoShaker.RegularTreesPage",
-				pageTitle: I18n.RegularTreePage_Name);
+				pageTitle: I18n.RegularTreePage_Title);
 
 			gmcmApi.AddSectionTitle(
 				mod: manifest,
-				text: I18n.RegularTreeSection_Name,
-				tooltip: null);
+				text: I18n.RegularTreeSection_Text);
 
 			// ShakeMahoganyTrees
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeMahoganyTrees",
 				name: I18n.ShakeMahoganyTrees_Name,
-				tooltip: I18n.ShakeMahoganyTrees_Description,
+				tooltip: I18n.ShakeMahoganyTrees_Tooltip,
 				getValue: () => ShakeMahoganyTrees,
 				setValue: val =>
 				{
@@ -220,7 +311,7 @@ namespace AutoShaker
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeMapleTrees",
 				name: I18n.ShakeMapleTrees_Name,
-				tooltip: I18n.ShakeMapleTrees_Description,
+				tooltip: I18n.ShakeMapleTrees_Tooltip,
 				getValue: () => ShakeMapleTrees,
 				setValue: val =>
 				{
@@ -233,7 +324,7 @@ namespace AutoShaker
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeOakTrees",
 				name: I18n.ShakeOakTrees_Name,
-				tooltip: I18n.ShakeOakTrees_Description,
+				tooltip: I18n.ShakeOakTrees_Tooltip,
 				getValue: () => ShakeOakTrees,
 				setValue: val =>
 				{
@@ -246,7 +337,7 @@ namespace AutoShaker
 				mod: manifest,
 				fieldId: "AutoShaker.ShakePalmTrees",
 				name: I18n.ShakePalmTrees_Name,
-				tooltip: I18n.ShakePalmTrees_Description,
+				tooltip: I18n.ShakePalmTrees_Tooltip,
 				getValue: () => ShakePalmTrees,
 				setValue: val =>
 				{
@@ -259,7 +350,7 @@ namespace AutoShaker
 				mod: manifest,
 				fieldId: "AutoShaker.ShakePineTrees",
 				name: I18n.ShakePineTrees_Name,
-				tooltip: I18n.ShakePineTrees_Description,
+				tooltip: I18n.ShakePineTrees_Tooltip,
 				getValue: () => ShakePineTrees,
 				setValue: val =>
 				{
@@ -270,26 +361,25 @@ namespace AutoShaker
 			gmcmApi.AddPageLink(
 				mod: manifest,
 				pageId: "",
-				text: I18n.LinkSection_BackToMain);
+				text: I18n.LinkSection_Link_BackToMain);
 
 			/* Fruit Trees */
 
 			gmcmApi.AddPage(
 				mod: manifest,
 				pageId: "AutoShaker.FruitTreesPage",
-				pageTitle: I18n.FruitTreePage_Name);
+				pageTitle: I18n.FruitTreePage_Title);
 
 			gmcmApi.AddSectionTitle(
 				mod: manifest,
-				text: I18n.FruitTreeSection_Name,
-				tooltip: null); ;
+				text: I18n.FruitTreeSection_Text); ;
 
 			// FruitsReadyToShake
 			gmcmApi.AddNumberOption(
 				mod: manifest,
 				fieldId: "AutoShaker.FruitsReadyToShake",
 				name: I18n.FruitsReadyToShake_Name,
-				tooltip: I18n.FruitsReadyToShake_Description,
+				tooltip: I18n.FruitsReadyToShake_Tooltip,
 				getValue: () => FruitsReadyToShake,
 				setValue: val => FruitsReadyToShake = val,
 				min: MinFruitsReady,
@@ -300,7 +390,7 @@ namespace AutoShaker
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeAppleTrees",
 				name: I18n.ShakeAppleTrees_Name,
-				tooltip: I18n.ShakeAppleTrees_Description,
+				tooltip: I18n.ShakeAppleTrees_Tooltip,
 				getValue: () => ShakeAppleTrees,
 				setValue: val =>
 				{
@@ -313,7 +403,7 @@ namespace AutoShaker
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeApricotTrees",
 				name: I18n.ShakeApricotTrees_Name,
-				tooltip: I18n.ShakeApricotTrees_Description,
+				tooltip: I18n.ShakeApricotTrees_Tooltip,
 				getValue: () => ShakeApricotTrees,
 				setValue: val =>
 				{
@@ -326,7 +416,7 @@ namespace AutoShaker
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeBananaTrees",
 				name: I18n.ShakeBananaTrees_Name,
-				tooltip: I18n.ShakeBananaTrees_Description,
+				tooltip: I18n.ShakeBananaTrees_Tooltip,
 				getValue: () => ShakeBananaTrees,
 				setValue: val =>
 				{
@@ -339,7 +429,7 @@ namespace AutoShaker
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeCherryTrees",
 				name: I18n.ShakeCherryTrees_Name,
-				tooltip: I18n.ShakeCherryTrees_Description,
+				tooltip: I18n.ShakeCherryTrees_Tooltip,
 				getValue: () => ShakeCherryTrees,
 				setValue: val =>
 				{
@@ -352,7 +442,7 @@ namespace AutoShaker
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeMangoTrees",
 				name: I18n.ShakeMangoTrees_Name,
-				tooltip: I18n.ShakeMangoTrees_Description,
+				tooltip: I18n.ShakeMangoTrees_Tooltip,
 				getValue: () => ShakeMangoTrees,
 				setValue: val =>
 				{
@@ -365,7 +455,7 @@ namespace AutoShaker
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeOrangeTrees",
 				name: I18n.ShakeOrangeTrees_Name,
-				tooltip: I18n.ShakeOrangeTrees_Description,
+				tooltip: I18n.ShakeOrangeTrees_Tooltip,
 				getValue: () => ShakeOrangeTrees,
 				setValue: val =>
 				{
@@ -378,7 +468,7 @@ namespace AutoShaker
 				mod: manifest,
 				fieldId: "AutoShaker.ShakePeachTrees",
 				name: I18n.ShakePeachTrees_Name,
-				tooltip: I18n.ShakePeachTrees_Description,
+				tooltip: I18n.ShakePeachTrees_Tooltip,
 				getValue: () => ShakePeachTrees,
 				setValue: val =>
 				{
@@ -391,7 +481,7 @@ namespace AutoShaker
 				mod: manifest,
 				fieldId: "AutoShaker.ShakePomegranateTrees",
 				name: I18n.ShakePomegranateTrees_Name,
-				tooltip: I18n.ShakePomegranateTrees_Description,
+				tooltip: I18n.ShakePomegranateTrees_Tooltip,
 				getValue: () => ShakePomegranateTrees,
 				setValue: val =>
 				{
@@ -402,26 +492,25 @@ namespace AutoShaker
 			gmcmApi.AddPageLink(
 				mod: manifest,
 				pageId: "",
-				text: I18n.LinkSection_BackToMain);
+				text: I18n.LinkSection_Link_BackToMain);
 
 			/* Bushes */
 
 			gmcmApi.AddPage(
 				mod: manifest,
 				pageId: "AutoShaker.BushesPage",
-				pageTitle: I18n.BushesPage_Name);
+				pageTitle: I18n.BushesPage_Title);
 
 			gmcmApi.AddSectionTitle(
 				mod: manifest,
-				text: I18n.BushesSection_Name,
-				tooltip: null);
+				text: I18n.BushesSection_Text);
 
 			// ShakeSalmonberries
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeSalmonberries",
 				name: I18n.ShakeSalmonberries_Name,
-				tooltip: I18n.ShakeSalmonberries_Description,
+				tooltip: I18n.ShakeSalmonberries_Tooltip,
 				getValue: () => ShakeSalmonberriesBushes,
 				setValue: val =>
 				{
@@ -434,7 +523,7 @@ namespace AutoShaker
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeBlackberries",
 				name: I18n.ShakeBlackberries_Name,
-				tooltip: I18n.ShakeBlackberries_Description,
+				tooltip: I18n.ShakeBlackberries_Tooltip,
 				getValue: () => ShakeBlackberriesBushes,
 				setValue: val =>
 				{
@@ -447,7 +536,7 @@ namespace AutoShaker
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeTeaBushes",
 				name: I18n.ShakeTeaBushes_Name,
-				tooltip: I18n.ShakeTeaBushes_Description,
+				tooltip: I18n.ShakeTeaBushes_Tooltip,
 				getValue: () => ShakeTeaBushes,
 				setValue: val =>
 				{
@@ -460,7 +549,7 @@ namespace AutoShaker
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeWalnutBushes",
 				name: I18n.ShakeWalnutBushes_Name,
-				tooltip: I18n.ShakeWalnutBushes_Description,
+				tooltip: I18n.ShakeWalnutBushes_Tooltip,
 				getValue: () => ShakeWalnutBushes,
 				setValue: val =>
 				{
@@ -471,37 +560,460 @@ namespace AutoShaker
 			gmcmApi.AddPageLink(
 				mod: manifest,
 				pageId: "",
-				text: I18n.LinkSection_BackToMain);
+				text: I18n.LinkSection_Link_BackToMain);
 
 			/* Forageables */
 
 			gmcmApi.AddPage(
 				mod: manifest,
 				pageId: "AutoShaker.ForageablesPage",
-				pageTitle: I18n.ForageablesPage_Name);
+				pageTitle: I18n.ForageablesPage_Title);
 
+			/* Spring */
 			gmcmApi.AddSectionTitle(
 				mod: manifest,
-				text: I18n.ForageablesSection_Name,
-				tooltip: null);
+				text: I18n.SpringSection_Text);
 
-			// PullForageables
+			// PullDaffodils
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				fieldId: "AutoShaker.PullForageables",
-				name: I18n.PullForageables_Name,
-				tooltip: I18n.PullForageables_Description,
-				getValue: () => PullForageables,
+				name: I18n.PullDaffodils_Name,
+				tooltip: I18n.PullDaffodils_Tooltip,
+				getValue: () => PullDaffodils,
 				setValue: val =>
 				{
-					PullForageables = val;
+					PullDaffodils = val;
+					UpdateEnabled();
+				});
+
+			// PullDandelions
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullDandelions_Name,
+				tooltip: I18n.PullDandelions_Tooltip,
+				getValue: () => PullDandelions,
+				setValue: val =>
+				{
+					PullDandelions = val;
+					UpdateEnabled();
+				});
+
+			// PullLeeks
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullLeeks_Name,
+				tooltip: I18n.PullLeeks_Tooltip,
+				getValue: () => PullLeeks,
+				setValue: val =>
+				{
+					PullLeeks = val;
+					UpdateEnabled();
+				});
+
+			// PullSpringOnions
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullSpringOnions_Name,
+				tooltip: I18n.PullSpringOnions_Tooltip,
+				getValue: () => PullSpringOnions,
+				setValue: val =>
+				{
+					PullSpringOnions = val;
+					UpdateEnabled();
+				});
+
+			// PullWildHorseradishes
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullWildHorseradishes_Name,
+				tooltip: I18n.PullWildHorseradishes_Tooltip,
+				getValue: () => PullWildHorseradishes,
+				setValue: val =>
+				{
+					PullWildHorseradishes = val;
+					UpdateEnabled();
+				});
+
+			/* Summer */
+			gmcmApi.AddSectionTitle(
+				mod: manifest,
+				text: I18n.SummerSection_Text);
+
+			// PullGrapes
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullGrapes_Name,
+				tooltip: I18n.PullGrapes_Tooltip,
+				getValue: () => PullGrapes,
+				setValue: val =>
+				{
+					PullGrapes = val;
+					UpdateEnabled();
+				});
+
+			// PullSpiceBerries
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullSpiceBerries_Name,
+				tooltip: I18n.PullSpiceBerries_Tooltip,
+				getValue: () => PullSpiceBerries,
+				setValue: val =>
+				{
+					PullSpiceBerries = val;
+					UpdateEnabled();
+				});
+
+			// PullSweetPeas
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullSweetPeas_Name,
+				tooltip: I18n.PullSweetPeas_Tooltip,
+				getValue: () => PullSweetPeas,
+				setValue: val =>
+				{
+					PullSweetPeas = val;
+					UpdateEnabled();
+				});
+
+			/* Fall */
+			gmcmApi.AddSectionTitle(
+				mod: manifest,
+				text: I18n.FallSection_Text);
+
+			// PullHazelnuts
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullHazelnuts_Name,
+				tooltip: I18n.PullHazelnuts_Tooltip,
+				getValue: () => PullHazelnuts,
+				setValue: val =>
+				{
+					PullHazelnuts = val;
+					UpdateEnabled();
+				});
+
+			// PullWildPlums
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullWildPlums_Name,
+				tooltip: I18n.PullWildPlums_Tooltip,
+				getValue: () => PullWildPlums,
+				setValue: val =>
+				{
+					PullWildPlums = val;
+					UpdateEnabled();
+				});
+
+			/* Winter */
+			gmcmApi.AddSectionTitle(
+				mod: manifest,
+				text: I18n.WinterSection_Text);
+
+			// PullCrocuses
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullCrocuses_Name,
+				tooltip: I18n.PullCrocuses_Tooltip,
+				getValue: () => PullCrocuses,
+				setValue: val =>
+				{
+					PullCrocuses = val;
+					UpdateEnabled();
+				});
+
+			// PullCrystalFruits
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullCrystalFruits_Name,
+				tooltip: I18n.PullCrystalFruits_Tooltip,
+				getValue: () => PullCrystalFruits,
+				setValue: val =>
+				{
+					PullCrystalFruits = val;
+					UpdateEnabled();
+				});
+
+			// PullHolly
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullHolly_Name,
+				tooltip: I18n.PullHolly_Tooltip,
+				getValue: () => PullHolly,
+				setValue: val =>
+				{
+					PullHolly = val;
+					UpdateEnabled();
+				});
+
+			// DigSnowYams
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.DigSnowYams_Name,
+				tooltip: I18n.DigSnowYams_Tooltip,
+				getValue: () => DigSnowYams,
+				setValue: val =>
+				{
+					DigSnowYams = val;
+					UpdateEnabled();
+				});
+
+			// DigWinterRoots
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.DigWinterRoots_Name,
+				tooltip: I18n.DigWinterRoots_Tooltip,
+				getValue: () => DigWinterRoots,
+				setValue: val =>
+				{
+					DigWinterRoots = val;
+					UpdateEnabled();
+				});
+
+			/* Mushrooms */
+			gmcmApi.AddSectionTitle(
+				mod: manifest,
+				text: I18n.MushroomSection_Text);
+
+			// PullChanterelles
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullChanterelles_Name,
+				tooltip: I18n.PullChanterelles_Tooltip,
+				getValue: () => PullChanterelles,
+				setValue: val =>
+				{
+					PullChanterelles = val;
+					UpdateEnabled();
+				});
+
+			// PullCommonMushrooms
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullCommonMushrooms_Name,
+				tooltip: I18n.PullCommonMushrooms_Tooltip,
+				getValue: () => PullCommonMushrooms,
+				setValue: val =>
+				{
+					PullCommonMushrooms = val;
+					UpdateEnabled();
+				});
+
+			// PullMagmaCaps
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullMagmaCaps_Name,
+				tooltip: I18n.PullMagmaCaps_Tooltip,
+				getValue: () => PullMagmaCaps,
+				setValue: val =>
+				{
+					PullMagmaCaps = val;
+					UpdateEnabled();
+				});
+
+			// PullMorels
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullMorels_Name,
+				tooltip: I18n.PullMorels_Tooltip,
+				getValue: () => PullMorels,
+				setValue: val =>
+				{
+					PullMorels = val;
+					UpdateEnabled();
+				});
+
+			// PullPurpleMushrooms
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullPurpleMushrooms_Name,
+				tooltip: I18n.PullPurpleMushrooms_Tooltip,
+				getValue: () => PullPurpleMushrooms,
+				setValue: val =>
+				{
+					PullPurpleMushrooms = val;
+					UpdateEnabled();
+				});
+
+			// PullRedMushrooms
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullRedMushrooms_Name,
+				tooltip: I18n.PullRedMushrooms_Tooltip,
+				getValue: () => PullRedMushrooms,
+				setValue: val =>
+				{
+					PullRedMushrooms = val;
+					UpdateEnabled();
+				});
+
+			/* Beach */
+			gmcmApi.AddSectionTitle(
+				mod: manifest,
+				text: I18n.BeachSection_Text);
+
+			// PullClams
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullClams_Name,
+				tooltip: I18n.PullClams_Tooltip,
+				getValue: () => PullClams,
+				setValue: val =>
+				{
+					PullClams = val;
+					UpdateEnabled();
+				});
+
+			// PullCockles
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullCockles_Name,
+				tooltip: I18n.PullCockles_Tooltip,
+				getValue: () => PullCockles,
+				setValue: val =>
+				{
+					PullCockles = val;
+					UpdateEnabled();
+				});
+
+			// PullCoral
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullCoral_Name,
+				tooltip: I18n.PullCoral_Tooltip,
+				getValue: () => PullCoral,
+				setValue: val =>
+				{
+					PullCoral = val;
+					UpdateEnabled();
+				});
+
+			// PullMussels
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullMussels_Name,
+				tooltip: I18n.PullMussels_Tooltip,
+				getValue: () => PullMussels,
+				setValue: val =>
+				{
+					PullMussels = val;
+					UpdateEnabled();
+				});
+
+			// PullNautilusShells
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullNautilusShells_Name,
+				tooltip: I18n.PullNautilusShells_Tooltip,
+				getValue: () => PullNautilusShells,
+				setValue: val =>
+				{
+					PullNautilusShells = val;
+					UpdateEnabled();
+				});
+
+			// PullOysters
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullOysters_Name,
+				tooltip: I18n.PullOysters_Tooltip,
+				getValue: () => PullOysters,
+				setValue: val =>
+				{
+					PullOysters = val;
+					UpdateEnabled();
+				});
+
+			// PullRainbowShells
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullRainbowShells_Name,
+				tooltip: I18n.PullRainbowShells_Tooltip,
+				getValue: () => PullRainbowShells,
+				setValue: val =>
+				{
+					PullRainbowShells = val;
+					UpdateEnabled();
+				});
+
+			// PullSeaUrchins
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullSeaUrchins_Name,
+				tooltip: I18n.PullSeaUrchins_Tooltip,
+				getValue: () => PullSeaUrchins,
+				setValue: val =>
+				{
+					PullSeaUrchins = val;
+					UpdateEnabled();
+				});
+
+			// PullSeaweed
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullSeaweed_Name,
+				tooltip: I18n.PullSeaweed_Tooltip,
+				getValue: () => PullSeaweed,
+				setValue: val =>
+				{
+					PullSeaweed = val;
+					UpdateEnabled();
+				});
+
+			/* Cave */
+			gmcmApi.AddSectionTitle(
+				mod: manifest,
+				text: I18n.CaveSection_Text);
+
+			// PullfiddleheadFerns
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullFiddleheadFerns_Name,
+				tooltip: I18n.PullFiddleheadFerns_Tooltip,
+				getValue: () => PullFiddleheadFerns,
+				setValue: val =>
+				{
+					PullFiddleheadFerns = val;
+					UpdateEnabled();
+				});
+
+			/* Desert */
+			gmcmApi.AddSectionTitle(
+				mod: manifest,
+				text: I18n.DesertSection_Text);
+
+			// PullCactusFruits
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.PullCactusFruits_Name,
+				tooltip: I18n.PullCactusFruits_Tooltip,
+				getValue: () => PullCactusFruits,
+				setValue: val =>
+				{
+					PullCactusFruits = val;
+					UpdateEnabled();
+				});
+
+			/* Island */
+			gmcmApi.AddSectionTitle(
+				mod: manifest,
+				text: I18n.DesertSection_Text);
+
+			// DigGinger
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: I18n.DigGinger_Name,
+				tooltip: I18n.DigGinger_Tooltip,
+				getValue: () => DigGinger,
+				setValue: val =>
+				{
+					DigGinger = val;
 					UpdateEnabled();
 				});
 
 			gmcmApi.AddPageLink(
 				mod: manifest,
 				pageId: "",
-				text: I18n.LinkSection_BackToMain);
+				text: I18n.LinkSection_Link_BackToMain);
 		}
 
 		public void UpdateEnabled()
@@ -526,7 +1038,38 @@ namespace AutoShaker
 				|| ShakeTeaBushes
 				|| ShakeWalnutBushes;
 
-			AnyForageablesEnabled = PullForageables;
+			AnyForageablesEnabled = PullDaffodils
+				|| PullDandelions
+				|| PullLeeks
+				|| PullSpringOnions
+				|| PullWildHorseradishes
+				|| PullGrapes
+				|| PullSpiceBerries
+				|| PullSweetPeas
+				|| PullHazelnuts
+				|| PullWildPlums
+				|| PullCrocuses
+				|| PullCrystalFruits
+				|| PullHolly
+				|| DigSnowYams
+				|| DigWinterRoots
+				|| PullChanterelles
+				|| PullCommonMushrooms
+				|| PullMagmaCaps
+				|| PullMorels
+				|| PullPurpleMushrooms
+				|| PullRedMushrooms
+				|| PullClams
+				|| PullCockles
+				|| PullCoral
+				|| PullMussels
+				|| PullNautilusShells
+				|| PullOysters
+				|| PullRainbowShells
+				|| PullSeaUrchins
+				|| PullSeaweed
+				|| PullFiddleheadFerns
+				|| DigGinger;
 
 			AnyShakeEnabled = AnyRegularTreeEnabled || AnyFruitTreeEnabled || AnyBushEnabled || AnyForageablesEnabled;
 		}
@@ -607,8 +1150,8 @@ namespace AutoShaker
 		void AddPageLink(IManifest mod, string pageId, Func<string> text, Func<string> tooltip = null);
 
 		/****
-        ** Advanced
-        ****/
+		** Advanced
+		****/
 
 		/// <summary>Register a method to notify when any option registered by this mod is edited through the config UI.</summary>
 		/// <param name="mod">The mod's manifest.</param>
