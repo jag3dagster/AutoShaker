@@ -25,14 +25,14 @@ namespace AutoShaker
 		static readonly string disabledConfigString = "{0} are not being interacted with due to the [{1}] config option being disabled.";
 		static readonly string eodStatMessage = Environment.NewLine + "\t[{0}] {1} shaken";
 
-		private ModConfig _config;
+		private ModConfig _config = new();
 
 		private Vector2 previousTilePosition;
 
 		private readonly HashSet<TerrainFeature> _ignoredFeatures = new();
 		private readonly HashSet<TerrainFeature> _shakenFeatures = new();
 
-		private Dictionary<string, Dictionary<string, int>> _trackingCounts;
+		private Dictionary<string, Dictionary<string, int>> _trackingCounts = new();
 		private int _forageablesCount = 0;
 
 		/// <summary>
@@ -63,7 +63,7 @@ namespace AutoShaker
 			helper.Events.GameLoop.GameLaunched += (_,_) => _config.RegisterModConfigMenu(helper, ModManifest);
 		}
 
-		private void OnPlayerWarped(object sender, WarpedEventArgs e)
+		private void OnPlayerWarped(object? sender, WarpedEventArgs e)
 		{
 			var loc = e.NewLocation;
 			var objs = loc.Objects.Pairs;
@@ -116,7 +116,7 @@ namespace AutoShaker
 			}
 		}
 
-		private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+		private void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
 		{
 			if (!Context.IsWorldReady || !Context.IsPlayerFree) return;
 			if (!_config.IsShakerActive || !_config.AnyShakeEnabled) return;
@@ -379,7 +379,7 @@ namespace AutoShaker
 							if (toIgnore)
 							{
 								Monitor.LogOnce($"Ignored {whichCrop}; {hoeDirtFeature?.crop?.indexOfHarvest.Value}", LogLevel.Debug);
-								_ignoredFeatures.Add(hoeDirtFeature);
+								if (hoeDirtFeature != null) _ignoredFeatures.Add(hoeDirtFeature);
 								continue;
 							}
 
@@ -414,8 +414,6 @@ namespace AutoShaker
 										obj.Quality = 1;
 									}
 
-									Monitor.Log($"regrow {hoeDirtFeature.crop.RegrowsAfterHarvest()}");
-
 									Game1.stats.ItemsForaged += (uint) obj.Stack;
 
 									hoeDirtFeature.destroyCrop(false);
@@ -436,6 +434,8 @@ namespace AutoShaker
 									}
 
 									tile = hoeDirtFeature.Tile;
+									if (hoeDirtFeature?.crop == null) continue;
+
 									hoeDirtFeature.crop.hitWithHoe((int) tile.X, (int) tile.Y, hoeDirtFeature.Location, hoeDirtFeature);
 									hoeDirtFeature.destroyCrop(false);
 									break;
@@ -519,13 +519,13 @@ namespace AutoShaker
 			}
 		}
 
-		private void OnDayStarted(object sender, DayStartedEventArgs e)
+		private void OnDayStarted(object? sender, DayStartedEventArgs e)
 		{
 			previousTilePosition = Game1.player.Tile;
 		}
 
 		// $TODO - Update to I18n.
-		private void OnDayEnding(object sender, DayEndingEventArgs e)
+		private void OnDayEnding(object? sender, DayEndingEventArgs e)
 		{
 			StringBuilder statMessage = new($"{Environment.NewLine}{Utility.getDateString()}:{Environment.NewLine}");
 			statMessage.AppendLine($"[{_shakenFeatures.Count}] Total Interactions");
@@ -556,7 +556,7 @@ namespace AutoShaker
 			_forageablesCount = 0;
 		}
 
-		private void OnButtonsChanged(object sender, ButtonsChangedEventArgs e)
+		private void OnButtonsChanged(object? sender, ButtonsChangedEventArgs e)
 		{
 			if (Game1.activeClickableMenu == null)
 			{
