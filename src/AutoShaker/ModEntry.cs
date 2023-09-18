@@ -33,7 +33,7 @@ namespace AutoShaker
 		private readonly HashSet<TerrainFeature> _shakenFeatures = new();
 
 		private Dictionary<string, Dictionary<string, int>> _trackingCounts = new();
-		private int _forageablesCount = 0;
+		private int _forageablesCount;
 
 		/// <summary>
 		/// The mod entry point, called after the mod is first loaded.
@@ -52,7 +52,7 @@ namespace AutoShaker
 				{ "Seed Trees", new() },
 				{ "Fruit Trees", new() },
 				{ "Bushes", new() },
-				{ "forageables", new() }
+				{ "Forageables", new() }
 			};
 
 			helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
@@ -79,7 +79,7 @@ namespace AutoShaker
 				{
 					var random = Utility.CreateDaySaveRandom(x * 2000, y);
 					var dict = Game1.content.Load<Dictionary<string, LocationData>>("Data\\Locations");
-					var locData = loc.GetLocationData();
+					var locData = loc.GetData();
 					var context = new ItemQueryContext(loc, Game1.player, random);
 					IEnumerable<ArtifactSpotDropData> enumerable = dict["Default"].ArtifactSpots;
 					if (locData != null && locData.ArtifactSpots?.Count > 0)
@@ -132,322 +132,313 @@ namespace AutoShaker
 			var playerMagnetism = Game1.player.GetAppliedMagneticRadius();
 			var radius = _config.UsePlayerMagnetism ? playerMagnetism / Game1.tileSize : _config.ShakeDistance;
 
-			foreach (Vector2 vec in GetTilesToCheck(playerTileLocationPoint, radius))
+			if (_config.AnyRegularTreeEnabled || _config.AnyFruitTreeEnabled || _config.AnyBushEnabled || _config.AnyForageablesEnabled)
 			{
-				if (Game1.currentLocation.terrainFeatures.TryGetValue(vec, out var feature)
-					&& feature is Tree or FruitTree or Bush or HoeDirt
-					&& !_ignoredFeatures.Contains(feature)
-					&& !_shakenFeatures.Contains(feature))
+				foreach (var vec in GetTilesToCheck(playerTileLocationPoint, radius))
 				{
-					var featureTileLocation = feature.Tile;
-					var toIgnore = false;
-
-					switch (feature)
+					// Regular Trees, Fruit Trees, Bushes, Spring Onions, Ginger
+					if (Game1.currentLocation.terrainFeatures.TryGetValue(vec, out var feature)
+						&& feature is Tree or FruitTree or Bush or HoeDirt
+						&& !_ignoredFeatures.Contains(feature)
+						&& !_shakenFeatures.Contains(feature))
 					{
-						// Tree Cases
-						case Tree treeFeature:
-							if (!_config.AnyRegularTreeEnabled) continue;
-							if (treeFeature.stump.Value) toIgnore = true;
-							if (treeFeature.growthStage.Value < 5 || !treeFeature.hasSeed.Value) toIgnore = true;
-							if (Game1.player.ForagingLevel < 1) toIgnore = true;
+						var featureTileLocation = feature.Tile;
+						var toIgnore = false;
 
-							if (!treeFeature.isActionable())
-							{
-								Monitor.Log($"Tree of type [{treeFeature.treeType.Value}] not shaken because the game deemed it was not actionable. It is likely tapped or not mature yet.", LogLevel.Trace);
-								toIgnore = true;
-							}
+						switch (feature)
+						{
+							// Tree Cases
+							case Tree treeFeature:
+								if (!_config.AnyRegularTreeEnabled) continue;
+								if (treeFeature.stump.Value) toIgnore = true;
+								if (treeFeature.growthStage.Value < 5 || !treeFeature.hasSeed.Value) toIgnore = true;
+								if (Game1.player.ForagingLevel < 1) toIgnore = true;
 
-							if (toIgnore)
-							{
-								_ignoredFeatures.Add(treeFeature);
-								continue;
-							}
+								if (!treeFeature.isActionable())
+								{
+									Monitor.Log($"Tree of type [{treeFeature.treeType.Value}] not shaken because the game deemed it was not actionable. It is likely tapped or not mature yet.", LogLevel.Trace);
+									toIgnore = true;
+								}
 
-							switch (treeFeature.treeType.Value)
-							{
-								// Oak Tree
-								case "1":
-								case "4": // Winter
-									if (!_config.ShakeOakTrees)
-									{
-										Monitor.LogOnce(String.Format(disabledConfigString, "Oak trees", I18n.ShakeOakTrees_Name()), LogLevel.Debug);
-										continue;
-									}
-
-									_trackingCounts["Seed Trees"].AddOrIncrement("Oak trees");
-									break;
-
-								// Maple Tree
-								case "2":
-								case "5": // Winter
-									if (!_config.ShakeMapleTrees)
-									{
-										Monitor.LogOnce(String.Format(disabledConfigString, "Maple trees", I18n.ShakeMapleTrees_Name()), LogLevel.Debug);
-										continue;
-									}
-
-									_trackingCounts["Seed Trees"].AddOrIncrement("Maple trees");
-									break;
-
-								// Pine Tree
-								case "3":
-									if (!_config.ShakePineTrees)
-									{
-										Monitor.LogOnce(String.Format(disabledConfigString, "Pine trees", I18n.ShakePineTrees_Name()), LogLevel.Debug);
-										continue;
-									}
-
-									_trackingCounts["Seed Trees"].AddOrIncrement("Pine trees");
-									break;
-
-								// Mahogany Tree
-								case "8":
-									if (!_config.ShakeMahoganyTrees)
-									{
-										Monitor.LogOnce(String.Format(disabledConfigString, "Mahogany trees", I18n.ShakeMahoganyTrees_Name()), LogLevel.Debug);
-										continue;
-									}
-
-									_trackingCounts["Seed Trees"].AddOrIncrement("Mahogany trees");
-									break;
-
-								// Palm Tree
-								case "6": // Desert
-								case "9": // Island
-									if (!_config.ShakePalmTrees)
-									{
-										Monitor.LogOnce(String.Format(disabledConfigString, "Palm trees", I18n.ShakePalmTrees_Name()), LogLevel.Debug);
-										continue;
-									}
-
-									_trackingCounts["Seed Trees"].AddOrIncrement("Palm trees");
-									break;
-
-								default:
-									Monitor.Log($"Unknown Tree type: [{treeFeature.treeType.Value}]", LogLevel.Warn);
+								if (toIgnore)
+								{
 									_ignoredFeatures.Add(treeFeature);
 									continue;
-							}
+								}
 
-							treeFeature.performUseAction(featureTileLocation);
-							_shakenFeatures.Add(treeFeature);
-							break;
+								switch (treeFeature.treeType.Value)
+								{
+									// Oak Tree
+									case "1":
+									case "4": // Winter
+										if (!_config.ShakeOakTrees)
+										{
+											Monitor.LogOnce(String.Format(disabledConfigString, "Oak trees", I18n.ShakeOakTrees_Name()), LogLevel.Debug);
+											continue;
+										}
 
-						// Fruit Tree Cases
-						case FruitTree fruitTree:
-							if (!_config.AnyFruitTreeEnabled) continue;
-							if (fruitTree.stump.Value) toIgnore = true;
-							if (fruitTree.growthStage.Value < 4) toIgnore = true;
+										_trackingCounts["Seed Trees"].AddOrIncrement("Oak trees");
+										break;
 
-							if (fruitTree.fruit.Count < _config.FruitsReadyToShake)
-							{
-								Monitor.LogOnce($"Fruit trees will not be shaken until they have the mnumber of fruits available specified by the [{I18n.FruitsReadyToShake_Name()}] config option. Expected Number of Fruits: [{_config.FruitsReadyToShake}]", LogLevel.Debug);
-								toIgnore = true;
-							}
+									// Maple Tree
+									case "2":
+									case "5": // Winter
+										if (!_config.ShakeMapleTrees)
+										{
+											Monitor.LogOnce(String.Format(disabledConfigString, "Maple trees", I18n.ShakeMapleTrees_Name()), LogLevel.Debug);
+											continue;
+										}
 
-							if (!fruitTree.isActionable())
-							{
-								Monitor.Log($"A fruit tree of type [{fruitTree.treeId.Value}] was marked as not actionable. This shouldn't be possible.", LogLevel.Warn);
-								Monitor.Log($"Type: [{fruitTree.treeId.Value}]; Location: [{fruitTree.Location.Name}]; Tile Location: [{fruitTree.Tile}]; Fruit Count: [{fruitTree.fruit.Count}]; Fruit Indices: [{String.Join(",", fruitTree.fruit)}]", LogLevel.Debug);
-							}
+										_trackingCounts["Seed Trees"].AddOrIncrement("Maple trees");
+										break;
 
-							if (toIgnore)
-							{
-								_ignoredFeatures.Add(fruitTree);
-								continue;
-							}
+									// Pine Tree
+									case "3":
+										if (!_config.ShakePineTrees)
+										{
+											Monitor.LogOnce(String.Format(disabledConfigString, "Pine trees", I18n.ShakePineTrees_Name()), LogLevel.Debug);
+											continue;
+										}
 
-							switch (fruitTree.treeId.Value)
-							{
-								// Cherry Tree
-								case "0":
-									if (!_config.ShakeCherryTrees)
-									{
-										Monitor.LogOnce(String.Format(disabledConfigString, "Cherry trees", I18n.ShakeCherryTrees_Name()), LogLevel.Debug);
+										_trackingCounts["Seed Trees"].AddOrIncrement("Pine trees");
+										break;
+
+									// Mahogany Tree
+									case "8":
+										if (!_config.ShakeMahoganyTrees)
+										{
+											Monitor.LogOnce(String.Format(disabledConfigString, "Mahogany trees", I18n.ShakeMahoganyTrees_Name()), LogLevel.Debug);
+											continue;
+										}
+
+										_trackingCounts["Seed Trees"].AddOrIncrement("Mahogany trees");
+										break;
+
+									// Palm Tree
+									case "6": // Desert
+									case "9": // Island
+										if (!_config.ShakePalmTrees)
+										{
+											Monitor.LogOnce(String.Format(disabledConfigString, "Palm trees", I18n.ShakePalmTrees_Name()), LogLevel.Debug);
+											continue;
+										}
+
+										_trackingCounts["Seed Trees"].AddOrIncrement("Palm trees");
+										break;
+
+									default:
+										Monitor.Log($"Unknown Tree type: [{treeFeature.treeType.Value}]", LogLevel.Warn);
+										_ignoredFeatures.Add(treeFeature);
 										continue;
-									}
+								}
 
-									_trackingCounts["Fruit Trees"].AddOrIncrement("Cherry trees");
-									break;
+								treeFeature.performUseAction(featureTileLocation);
+								_shakenFeatures.Add(treeFeature);
+								break;
 
-								// Apricot Tree
-								case "1":
-									if (!_config.ShakeApricotTrees)
-									{
-										Monitor.LogOnce(String.Format(disabledConfigString, "Apricot trees", I18n.ShakeApricotTrees_Name()), LogLevel.Debug);
-										continue;
-									}
+							// Fruit Tree Cases
+							case FruitTree fruitTree:
+								if (!_config.AnyFruitTreeEnabled) continue;
+								if (fruitTree.stump.Value) toIgnore = true;
+								if (fruitTree.growthStage.Value < 4) toIgnore = true;
 
-									_trackingCounts["Fruit Trees"].AddOrIncrement("Apricot trees");
-									break;
+								if (fruitTree.fruit.Count < _config.FruitsReadyToShake)
+								{
+									Monitor.LogOnce($"Fruit trees will not be shaken until they have the mnumber of fruits available specified by the [{I18n.FruitsReadyToShake_Name()}] config option. Expected Number of Fruits: [{_config.FruitsReadyToShake}]", LogLevel.Debug);
+									toIgnore = true;
+								}
 
-								// Orange Tree
-								case "2":
-									if (!_config.ShakeOrangeTrees)
-									{
-										Monitor.LogOnce(String.Format(disabledConfigString, "Orange trees", I18n.ShakeOrangeTrees_Name()), LogLevel.Debug);
-										continue;
-									}
+								if (!fruitTree.isActionable())
+								{
+									Monitor.Log($"A fruit tree of type [{fruitTree.treeId.Value}] was marked as not actionable. This shouldn't be possible.", LogLevel.Warn);
+									Monitor.Log($"Type: [{fruitTree.treeId.Value}]; Location: [{fruitTree.Location.Name}]; Tile Location: [{fruitTree.Tile}]; Fruit Count: [{fruitTree.fruit.Count}]; Fruit Indices: [{String.Join(",", fruitTree.fruit)}]", LogLevel.Debug);
+								}
 
-									_trackingCounts["Fruit Trees"].AddOrIncrement("Orange trees");
-									break;
-
-								// Peach Tree
-								case "3":
-									if (!_config.ShakePeachTrees)
-									{
-										Monitor.LogOnce(String.Format(disabledConfigString, "Peach trees", I18n.ShakePeachTrees_Name()), LogLevel.Debug);
-										continue;
-									}
-
-									_trackingCounts["Fruit Trees"].AddOrIncrement("Peach trees");
-									break;
-
-								// Pomegranate Tree
-								case "4":
-									if (!_config.ShakePomegranateTrees)
-									{
-										Monitor.LogOnce(String.Format(disabledConfigString, "Pomegranate trees", I18n.ShakePomegranateTrees_Name()), LogLevel.Debug);
-										continue;
-									}
-
-									_trackingCounts["Fruit Trees"].AddOrIncrement("Pomegranate trees");
-									break;
-
-								// Apple Tree
-								case "5":
-									if (!_config.ShakeAppleTrees)
-									{
-										Monitor.LogOnce(String.Format(disabledConfigString, "Apple trees", I18n.ShakeAppleTrees_Name()), LogLevel.Debug);
-										continue;
-									}
-
-									_trackingCounts["Fruit Trees"].AddOrIncrement("Apple trees");
-									break;
-
-								// Banana Tree
-								case "7":
-									if (!_config.ShakeBananaTrees)
-									{
-										Monitor.LogOnce(String.Format(disabledConfigString, "Banana trees", I18n.ShakeBananaTrees_Name()), LogLevel.Debug);
-										continue;
-									}
-
-									_trackingCounts["Fruit Trees"].AddOrIncrement("Banana trees");
-									break;
-
-								// Mango Tree
-								case "8":
-									if (!_config.ShakeMangoTrees)
-									{
-										Monitor.LogOnce(String.Format(disabledConfigString, "Mango trees", I18n.ShakeMangoTrees_Name()), LogLevel.Debug);
-										continue;
-									}
-
-									_trackingCounts["Fruit Trees"].AddOrIncrement("Mango trees");
-									break;
-
-								default:
-									Monitor.Log($"Unknown Fruit Tree type: [{fruitTree.treeId.Value}]", LogLevel.Warn);
+								if (toIgnore)
+								{
 									_ignoredFeatures.Add(fruitTree);
 									continue;
-							}
+								}
 
-							fruitTree.performUseAction(featureTileLocation);
-							_shakenFeatures.Add(fruitTree);
-							break;
+								switch (fruitTree.treeId.Value)
+								{
+									// Cherry Tree
+									case "0":
+										if (!_config.ShakeCherryTrees)
+										{
+											Monitor.LogOnce(String.Format(disabledConfigString, "Cherry trees", I18n.ShakeCherryTrees_Name()), LogLevel.Debug);
+											continue;
+										}
 
-						// Bush Cases
-						case Bush bushFeature:
-							if (!CheckBush(bushFeature)) continue;
+										_trackingCounts["Fruit Trees"].AddOrIncrement("Cherry trees");
+										break;
 
-							bushFeature.performUseAction(featureTileLocation);
-							_shakenFeatures.Add(bushFeature);
-							break;
+									// Apricot Tree
+									case "1":
+										if (!_config.ShakeApricotTrees)
+										{
+											Monitor.LogOnce(String.Format(disabledConfigString, "Apricot trees", I18n.ShakeApricotTrees_Name()), LogLevel.Debug);
+											continue;
+										}
 
-						// This should never happen
-						default:
-							Monitor.Log("I am an unknown terrain feature, ignore me I guess...", LogLevel.Debug);
-							break;
+										_trackingCounts["Fruit Trees"].AddOrIncrement("Apricot trees");
+										break;
 
-						case HoeDirt hoeDirtFeature:
-							if (!_config.PullSpringOnions && !_config.DigGinger) continue;
+									// Orange Tree
+									case "2":
+										if (!_config.ShakeOrangeTrees)
+										{
+											Monitor.LogOnce(String.Format(disabledConfigString, "Orange trees", I18n.ShakeOrangeTrees_Name()), LogLevel.Debug);
+											continue;
+										}
 
-							var whichCrop = hoeDirtFeature.crop?.whichForageCrop.Value;
-							if (whichCrop == null) toIgnore = true;
+										_trackingCounts["Fruit Trees"].AddOrIncrement("Orange trees");
+										break;
 
-							if (toIgnore)
-							{
-								Monitor.LogOnce($"Ignored {whichCrop}; {hoeDirtFeature?.crop?.indexOfHarvest.Value}", LogLevel.Debug);
-								if (hoeDirtFeature != null) _ignoredFeatures.Add(hoeDirtFeature);
-								continue;
-							}
+									// Peach Tree
+									case "3":
+										if (!_config.ShakePeachTrees)
+										{
+											Monitor.LogOnce(String.Format(disabledConfigString, "Peach trees", I18n.ShakePeachTrees_Name()), LogLevel.Debug);
+											continue;
+										}
 
-							Vector2 tile;
+										_trackingCounts["Fruit Trees"].AddOrIncrement("Peach trees");
+										break;
 
-							switch (whichCrop)
-							{
-								// Spring Onion
-								case "1":
-									if (!_config.PullSpringOnions)
-									{
-										Monitor.LogOnce(String.Format(disabledConfigString, "Spring Onions", "Pull Spring Onions"), LogLevel.Debug);
+									// Pomegranate Tree
+									case "4":
+										if (!_config.ShakePomegranateTrees)
+										{
+											Monitor.LogOnce(String.Format(disabledConfigString, "Pomegranate trees", I18n.ShakePomegranateTrees_Name()), LogLevel.Debug);
+											continue;
+										}
+
+										_trackingCounts["Fruit Trees"].AddOrIncrement("Pomegranate trees");
+										break;
+
+									// Apple Tree
+									case "5":
+										if (!_config.ShakeAppleTrees)
+										{
+											Monitor.LogOnce(String.Format(disabledConfigString, "Apple trees", I18n.ShakeAppleTrees_Name()), LogLevel.Debug);
+											continue;
+										}
+
+										_trackingCounts["Fruit Trees"].AddOrIncrement("Apple trees");
+										break;
+
+									// Banana Tree
+									case "7":
+										if (!_config.ShakeBananaTrees)
+										{
+											Monitor.LogOnce(String.Format(disabledConfigString, "Banana trees", I18n.ShakeBananaTrees_Name()), LogLevel.Debug);
+											continue;
+										}
+
+										_trackingCounts["Fruit Trees"].AddOrIncrement("Banana trees");
+										break;
+
+									// Mango Tree
+									case "8":
+										if (!_config.ShakeMangoTrees)
+										{
+											Monitor.LogOnce(String.Format(disabledConfigString, "Mango trees", I18n.ShakeMangoTrees_Name()), LogLevel.Debug);
+											continue;
+										}
+
+										_trackingCounts["Fruit Trees"].AddOrIncrement("Mango trees");
+										break;
+
+									default:
+										Monitor.Log($"Unknown Fruit Tree type: [{fruitTree.treeId.Value}]", LogLevel.Warn);
+										_ignoredFeatures.Add(fruitTree);
 										continue;
-									}
+								}
 
-									tile = hoeDirtFeature.Tile;
-									var xTile = (int) tile.X;
-									var yTile = (int) tile.Y;
-									var obj = ItemRegistry.Create<Object>("(O)399");
-									var random = Utility.CreateDaySaveRandom(xTile * 1000, yTile * 2000);
+								fruitTree.performUseAction(featureTileLocation);
+								_shakenFeatures.Add(fruitTree);
+								break;
 
-									if (Game1.player.professions.Contains(16))
-									{
-										obj.Quality = 4;
-									}
-									else if (random.NextDouble() < (double) ((float) Game1.player.ForagingLevel / 30f))
-									{
-										obj.Quality = 2;
-									}
-									else if (random.NextDouble() < (double) ((float) Game1.player.ForagingLevel / 15f))
-									{
-										obj.Quality = 1;
-									}
+							// Bush Cases
+							case Bush bushFeature:
+								if (!CheckBush(bushFeature)) continue;
 
-									Game1.stats.ItemsForaged += (uint) obj.Stack;
+								bushFeature.performUseAction(featureTileLocation);
+								_shakenFeatures.Add(bushFeature);
+								break;
 
-									hoeDirtFeature.destroyCrop(false);
-									Game1.playSound("harvest");
+							// Forageable Cases
+							case HoeDirt hoeDirtFeature:
+								if (!_config.PullSpringOnions && !_config.DigGinger) continue;
+								if (!hoeDirtFeature.crop.forageCrop.Value || hoeDirtFeature.crop.whichForageCrop.Value.IsNullOrEmpty()) toIgnore = true;
 
-									tile *= 64.0f;
-
-									Game1.player.gainExperience(2, 3);
-									Game1.createItemDebris(obj.getOne(), tile, -1, null, -1);
-									break;
-
-								// Ginger
-								case "2":
-									if (!_config.DigGinger)
-									{
-										Monitor.LogOnce(String.Format(disabledConfigString, "Ginger Roots", "Pull Ginger Roots"), LogLevel.Debug);
-										continue;
-									}
-
-									tile = hoeDirtFeature.Tile;
-									if (hoeDirtFeature?.crop == null) continue;
-
-									hoeDirtFeature.crop.hitWithHoe((int) tile.X, (int) tile.Y, hoeDirtFeature.Location, hoeDirtFeature);
-									hoeDirtFeature.destroyCrop(false);
-									break;
-
-								default:
-									Monitor.Log($"No good case: {whichCrop}");
+								if (toIgnore)
+								{
+									Monitor.LogOnce($"Ignored {hoeDirtFeature.crop.indexOfHarvest.Value}", LogLevel.Debug);
+									_ignoredFeatures.Add(hoeDirtFeature);
 									continue;
-							}
+								}
 
-							break;
+								var whichCrop = hoeDirtFeature.crop.whichForageCrop.Value;
+								Vector2 tile;
+
+								switch (whichCrop)
+								{
+									// Spring Onion
+									case "1":
+										if (!_config.PullSpringOnions)
+										{
+											Monitor.LogOnce(String.Format(disabledConfigString, "Spring Onions", I18n.PullSpringOnions_Name()), LogLevel.Debug);
+											continue;
+										}
+
+										ForageItem(ItemRegistry.Create<Object>("(O)399"), hoeDirtFeature.Tile, 3, 1000, 2000);
+										hoeDirtFeature.destroyCrop(false);
+										Game1.playSound("harvest");
+
+										_trackingCounts["Forageables"].AddOrIncrement("Spring Onions");
+										_forageablesCount += 1;
+										break;
+
+									// Ginger
+									case "2":
+										if (!_config.DigGinger)
+										{
+											Monitor.LogOnce(String.Format(disabledConfigString, "Ginger Roots", I18n.DigGinger_Name()), LogLevel.Debug);
+											continue;
+										}
+
+										tile = hoeDirtFeature.Tile;
+
+										hoeDirtFeature.crop.hitWithHoe((int)tile.X, (int)tile.Y, hoeDirtFeature.Location, hoeDirtFeature);
+										hoeDirtFeature.destroyCrop(false);
+
+										_trackingCounts["Forageables"].AddOrIncrement("Ginger roots");
+										_forageablesCount += 1;
+										break;
+
+									default:
+										Monitor.Log($"No good case: {whichCrop}");
+										continue;
+								}
+
+								break;
+
+							// This should never happen
+							default:
+								Monitor.Log("I am an unknown terrain feature, ignore me I guess...", LogLevel.Debug);
+								break;
+						}
+					}
+
+					// Forageables (except Spring Onions, Ginger)
+					if (Game1.currentLocation.Objects.TryGetValue(vec, out var obj))
+					{
+						// do forage shit here
 					}
 				}
+
 			}
 
 			if (_config.AnyBushEnabled)
@@ -528,7 +519,7 @@ namespace AutoShaker
 		private void OnDayEnding(object? sender, DayEndingEventArgs e)
 		{
 			StringBuilder statMessage = new($"{Environment.NewLine}{Utility.getDateString()}:{Environment.NewLine}");
-			statMessage.AppendLine($"[{_shakenFeatures.Count}] Total Interactions");
+			statMessage.AppendLine($"[{_shakenFeatures.Count + _forageablesCount}] Total Interactions");
 
 			foreach (var category in _trackingCounts)
 			{
@@ -651,6 +642,39 @@ namespace AutoShaker
 			}
 
 			return true;
+		}
+
+		private static void ForageItem(Object obj, Vector2 vec, int xpGained = 0, int xMult = 1, int yMult = 1, bool checkGatherer = false)
+		{
+			var x = (int)vec.X;
+			var y = (int)vec.Y;
+			var random = Utility.CreateDaySaveRandom(x * xMult, y * yMult);
+			var foragingLevel = Game1.player.ForagingLevel;
+			var professions = Game1.player.professions;
+
+			if (professions.Contains(16))
+			{
+				obj.Quality = 4;
+			}
+			else if (random.NextDouble() < (double)(foragingLevel / 30f))
+			{
+				obj.Quality = 2;
+			}
+			else if (random.NextDouble() < (double)(foragingLevel / 15f))
+			{
+				obj.Quality = 1;
+			}
+
+			vec *= 64.0f;
+
+			Game1.player.gainExperience(2, xpGained);
+			Game1.createItemDebris(obj.getOne(), vec, -1, null, -1);
+
+			if (checkGatherer && professions.Contains(13) && random.NextDouble() < 0.2)
+			{
+				Game1.player.gainExperience(2, xpGained);
+				Game1.createItemDebris(obj.getOne(), vec, -1, null, -1);
+			}
 		}
 
 		private static bool IsInRange(Point playerLocation, Vector2 bushLocation, int radius)
