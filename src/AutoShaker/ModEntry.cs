@@ -13,6 +13,7 @@ using StardewValley.GameData.Locations;
 using StardewValley.Internal;
 using StardewValley.TerrainFeatures;
 
+using Constants = AutoShaker.Helpers.Constants;
 using Object = StardewValley.Object;
 
 namespace AutoShaker
@@ -30,10 +31,13 @@ namespace AutoShaker
 		private Vector2 previousTilePosition;
 
 		private readonly HashSet<TerrainFeature> _ignoredFeatures = new();
-		private readonly HashSet<TerrainFeature> _shakenFeatures = new();
+		private readonly HashSet<TerrainFeature> _interactedFeatures = new();
+		private readonly HashSet<Item> _interactedItems = new();
 
 		private Dictionary<string, Dictionary<string, int>> _trackingCounts = new();
 		private int _forageablesCount;
+
+		private Dictionary<Vector2, string> _forageablePredictions = new();
 
 		/// <summary>
 		/// The mod entry point, called after the mod is first loaded.
@@ -65,10 +69,12 @@ namespace AutoShaker
 
 		private void OnPlayerWarped(object? sender, WarpedEventArgs e)
 		{
-			var loc = e.NewLocation;
-			var objs = loc.Objects.Pairs;
+			_forageablePredictions.Clear();
 
-			foreach (var objPair in objs)
+			var mapLoc = e.NewLocation;
+			var objsPairs = mapLoc.Objects.Pairs;
+
+			foreach (var objPair in objsPairs)
 			{
 				var vec = objPair.Key;
 				var x = (int)vec.X;
@@ -79,9 +85,10 @@ namespace AutoShaker
 				{
 					var random = Utility.CreateDaySaveRandom(x * 2000, y);
 					var dict = Game1.content.Load<Dictionary<string, LocationData>>("Data\\Locations");
-					var locData = loc.GetData();
-					var context = new ItemQueryContext(loc, Game1.player, random);
+					var locData = mapLoc.GetData();
+					var context = new ItemQueryContext(mapLoc, Game1.player, random);
 					IEnumerable<ArtifactSpotDropData> enumerable = dict["Default"].ArtifactSpots;
+
 					if (locData != null && locData.ArtifactSpots?.Count > 0)
 					{
 						enumerable = enumerable.Concat(locData.ArtifactSpots);
@@ -90,14 +97,14 @@ namespace AutoShaker
 					enumerable = enumerable.OrderBy((ArtifactSpotDropData p) => p.Precedence);
 					foreach (var drop in enumerable)
 					{
-						if (!random.NextBool(drop.Chance) || (drop.Condition != null && !GameStateQuery.CheckConditions(drop.Condition, loc, Game1.player, null, null, random)))
+						if (!random.NextBool(drop.Chance) || (drop.Condition != null && !GameStateQuery.CheckConditions(drop.Condition, mapLoc, Game1.player, null, null, random)))
 						{
 							continue;
 						}
 
 						var item = ItemQueryResolver.TryResolveRandomItem(drop, context, avoidRepeat: false, null, null, null, delegate (string query, string error)
 						{
-							Monitor.Log("error on query resolve");
+							Monitor.Log($"Error on query resolve.", LogLevel.Debug);
 						});
 
 						if (item == null)
@@ -106,6 +113,12 @@ namespace AutoShaker
 						}
 
 						Monitor.Log($"[{x}, {y}] {item.QualifiedItemId}", LogLevel.Info);
+
+						// Snow Yam or Winter Root
+						if (item.QualifiedItemId == "(O)416" || item.QualifiedItemId == "(O)412")
+						{
+							_forageablePredictions.Add(vec, item.QualifiedItemId);
+						}
 
 						if (!drop.ContinueOnDrop)
 						{
@@ -140,7 +153,7 @@ namespace AutoShaker
 					if (Game1.currentLocation.terrainFeatures.TryGetValue(vec, out var feature)
 						&& feature is Tree or FruitTree or Bush or HoeDirt
 						&& !_ignoredFeatures.Contains(feature)
-						&& !_shakenFeatures.Contains(feature))
+						&& !_interactedFeatures.Contains(feature))
 					{
 						var featureTileLocation = feature.Tile;
 						var toIgnore = false;
@@ -233,7 +246,7 @@ namespace AutoShaker
 								}
 
 								treeFeature.performUseAction(featureTileLocation);
-								_shakenFeatures.Add(treeFeature);
+								_interactedFeatures.Add(treeFeature);
 								break;
 
 							// Fruit Tree Cases
@@ -357,7 +370,7 @@ namespace AutoShaker
 								}
 
 								fruitTree.performUseAction(featureTileLocation);
-								_shakenFeatures.Add(fruitTree);
+								_interactedFeatures.Add(fruitTree);
 								break;
 
 							// Bush Cases
@@ -365,24 +378,23 @@ namespace AutoShaker
 								if (!CheckBush(bushFeature)) continue;
 
 								bushFeature.performUseAction(featureTileLocation);
-								_shakenFeatures.Add(bushFeature);
+								_interactedFeatures.Add(bushFeature);
 								break;
 
 							// Forageable Cases
 							case HoeDirt hoeDirtFeature:
 								if (!_config.PullSpringOnions && !_config.DigGinger) continue;
-								if (!hoeDirtFeature.crop.forageCrop.Value || hoeDirtFeature.crop.whichForageCrop.Value.IsNullOrEmpty()) toIgnore = true;
+								if (hoeDirtFeature.crop == null || !hoeDirtFeature.crop.forageCrop.Value || hoeDirtFeature.crop.whichForageCrop.Value.IsNullOrEmpty()) toIgnore = true;
 
 								if (toIgnore)
 								{
-									Monitor.LogOnce($"Ignored {hoeDirtFeature.crop.indexOfHarvest.Value}", LogLevel.Debug);
+									Monitor.LogOnce($"Ignored {hoeDirtFeature.crop?.indexOfHarvest.Value ?? "empty hoe dirt"}", LogLevel.Debug);
 									_ignoredFeatures.Add(hoeDirtFeature);
 									continue;
 								}
 
-								var whichCrop = hoeDirtFeature.crop.whichForageCrop.Value;
+								var whichCrop = hoeDirtFeature.crop?.whichForageCrop.Value ?? "-1";
 								Vector2 tile;
-
 								switch (whichCrop)
 								{
 									// Spring Onion
@@ -393,12 +405,15 @@ namespace AutoShaker
 											continue;
 										}
 
-										ForageItem(ItemRegistry.Create<Object>("(O)399"), hoeDirtFeature.Tile, 3, 1000, 2000);
+										tile = hoeDirtFeature.Tile;
+										var x = (int)tile.X;
+										var y = (int)tile.Y;
+
+										ForageItem(ItemRegistry.Create<Object>("(O)399"), tile, Utility.CreateDaySaveRandom(x * 1000, y * 2000), 3);
 										hoeDirtFeature.destroyCrop(false);
 										Game1.playSound("harvest");
 
 										_trackingCounts["Forageables"].AddOrIncrement("Spring Onions");
-										_forageablesCount += 1;
 										break;
 
 									// Ginger
@@ -411,11 +426,10 @@ namespace AutoShaker
 
 										tile = hoeDirtFeature.Tile;
 
-										hoeDirtFeature.crop.hitWithHoe((int)tile.X, (int)tile.Y, hoeDirtFeature.Location, hoeDirtFeature);
+										hoeDirtFeature.crop?.hitWithHoe((int)tile.X, (int)tile.Y, hoeDirtFeature.Location, hoeDirtFeature);
 										hoeDirtFeature.destroyCrop(false);
 
 										_trackingCounts["Forageables"].AddOrIncrement("Ginger roots");
-										_forageablesCount += 1;
 										break;
 
 									default:
@@ -423,6 +437,8 @@ namespace AutoShaker
 										continue;
 								}
 
+								_forageablesCount += 1;
+								_interactedFeatures.Add(hoeDirtFeature);
 								break;
 
 							// This should never happen
@@ -433,9 +449,36 @@ namespace AutoShaker
 					}
 
 					// Forageables (except Spring Onions, Ginger)
-					if (Game1.currentLocation.Objects.TryGetValue(vec, out var obj))
+					if (_config.AnyForageablesEnabled && Game1.currentLocation.Objects.TryGetValue(vec, out var obj))
 					{
-						// do forage shit here
+						if (obj.isForage() && obj.IsSpawnedObject && !obj.questItem.Value)
+						{
+							if ((_config.ForageableToggles & (int)Constants.ForageableLookup[obj.QualifiedItemId]) > 0)
+							{
+								ForageItem(obj, vec, Utility.CreateDaySaveRandom(vec.X, vec.Y * 777f), 7, true);
+
+								Game1.player.currentLocation.removeObject(vec, showDestroyedObject: false);
+								Game1.playSound("harvest");
+
+								_forageablesCount += 1;
+								_interactedItems.Add(obj);
+							}
+						}
+						else if (obj.QualifiedItemId == "(O)590")
+						{
+							if (_forageablePredictions.ContainsKey(vec) && (_config.ForageableToggles & (int)Constants.ForageableLookup[_forageablePredictions[vec]]) > 0)
+							{
+								Game1.currentLocation.digUpArtifactSpot((int)vec.X, (int)vec.Y, Game1.player);
+
+								if (!Game1.currentLocation.terrainFeatures.ContainsKey(vec))
+								{
+									Game1.currentLocation.makeHoeDirt(vec, ignoreChecks: true);
+								}
+
+								Game1.currentLocation.playSound("hoeHit");
+								Game1.currentLocation.removeObject(vec, false);
+							}
+						}
 					}
 				}
 
@@ -450,7 +493,7 @@ namespace AutoShaker
 					var location = bush.Tile;
 
 					if (!IsInRange(playerTileLocationPoint, location, radius)
-						|| _shakenFeatures.Contains(bush) || _ignoredFeatures.Contains(bush))
+						|| _interactedFeatures.Contains(bush) || _ignoredFeatures.Contains(bush))
 					{
 						continue;
 					}
@@ -458,53 +501,7 @@ namespace AutoShaker
 					if (CheckBush(bush))
 					{
 						bush.performUseAction(location);
-						_shakenFeatures.Add(feature);
-					}
-				}
-			}
-
-			if (_config.AnyForageablesEnabled)
-			{
-				foreach (var objPair in Game1.player.currentLocation.Objects.Pairs)
-				{
-					var loc = objPair.Key;
-					var obj = objPair.Value;
-
-					if (!IsInRange(playerTileLocationPoint, loc, radius)) continue;
-
-					if (obj.isForage() && obj.IsSpawnedObject && !obj.questItem.Value)
-					{
-						var random = Utility.CreateDaySaveRandom((int) loc.X, (int) loc.Y * 777f);
-						var playerProfessions = Game1.player.professions;
-						var playerForaging = Game1.player.ForagingLevel;
-
-						if (playerProfessions.Contains(16))
-						{
-							obj.Quality = 4;
-						}
-						else if (random.NextDouble() < (double)((float)playerForaging / 30))
-						{
-							obj.Quality = 2;
-						}
-						else if (random.NextDouble() < (double)((float)playerForaging / 15))
-						{
-							obj.Quality = 1;
-						}
-
-						Game1.player.currentLocation.removeObject(loc, showDestroyedObject: false);
-						Game1.playSound("harvest");
-
-						loc *= 64.0f;
-
-						Game1.player.gainExperience(2, 7);
-						Game1.createItemDebris(obj.getOne(), loc, -1, null, -1);
-						Game1.stats.ItemsForaged += 1;
-
-						if (playerProfessions.Contains(13) && random.NextDouble() < 0.2)
-						{
-							Game1.createItemDebris(obj.getOne(), loc, -1, null, -1);
-							Game1.player.gainExperience(2, 7);
-						}
+						_interactedFeatures.Add(feature);
 					}
 				}
 			}
@@ -519,7 +516,7 @@ namespace AutoShaker
 		private void OnDayEnding(object? sender, DayEndingEventArgs e)
 		{
 			StringBuilder statMessage = new($"{Environment.NewLine}{Utility.getDateString()}:{Environment.NewLine}");
-			statMessage.AppendLine($"[{_shakenFeatures.Count + _forageablesCount}] Total Interactions");
+			statMessage.AppendLine($"[{_interactedFeatures.Count + _forageablesCount}] Total Interactions");
 
 			foreach (var category in _trackingCounts)
 			{
@@ -543,7 +540,7 @@ namespace AutoShaker
 			Monitor.Log("Resetting daily counts...", LogLevel.Trace);
 
 			_ignoredFeatures.Clear();
-			_shakenFeatures.Clear();
+			_interactedFeatures.Clear();
 			_forageablesCount = 0;
 		}
 
@@ -644,11 +641,8 @@ namespace AutoShaker
 			return true;
 		}
 
-		private static void ForageItem(Object obj, Vector2 vec, int xpGained = 0, int xMult = 1, int yMult = 1, bool checkGatherer = false)
+		private static void ForageItem(Object obj, Vector2 vec, Random random, int xpGained = 0, bool checkGatherer = false)
 		{
-			var x = (int)vec.X;
-			var y = (int)vec.Y;
-			var random = Utility.CreateDaySaveRandom(x * xMult, y * yMult);
 			var foragingLevel = Game1.player.ForagingLevel;
 			var professions = Game1.player.professions;
 

@@ -2,6 +2,8 @@ using System;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 
+using Forageable = AutoShaker.Helpers.Constants.Forageable;
+
 namespace AutoShaker
 {
 	internal class ModConfig
@@ -10,8 +12,10 @@ namespace AutoShaker
 		private const int MaxFruitsReady = 3;
 
 		private int _fruitsReadyToShake;
+		public int ForageableToggles;
 
-		// General
+		#region General Properties
+
 		public bool IsShakerActive { get; set; }
 		public KeybindList ToggleShaker { get; set; } = new KeybindList();
 		public bool UsePlayerMagnetism { get; set; }
@@ -19,7 +23,10 @@ namespace AutoShaker
 
 		public bool AnyShakeEnabled { get; set; }
 
-		// Regular Trees
+		#endregion General Properties
+
+		#region Regular Tree Properties
+
 		public bool ShakeMahoganyTrees { get; set; }
 		public bool ShakeMapleTrees { get; set; }
 		public bool ShakeOakTrees { get; set; }
@@ -28,7 +35,10 @@ namespace AutoShaker
 
 		public bool AnyRegularTreeEnabled { get; set; }
 
-		// Fruit Trees
+		#endregion Regular Tree Properties
+
+		#region Fruit Tree Properties
+
 		public int FruitsReadyToShake
 		{
 			get => _fruitsReadyToShake;
@@ -45,7 +55,10 @@ namespace AutoShaker
 
 		public bool AnyFruitTreeEnabled { get; set; }
 
-		// Bushes
+		#endregion Fruit Tree Properties
+
+		#region Bush Properties
+
 		public bool ShakeSalmonberriesBushes { get; set; }
 		public bool ShakeBlackberriesBushes { get; set; }
 		public bool ShakeTeaBushes { get; set; }
@@ -53,39 +66,77 @@ namespace AutoShaker
 
 		public bool AnyBushEnabled { get; set; }
 
-		// Forageables
-		// Spring
-		public bool PullDaffodils { get; set; }
-		public bool PullDandelions { get; set; }
+		#endregion Bush Properties
+
+		#region Forageable Properties
+
+		#region Spring Forageable Properties
+
+		private bool _pullDaffodils;
+		public bool PullDaffodils
+		{
+			get => _pullDaffodils;
+			set 
+			{
+				_pullDaffodils = value;
+				UpdateForageableBit(Forageable.Daffodil, value);
+			}
+		}
+
+		private bool _pullDandelions;
+		public bool PullDandelions
+		{
+			get => _pullDandelions;
+			set
+			{
+				_pullDandelions = value;
+				UpdateForageableBit(Forageable.Dandelion, value);
+			}
+		}
 		public bool PullLeeks { get; set; }
 		public bool PullSpringOnions { get; set; }
 		public bool PullWildHorseradishes { get; set; }
 
-		// Summer
+		#endregion Spring Forageable Properties
+
+		#region Summer Forageable Properties
+
 		public bool PullGrapes { get; set; }
 		public bool PullSpiceBerries { get; set; }
 		public bool PullSweetPeas { get; set; }
 
-		// Fall
+		#endregion Summer Forageable Properties
+
+		#region Fall Forageable Properties
+
 		public bool PullHazelnuts { get; set; }
 		public bool PullWildPlums { get; set; }
 
-		// Winter
+		#endregion Fall Forageable Properties
+
+		#region Winter Forageable Properties
+
 		public bool PullCrocuses { get; set; }
 		public bool PullCrystalFruits { get; set; }
 		public bool PullHolly { get; set; }
 		public bool DigSnowYams { get; set; }
 		public bool DigWinterRoots { get; set; }
 
-		// Mushrooms
+		#endregion Winter Forageable Properties
+
+		#region Mushroom Forageable Properties
+
 		public bool PullChanterelles { get; set; }
 		public bool PullCommonMushrooms { get; set; }
 		public bool PullMagmaCaps { get; set; }
 		public bool PullMorels { get; set; }
 		public bool PullPurpleMushrooms { get; set; }
 		public bool PullRedMushrooms { get; set; }
-		
-		// Beach
+
+		#endregion Mushroom Forageable Properties
+
+		#region Beach Forageable Properties
+
 		public bool PullClams { get; set; }
 		public bool PullCockles { get; set; }
 		public bool PullCoral { get; set; }
@@ -96,16 +147,29 @@ namespace AutoShaker
 		public bool PullSeaUrchins { get; set; }
 		public bool PullSeaweed { get; set; }
 
-		// Cave
+		#endregion Beach Forageable Properties
+
+		#region Cave Forageable Properties
+
 		public bool PullFiddleheadFerns { get; set; }
 
-		// Desert
+		#endregion Cave Forageable Properties
+
+		#region Desert Forageable Properties
+
 		public bool PullCactusFruits { get; set; }
 
-		// Island
+		#endregion Desert Forageable Properties
+
+		#region Island Forageable Properties
+
 		public bool DigGinger { get; set; }
 
+		#endregion Island Forageable Properties
+
 		public bool AnyForageablesEnabled { get; set; }
+
+		#endregion Forageable Properties
 
 		public void ResetToDefault()
 		{
@@ -202,6 +266,7 @@ namespace AutoShaker
 			DigGinger = false;
 
 			AnyForageablesEnabled = false;
+			ForageableToggles = 0;
 		}
 
 		public ModConfig()
@@ -1073,6 +1138,18 @@ namespace AutoShaker
 				|| DigGinger;
 
 			AnyShakeEnabled = AnyRegularTreeEnabled || AnyFruitTreeEnabled || AnyBushEnabled || AnyForageablesEnabled;
+		}
+
+		private void UpdateForageableBit(Forageable forageble, bool enabled)
+		{
+			if (enabled)
+			{
+				ForageableToggles |= (int)forageble;
+			}
+			else
+			{
+				ForageableToggles &= ~(int)forageble;
+			}
 		}
 	}
 
