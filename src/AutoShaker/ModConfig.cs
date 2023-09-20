@@ -93,71 +93,356 @@ namespace AutoShaker
 				UpdateForageableBit(Forageable.Dandelion, value);
 			}
 		}
-		public bool PullLeeks { get; set; }
+
+		private bool _pullLeeks;
+		public bool PullLeeks
+		{
+			get => _pullLeeks;
+			set
+			{
+				_pullLeeks = value;
+				UpdateForageableBit(Forageable.Leek, value);
+			}
+		}
+
 		public bool PullSpringOnions { get; set; }
-		public bool PullWildHorseradishes { get; set; }
+
+		private bool _pullWildHorseradishes;
+		public bool PullWildHorseradishes
+		{
+			get => _pullWildHorseradishes;
+			set
+			{
+				_pullWildHorseradishes = value;
+				UpdateForageableBit(Forageable.WildHorseradish, value);
+			}
+		}
 
 		#endregion Spring Forageable Properties
 
 		#region Summer Forageable Properties
 
-		public bool PullGrapes { get; set; }
-		public bool PullSpiceBerries { get; set; }
-		public bool PullSweetPeas { get; set; }
+		private bool _pullGrapes;
+		public bool PullGrapes
+		{
+			get => _pullGrapes;
+			set
+			{
+				_pullGrapes = value;
+				UpdateForageableBit(Forageable.Grape, value);
+			}
+		}
+
+		private bool _pullSpiceBerries;
+		public bool PullSpiceBerries
+		{
+			get => _pullSpiceBerries;
+			set
+			{
+				_pullSpiceBerries = value;
+				UpdateForageableBit(Forageable.SpiceBerry, value);
+			}
+		}
+
+		private bool _pullSweetPeas;
+		public bool PullSweetPeas
+		{
+			get => _pullSweetPeas;
+			set
+			{
+				_pullSweetPeas = value;
+				UpdateForageableBit(Forageable.SweetPea, value);
+			}
+		}
 
 		#endregion Summer Forageable Properties
 
 		#region Fall Forageable Properties
 
-		public bool PullHazelnuts { get; set; }
-		public bool PullWildPlums { get; set; }
+		private bool _pullHazelnuts;
+		public bool PullHazelnuts
+		{
+			get => _pullHazelnuts;
+			set
+			{
+				_pullHazelnuts = value;
+				UpdateForageableBit(Forageable.Hazelnut, value);
+			}
+		}
+
+		private bool _pullWildPlums;
+		public bool PullWildPlums
+		{
+			get => _pullWildPlums;
+			set
+			{
+				_pullWildPlums = value;
+				UpdateForageableBit(Forageable.WildPlum, value);
+			}
+		}
 
 		#endregion Fall Forageable Properties
 
 		#region Winter Forageable Properties
 
-		public bool PullCrocuses { get; set; }
-		public bool PullCrystalFruits { get; set; }
-		public bool PullHolly { get; set; }
-		public bool DigSnowYams { get; set; }
-		public bool DigWinterRoots { get; set; }
+		private bool _pullCrocuses;
+		public bool PullCrocuses
+		{
+			get => _pullCrocuses;
+			set
+			{
+				_pullCrocuses = value;
+				UpdateForageableBit(Forageable.Crocus, value);
+			}
+		}
+
+
+		private bool _pullCrystalFruits;
+		public bool PullCrystalFruits
+		{
+			get => _pullCrystalFruits;
+			set
+			{
+				_pullCrystalFruits = value;
+				UpdateForageableBit(Forageable.CrystalFruit, value);
+			}
+		}
+
+		private bool _pullHolly;
+		public bool PullHolly
+		{
+			get => _pullHolly;
+			set
+			{
+				_pullHolly = value;
+				UpdateForageableBit(Forageable.Holly, value);
+			}
+		}
+
+		private bool _digSnowYams;
+		public bool DigSnowYams
+		{
+			get => _digSnowYams;
+			set
+			{
+				_digSnowYams = value;
+				UpdateForageableBit(Forageable.SnowYam, value);
+			}
+		}
+
+		private bool _digWinterRoots;
+		public bool DigWinterRoots
+		{
+			get => _digWinterRoots;
+			set
+			{
+				_digWinterRoots = value;
+				UpdateForageableBit(Forageable.WinterRoot, value);
+			}
+		}
 
 		#endregion Winter Forageable Properties
 
 		#region Mushroom Forageable Properties
 
-		public bool PullChanterelles { get; set; }
-		public bool PullCommonMushrooms { get; set; }
-		public bool PullMagmaCaps { get; set; }
-		public bool PullMorels { get; set; }
-		public bool PullPurpleMushrooms { get; set; }
-		public bool PullRedMushrooms { get; set; }
+		private bool _pullChanterelles;
+		public bool PullChanterelles
+		{
+			get => _pullChanterelles;
+			set
+			{
+				_pullChanterelles = value;
+				UpdateForageableBit(Forageable.Chanterelle, value);
+			}
+		}
+
+		private bool _pullCommonMushrooms;
+		public bool PullCommonMushrooms
+		{
+			get => _pullCommonMushrooms;
+			set
+			{
+				_pullCommonMushrooms = value;
+				UpdateForageableBit(Forageable.CommonMushroom, value);
+			}
+		}
+
+		private bool _pullMagmaCaps;
+		public bool PullMagmaCaps
+		{
+			get => _pullMagmaCaps;
+			set
+			{
+				_pullMagmaCaps = value;
+				UpdateForageableBit(Forageable.MagmaCap, value);
+			}
+		}
+
+		private bool _pullMorels;
+		public bool PullMorels
+		{
+			get => _pullMorels;
+			set
+			{
+				_pullMorels = value;
+				UpdateForageableBit(Forageable.Morel, value);
+			}
+		}
+
+		private bool _pullPurpleMushrooms;
+		public bool PullPurpleMushrooms
+		{
+			get => _pullPurpleMushrooms;
+			set
+			{
+				_pullPurpleMushrooms = value;
+				UpdateForageableBit(Forageable.PurpleMushroom, value);
+			}
+		}
+
+		private bool _pullRedMushrooms;
+		public bool PullRedMushrooms
+		{
+			get => _pullRedMushrooms;
+			set
+			{
+				_pullRedMushrooms = value;
+				UpdateForageableBit(Forageable.RedMushroom, value);
+			}
+		}
 
 		#endregion Mushroom Forageable Properties
 
 		#region Beach Forageable Properties
 
-		public bool PullClams { get; set; }
-		public bool PullCockles { get; set; }
-		public bool PullCoral { get; set; }
-		public bool PullMussels { get; set; }
-		public bool PullNautilusShells { get; set; }
-		public bool PullOysters { get; set; }
-		public bool PullRainbowShells { get; set; }
-		public bool PullSeaUrchins { get; set; }
-		public bool PullSeaweed { get; set; }
+		private bool _pullClams;
+		public bool PullClams
+		{
+			get => _pullClams;
+			set
+			{
+				_pullClams = value;
+				UpdateForageableBit(Forageable.Clam, value);
+			}
+		}
+
+		private bool _pullCockles;
+		public bool PullCockles
+		{
+			get => _pullCockles;
+			set
+			{
+				_pullCockles = value;
+				UpdateForageableBit(Forageable.Cockle, value);
+			}
+		}
+
+		private bool _pullCoral;
+		public bool PullCoral
+		{
+			get => _pullCoral;
+			set
+			{
+				_pullCoral = value;
+				UpdateForageableBit(Forageable.Coral, value);
+			}
+		}
+
+		private bool _pullMussels;
+		public bool PullMussels
+		{
+			get => _pullMussels;
+			set
+			{
+				_pullMussels = value;
+				UpdateForageableBit(Forageable.Mussel, value);
+			}
+		}
+
+		private bool _pullNautilusShells;
+		public bool PullNautilusShells
+		{
+			get => _pullNautilusShells;
+			set
+			{
+				_pullNautilusShells = value;
+				UpdateForageableBit(Forageable.NautilusShell, value);
+			}
+		}
+
+		private bool _pullOysters;
+		public bool PullOysters
+		{
+			get => _pullOysters;
+			set
+			{
+				_pullOysters = value;
+				UpdateForageableBit(Forageable.Oyster, value);
+			}
+		}
+
+		private bool _pullRainbowShells;
+		public bool PullRainbowShells
+		{
+			get => _pullRainbowShells;
+			set
+			{
+				_pullRainbowShells = value;
+				UpdateForageableBit(Forageable.RainbowShell, value);
+			}
+		}
+
+		private bool _pullSeaUrchins;
+		public bool PullSeaUrchins
+		{
+			get => _pullSeaUrchins;
+			set
+			{
+				_pullSeaUrchins = value;
+				UpdateForageableBit(Forageable.SeaUrchin, value);
+			}
+		}
+
+		private bool _pullSeaweed;
+		public bool PullSeaweed
+		{
+			get => _pullSeaweed;
+			set
+			{
+				_pullSeaweed = value;
+				UpdateForageableBit(Forageable.Seaweed, value);
+			}
+		}
 
 		#endregion Beach Forageable Properties
 
 		#region Cave Forageable Properties
 
-		public bool PullFiddleheadFerns { get; set; }
+		private bool _pullFiddleheadFerns;
+		public bool PullFiddleheadFerns
+		{
+			get => _pullFiddleheadFerns;
+			set
+			{
+				_pullFiddleheadFerns = value;
+				UpdateForageableBit(Forageable.FiddleheadFern, value);
+			}
+		}
 
 		#endregion Cave Forageable Properties
 
 		#region Desert Forageable Properties
 
-		public bool PullCactusFruits { get; set; }
+		private bool _pullCactusFruits;
+		public bool PullCactusFruits
+		{
+			get => _pullCactusFruits;
+			set
+			{
+				_pullCactusFruits = value;
+				UpdateForageableBit(Forageable.CactusFruit, value);
+			}
+		}
 
 		#endregion Desert Forageable Properties
 

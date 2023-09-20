@@ -32,12 +32,18 @@ namespace AutoShaker
 
 		private readonly HashSet<TerrainFeature> _ignoredFeatures = new();
 		private readonly HashSet<TerrainFeature> _interactedFeatures = new();
-		private readonly HashSet<Item> _interactedItems = new();
 
-		private Dictionary<string, Dictionary<string, int>> _trackingCounts = new();
+		private readonly Dictionary<Vector2, string> _forageablePredictions = new();
+		private readonly Dictionary<string, Dictionary<string, int>> _trackingCounts = new()
+		{
+			{ "Seed Trees", new() },
+			{ "Fruit Trees", new() },
+			{ "Bushes", new() },
+			{ "Forageables", new() }
+		};
+
+
 		private int _forageablesCount;
-
-		private Dictionary<Vector2, string> _forageablePredictions = new();
 
 		/// <summary>
 		/// The mod entry point, called after the mod is first loaded.
@@ -50,14 +56,6 @@ namespace AutoShaker
 			_config = helper.ReadConfig<ModConfig>();
 			_config.UpdateEnabled();
 			helper.WriteConfig(_config);
-
-			_trackingCounts = new(StringComparer.OrdinalIgnoreCase)
-			{
-				{ "Seed Trees", new() },
-				{ "Fruit Trees", new() },
-				{ "Bushes", new() },
-				{ "Forageables", new() }
-			};
 
 			helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
 			helper.Events.GameLoop.DayStarted += OnDayStarted;
@@ -460,8 +458,13 @@ namespace AutoShaker
 								Game1.player.currentLocation.removeObject(vec, showDestroyedObject: false);
 								Game1.playSound("harvest");
 
+								_trackingCounts["Forageables"].AddOrIncrement(obj.DisplayName);
 								_forageablesCount += 1;
-								_interactedItems.Add(obj);
+							}
+							else
+							{
+								Monitor.LogOnce(String.Format(disabledConfigString, obj.DisplayName, Constants.ConfigNameLookup[obj.QualifiedItemId]()), LogLevel.Debug);
+								continue;
 							}
 						}
 						else if (obj.QualifiedItemId == "(O)590")
@@ -477,6 +480,13 @@ namespace AutoShaker
 
 								Game1.currentLocation.playSound("hoeHit");
 								Game1.currentLocation.removeObject(vec, false);
+
+								_forageablesCount += 1;
+							}
+							else if (_forageablePredictions.ContainsKey(vec))
+							{
+								Monitor.LogOnce(String.Format(disabledConfigString, obj.DisplayName, Constants.ConfigNameLookup[_forageablePredictions[vec]]()), LogLevel.Debug);
+								continue;
 							}
 						}
 					}

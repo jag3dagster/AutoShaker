@@ -108,5 +108,55 @@ namespace AutoShaker.Helpers
 			// Desert
 			{ "(O)90", Forageable.CactusFruit }
 		};
+
+		public static readonly Dictionary<string, Func<string>> ConfigNameLookup = new()
+		{
+			// Spring
+			{ "(O)18", I18n.PullDaffodils_Name },
+			{ "(O)22", I18n.PullDandelions_Name },
+			{ "(O)20", I18n.PullLeeks_Name },
+			{ "(O)16", I18n.PullWildHorseradishes_Name },
+
+			// Summer
+			{ "(O)398", I18n.PullGrapes_Name },
+			{ "(O)396", I18n.PullSpiceBerries_Name },
+			{ "(O)402", I18n.PullSweetPeas_Name },
+
+			// Fall
+			{ "(O)408", I18n.PullHazelnuts_Name },
+			{ "(O)406", I18n.PullWildPlums_Name },
+
+			// Winter
+			{ "(O)418", I18n.PullCrocuses_Name },
+			{ "(O)414", I18n.PullCrystalFruits_Name },
+			{ "(O)283", I18n.PullHolly_Name },
+			{ "(O)416", I18n.DigSnowYams_Name },
+			{ "(O)412", I18n.DigWinterRoots_Name },
+
+			// Mushrooms
+			{ "(O)281", I18n.PullChanterelles_Name },
+			{ "(O)404", I18n.PullCommonMushrooms_Name },
+			{ "(O)851", I18n.PullMagmaCaps_Name },
+			{ "(O)257", I18n.PullMorels_Name },
+			{ "(O)422", I18n.PullPurpleMushrooms_Name },
+			{ "(O)420", I18n.PullDaffodils_Name },
+
+			// Beach
+			{ "(O)372", I18n.PullClams_Name },
+			{ "(O)718", I18n.PullCockles_Name },
+			{ "(O)393", I18n.PullCoral_Name },
+			{ "(O)719", I18n.PullMussels_Name },
+			{ "(O)392", I18n.PullNautilusShells_Name },
+			{ "(O)723", I18n.PullOysters_Name },
+			{ "(O)394", I18n.PullRainbowShells_Name },
+			{ "(O)397", I18n.PullSeaUrchins_Name },
+			{ "(O)152", I18n.PullSeaweed_Name },
+
+			// Cave
+			{ "(O)259", I18n.PullSeaweed_Name },
+
+			// Desert
+			{ "(O)90", I18n.PullCactusFruits_Name }
+		};
 	}
 }
