@@ -1,10 +1,9 @@
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AutoShaker.Helpers;
-using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -12,6 +11,7 @@ using StardewValley.Extensions;
 using StardewValley.GameData.Locations;
 using StardewValley.Internal;
 using StardewValley.TerrainFeatures;
+using AutoShaker.Helpers;
 
 using Constants = AutoShaker.Helpers.Constants;
 using Object = StardewValley.Object;
@@ -41,7 +41,6 @@ namespace AutoShaker
 			{ "Bushes", new() },
 			{ "Forageables", new() }
 		};
-
 
 		private int _forageablesCount;
 
@@ -184,7 +183,7 @@ namespace AutoShaker
 									case "4": // Winter
 										if (!_config.ShakeOakTrees)
 										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Oak trees", I18n.ShakeOakTrees_Name()), LogLevel.Debug);
+											//Monitor.LogOnce(String.Format(disabledConfigString, "Oak trees", I18n.ShakeOakTrees_Name()), LogLevel.Debug);
 											continue;
 										}
 
@@ -196,7 +195,7 @@ namespace AutoShaker
 									case "5": // Winter
 										if (!_config.ShakeMapleTrees)
 										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Maple trees", I18n.ShakeMapleTrees_Name()), LogLevel.Debug);
+											//Monitor.LogOnce(String.Format(disabledConfigString, "Maple trees", I18n.ShakeMapleTrees_Name()), LogLevel.Debug);
 											continue;
 										}
 
@@ -207,7 +206,7 @@ namespace AutoShaker
 									case "3":
 										if (!_config.ShakePineTrees)
 										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Pine trees", I18n.ShakePineTrees_Name()), LogLevel.Debug);
+											//Monitor.LogOnce(String.Format(disabledConfigString, "Pine trees", I18n.ShakePineTrees_Name()), LogLevel.Debug);
 											continue;
 										}
 
@@ -218,7 +217,7 @@ namespace AutoShaker
 									case "8":
 										if (!_config.ShakeMahoganyTrees)
 										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Mahogany trees", I18n.ShakeMahoganyTrees_Name()), LogLevel.Debug);
+											//Monitor.LogOnce(String.Format(disabledConfigString, "Mahogany trees", I18n.ShakeMahoganyTrees_Name()), LogLevel.Debug);
 											continue;
 										}
 
@@ -230,7 +229,7 @@ namespace AutoShaker
 									case "9": // Island
 										if (!_config.ShakePalmTrees)
 										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Palm trees", I18n.ShakePalmTrees_Name()), LogLevel.Debug);
+											//Monitor.LogOnce(String.Format(disabledConfigString, "Palm trees", I18n.ShakePalmTrees_Name()), LogLevel.Debug);
 											continue;
 										}
 
@@ -277,7 +276,7 @@ namespace AutoShaker
 									case "0":
 										if (!_config.ShakeCherryTrees)
 										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Cherry trees", I18n.ShakeCherryTrees_Name()), LogLevel.Debug);
+											//Monitor.LogOnce(String.Format(disabledConfigString, "Cherry trees", I18n.ShakeCherryTrees_Name()), LogLevel.Debug);
 											continue;
 										}
 
@@ -288,7 +287,7 @@ namespace AutoShaker
 									case "1":
 										if (!_config.ShakeApricotTrees)
 										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Apricot trees", I18n.ShakeApricotTrees_Name()), LogLevel.Debug);
+											//Monitor.LogOnce(String.Format(disabledConfigString, "Apricot trees", I18n.ShakeApricotTrees_Name()), LogLevel.Debug);
 											continue;
 										}
 
@@ -299,7 +298,7 @@ namespace AutoShaker
 									case "2":
 										if (!_config.ShakeOrangeTrees)
 										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Orange trees", I18n.ShakeOrangeTrees_Name()), LogLevel.Debug);
+											//Monitor.LogOnce(String.Format(disabledConfigString, "Orange trees", I18n.ShakeOrangeTrees_Name()), LogLevel.Debug);
 											continue;
 										}
 
@@ -310,7 +309,7 @@ namespace AutoShaker
 									case "3":
 										if (!_config.ShakePeachTrees)
 										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Peach trees", I18n.ShakePeachTrees_Name()), LogLevel.Debug);
+											//Monitor.LogOnce(String.Format(disabledConfigString, "Peach trees", I18n.ShakePeachTrees_Name()), LogLevel.Debug);
 											continue;
 										}
 
@@ -321,7 +320,7 @@ namespace AutoShaker
 									case "4":
 										if (!_config.ShakePomegranateTrees)
 										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Pomegranate trees", I18n.ShakePomegranateTrees_Name()), LogLevel.Debug);
+											//Monitor.LogOnce(String.Format(disabledConfigString, "Pomegranate trees", I18n.ShakePomegranateTrees_Name()), LogLevel.Debug);
 											continue;
 										}
 
@@ -332,7 +331,7 @@ namespace AutoShaker
 									case "5":
 										if (!_config.ShakeAppleTrees)
 										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Apple trees", I18n.ShakeAppleTrees_Name()), LogLevel.Debug);
+											//Monitor.LogOnce(String.Format(disabledConfigString, "Apple trees", I18n.ShakeAppleTrees_Name()), LogLevel.Debug);
 											continue;
 										}
 
@@ -343,7 +342,7 @@ namespace AutoShaker
 									case "7":
 										if (!_config.ShakeBananaTrees)
 										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Banana trees", I18n.ShakeBananaTrees_Name()), LogLevel.Debug);
+											//Monitor.LogOnce(String.Format(disabledConfigString, "Banana trees", I18n.ShakeBananaTrees_Name()), LogLevel.Debug);
 											continue;
 										}
 
@@ -354,7 +353,7 @@ namespace AutoShaker
 									case "8":
 										if (!_config.ShakeMangoTrees)
 										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Mango trees", I18n.ShakeMangoTrees_Name()), LogLevel.Debug);
+											//Monitor.LogOnce(String.Format(disabledConfigString, "Mango trees", I18n.ShakeMangoTrees_Name()), LogLevel.Debug);
 											continue;
 										}
 
@@ -399,7 +398,7 @@ namespace AutoShaker
 									case "1":
 										if (!_config.PullSpringOnions)
 										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Spring Onions", I18n.PullSpringOnions_Name()), LogLevel.Debug);
+											//Monitor.LogOnce(String.Format(disabledConfigString, "Spring Onions", I18n.PullSpringOnions_Name()), LogLevel.Debug);
 											continue;
 										}
 
@@ -418,7 +417,7 @@ namespace AutoShaker
 									case "2":
 										if (!_config.DigGinger)
 										{
-											Monitor.LogOnce(String.Format(disabledConfigString, "Ginger Roots", I18n.DigGinger_Name()), LogLevel.Debug);
+											//Monitor.LogOnce(String.Format(disabledConfigString, "Ginger Roots", I18n.DigGinger_Name()), LogLevel.Debug);
 											continue;
 										}
 
@@ -463,7 +462,7 @@ namespace AutoShaker
 							}
 							else
 							{
-								Monitor.LogOnce(String.Format(disabledConfigString, obj.DisplayName, Constants.ConfigNameLookup[obj.QualifiedItemId]()), LogLevel.Debug);
+								//Monitor.LogOnce(String.Format(disabledConfigString, obj.DisplayName, Constants.ConfigNameLookup[obj.QualifiedItemId]()), LogLevel.Debug);
 								continue;
 							}
 						}
@@ -485,7 +484,7 @@ namespace AutoShaker
 							}
 							else if (_forageablePredictions.ContainsKey(vec))
 							{
-								Monitor.LogOnce(String.Format(disabledConfigString, obj.DisplayName, Constants.ConfigNameLookup[_forageablePredictions[vec]]()), LogLevel.Debug);
+								//Monitor.LogOnce(String.Format(disabledConfigString, obj.DisplayName, Constants.ConfigNameLookup[_forageablePredictions[vec]]()), LogLevel.Debug);
 								continue;
 							}
 						}
@@ -562,7 +561,7 @@ namespace AutoShaker
 				{
 					_config.IsShakerActive = !_config.IsShakerActive;
 					Task.Run(() => Helper.WriteConfig(_config)).ContinueWith((t) =>
-						this.Monitor.Log(t.Status == TaskStatus.RanToCompletion
+						Monitor.Log(t.Status == TaskStatus.RanToCompletion
 							? "Config saved successfully!"
 							: $"Saving config unsuccessful {t.Status}"));
 
@@ -607,13 +606,13 @@ namespace AutoShaker
 
 					if (season.Equals("spring") && !_config.ShakeSalmonberriesBushes)
 					{
-						Monitor.LogOnce(String.Format(disabledConfigString, "Salmonberry bushes", I18n.ShakeSalmonberries_Name()), LogLevel.Debug);
+						//Monitor.LogOnce(String.Format(disabledConfigString, "Salmonberry bushes", I18n.ShakeSalmonberries_Name()), LogLevel.Debug);
 						return false;
 					}
 
 					if (season.Equals("fall") && !_config.ShakeBlackberriesBushes)
 					{
-						Monitor.LogOnce(String.Format(disabledConfigString, "Blackberry bushes", I18n.ShakeBlackberries_Name()), LogLevel.Debug);
+						//Monitor.LogOnce(String.Format(disabledConfigString, "Blackberry bushes", I18n.ShakeBlackberries_Name()), LogLevel.Debug);
 						return false;
 					}
 
@@ -624,7 +623,7 @@ namespace AutoShaker
 				case 3:
 					if (!_config.ShakeTeaBushes)
 					{
-						Monitor.LogOnce(String.Format(disabledConfigString, "Tea bushes", I18n.ShakeTeaBushes_Name()), LogLevel.Debug);
+						//Monitor.LogOnce(String.Format(disabledConfigString, "Tea bushes", I18n.ShakeTeaBushes_Name()), LogLevel.Debug);
 						return false;
 					}
 
@@ -635,7 +634,7 @@ namespace AutoShaker
 				case 4:
 					if (!_config.ShakeWalnutBushes)
 					{
-						Monitor.LogOnce(String.Format(disabledConfigString, "Walnut bushes", I18n.ShakeWalnutBushes_Name()), LogLevel.Debug);
+						//Monitor.LogOnce(String.Format(disabledConfigString, "Walnut bushes", I18n.ShakeWalnutBushes_Name()), LogLevel.Debug);
 						return false;
 					}
 
