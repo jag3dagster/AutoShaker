@@ -1,5 +1,5 @@
 ﻿{
-  "DisabledConfig": "{{subjects}} are not being interacted because their config setting is currently disabled.",
+  "DisabledConfig": "{{subjects}} are not being interacted because the [{{configName}}] config setting is currently disabled.",
   "EodStatMessage": "\t[{{amount}}] {{subjects}} {{action}}",
 
   "Action.Future.Forage": "Forage",
@@ -29,12 +29,13 @@
   "Subject.AppleTrees": "Apple trees",
   "Subject.ApricotTrees": "Apricot trees",
   "Subject.BananaTrees": "Banana trees",
-  "Subject.BlackberryTrees": "Blackberry bushes",
+  "Subject.BlackberryBushes": "Blackberry bushes",
   "Subject.CactusFruits": "Cactus Fruits",
   "Subject.ChanterelleMushrooms": "Chanterelles mushrooms",
   "Subject.CherryTrees": "Cherry trees",
   "Subject.Clams": "Clams",
   "Subject.Cockles": "Cockles",
+  "Subject.Coconuts": "Coconuts",
   "Subject.CommonMushrooms": "Common Mushrooms",
   "Subject.Coral": "Coral",
   "Subject.Crocuses": "Crocuses",
@@ -129,8 +130,10 @@
   "WinterSection.Text": "Winter Forageable Toggles",
 
   "ArtifactSpot.Note": "This checks Artifact Spots, a.k.a 'worms', 'stems', or 'twigs', and will only dig up the spot if it holds a {{subject}}",
+  "HarvestCoconuts.Note": "This is separate from Coconuts that come from shaking Palm trees",
   "HarvestHazelnuts.Note": "This is separate from Hazelnuts that come from shaking Maple trees",
   "ShakeMapleTrees.Note": "This is separate from forageable Hazelnuts",
+  "ShakePalmTrees.Note": "This is separate from forageable Coconuts",
   "ShakeWalnutBushes.Note": "These walnuts are meant to be end game content and difficult to find. Enabling this option does trivialize this content to some degree",
 
   "FruitsReadyToShake.Name": "Minimum Fruits Ready to Shake",

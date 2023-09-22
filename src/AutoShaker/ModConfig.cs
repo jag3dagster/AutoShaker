@@ -2,6 +2,7 @@ using System;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 
+using Constants = AutoShaker.Helpers.Constants;
 using Forageable = AutoShaker.Helpers.Constants.Forageable;
 
 namespace AutoShaker
@@ -12,7 +13,7 @@ namespace AutoShaker
 		private const int MaxFruitsReady = 3;
 
 		private int _fruitsReadyToShake;
-		public int ForageableToggles;
+		public uint ForageableToggles;
 
 		#region General Properties
 
@@ -444,6 +445,17 @@ namespace AutoShaker
 			}
 		}
 
+		private bool _harvestCoconuts;
+		public bool HarvestCoconuts
+		{
+			get => _harvestCoconuts;
+			set
+			{
+				_harvestCoconuts = value;
+				UpdateForageableBit(Forageable.Coconut, value);
+			}
+		}
+
 		#endregion Desert Forageable Properties
 
 		#region Island Forageable Properties
@@ -648,7 +660,7 @@ namespace AutoShaker
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeMahoganyTrees",
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_MahoganyTrees()),
+				name: () => Constants.MahoganyName,
 				tooltip: () => I18n.ToggleAction_Description_Reward(
 					I18n.Action_Future_Shake().ToLowerInvariant(),
 					I18n.Subject_MahoganyTrees(),
@@ -664,7 +676,7 @@ namespace AutoShaker
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeMapleTrees",
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_MapleTrees()),
+				name: () => Constants.MapleName,
 				tooltip:  () => I18n.ToggleAction_Description_Reward_Note(
 					I18n.Action_Future_Shake().ToLowerInvariant(),
 					I18n.Subject_MapleTrees(),
@@ -681,7 +693,7 @@ namespace AutoShaker
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeOakTrees",
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_OakTrees()),
+				name: () => Constants.OakName,
 				tooltip: () => I18n.ToggleAction_Description_Reward(
 					I18n.Action_Future_Shake().ToLowerInvariant(),
 					I18n.Subject_OakTrees(),
@@ -697,11 +709,12 @@ namespace AutoShaker
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.ShakePalmTrees",
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_PalmTrees()),
-				tooltip: () => I18n.ToggleAction_Description_Reward(
+				name: () => Constants.PalmName,
+				tooltip: () => I18n.ToggleAction_Description_Reward_Note(
 					I18n.Action_Future_Shake().ToLowerInvariant(),
 					I18n.Subject_PalmTrees(),
-					I18n.Reward_Coconuts()),
+					I18n.Reward_Coconuts(),
+					I18n.ShakePalmTrees_Note()),
 				getValue: () => ShakePalmTrees,
 				setValue: val =>
 				{
@@ -713,7 +726,7 @@ namespace AutoShaker
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.ShakePineTrees",
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_PineTrees()),
+				name: () => Constants.PineName,
 				tooltip: () => I18n.ToggleAction_Description_Reward(
 					I18n.Action_Future_Shake().ToLowerInvariant(),
 					I18n.Subject_PineTrees(),
@@ -756,7 +769,7 @@ namespace AutoShaker
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeAppleTrees",
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_AppleTrees()),
+				name: () => Constants.AppleName,
 				tooltip: () => I18n.ToggleAction_Description_Reward(
 					I18n.Action_Future_Shake().ToLowerInvariant(),
 					I18n.Subject_PineTrees(),
@@ -772,7 +785,7 @@ namespace AutoShaker
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeApricotTrees",
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_ApricotTrees()),
+				name: () => Constants.ApricotName,
 				tooltip: () => I18n.ToggleAction_Description_Reward(
 					I18n.Action_Future_Shake().ToLowerInvariant(),
 					I18n.Subject_ApricotTrees(),
@@ -788,7 +801,7 @@ namespace AutoShaker
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeBananaTrees",
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_BananaTrees()),
+				name: () => Constants.BananaName,
 				tooltip: () => I18n.ToggleAction_Description_Reward(
 					I18n.Action_Future_Shake().ToLowerInvariant(),
 					I18n.Subject_BananaTrees(),
@@ -804,7 +817,7 @@ namespace AutoShaker
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeCherryTrees",
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_CherryTrees()),
+				name: () => Constants.CherryName,
 				tooltip: () => I18n.ToggleAction_Description_Reward(
 					I18n.Action_Future_Shake().ToLowerInvariant(),
 					I18n.Subject_CherryTrees(),
@@ -820,7 +833,7 @@ namespace AutoShaker
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeMangoTrees",
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_MangoTrees()),
+				name: () => Constants.MangoName,
 				tooltip: () => I18n.ToggleAction_Description_Reward(
 					I18n.Action_Future_Shake().ToLowerInvariant(),
 					I18n.Subject_MangoTrees(),
@@ -836,7 +849,7 @@ namespace AutoShaker
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeOrangeTrees",
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_OrangeTrees()),
+				name: () => Constants.OrangeName,
 				tooltip: () => I18n.ToggleAction_Description_Reward(
 					I18n.Action_Future_Shake().ToLowerInvariant(),
 					I18n.Subject_OrangeTrees(),
@@ -852,7 +865,7 @@ namespace AutoShaker
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.ShakePeachTrees",
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_PeachTrees()),
+				name: () => Constants.PeachName,
 				tooltip: () => I18n.ToggleAction_Description_Reward(
 					I18n.Action_Future_Shake().ToLowerInvariant(),
 					I18n.Subject_PeachTrees(),
@@ -868,7 +881,7 @@ namespace AutoShaker
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.ShakePomegranateTrees",
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_PomegranateTrees()),
+				name: () => Constants.PomegranateName,
 				tooltip: () => I18n.ToggleAction_Description_Reward(
 					I18n.Action_Future_Shake().ToLowerInvariant(),
 					I18n.Subject_PomegranateTrees(),
@@ -900,7 +913,7 @@ namespace AutoShaker
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeSalmonberries",
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_SalmonberryBushes()),
+				name: () => Constants.SalmonberryName,
 				tooltip: () => I18n.ToggleAction_Description_Reward(
 					I18n.Action_Future_Shake().ToLowerInvariant(),
 					I18n.Subject_SalmonberryBushes(),
@@ -916,10 +929,10 @@ namespace AutoShaker
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeBlackberries",
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_BlackberryTrees()),
+				name: () => Constants.BlackberryName,
 				tooltip: () => I18n.ToggleAction_Description_Reward(
 					I18n.Action_Future_Shake().ToLowerInvariant(),
-					I18n.Subject_BlackberryTrees(),
+					I18n.Subject_BlackberryBushes(),
 					I18n.Reward_Blackberries()),
 				getValue: () => ShakeBlackberriesBushes,
 				setValue: val =>
@@ -932,7 +945,7 @@ namespace AutoShaker
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeTeaBushes",
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_TeaBushes()),
+				name: () => Constants.TeaName,
 				tooltip: () => I18n.ToggleAction_Description_Reward(
 					I18n.Action_Future_Shake().ToLowerInvariant(),
 					I18n.Subject_TeaBushes(),
@@ -948,7 +961,7 @@ namespace AutoShaker
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.ShakeWalnutBushes",
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_WalnutBushes()),
+				name: () => Constants.WalnutName,
 				tooltip: () => I18n.ToggleAction_Description_Reward_Note(
 					I18n.Action_Future_Shake().ToLowerInvariant(),
 					I18n.Subject_WalnutBushes(),
@@ -981,7 +994,7 @@ namespace AutoShaker
 			// PullDaffodils
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Daffodils()),
+				name: () => Constants.DaffodilName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_Daffodils()),
 				getValue: () => PullDaffodils,
 				setValue: val =>
@@ -993,7 +1006,7 @@ namespace AutoShaker
 			// PullDandelions
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Dandelions()),
+				name: () => Constants.DandelionName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_Dandelions()),
 				getValue: () => PullDandelions,
 				setValue: val =>
@@ -1005,7 +1018,7 @@ namespace AutoShaker
 			// PullLeeks
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Leeks()),
+				name: () => Constants.LeekName,
 				tooltip:  () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_Leeks()),
 				getValue: () => PullLeeks,
 				setValue: val =>
@@ -1017,7 +1030,7 @@ namespace AutoShaker
 			// PullSpringOnions
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_SpringOnions()),
+				name: () => Constants.SpringOnionName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_SpringOnions()),
 				getValue: () => PullSpringOnions,
 				setValue: val =>
@@ -1029,7 +1042,7 @@ namespace AutoShaker
 			// PullWildHorseradishes
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_WildHorseradishes()),
+				name: () => Constants.WildHorseradishName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_WildHorseradishes()),
 				getValue: () => PullWildHorseradishes,
 				setValue: val =>
@@ -1046,7 +1059,7 @@ namespace AutoShaker
 			// PullGrapes
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Grapes()),
+				name: () => Constants.GrapeName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_Grapes()),
 				getValue: () => PullGrapes,
 				setValue: val =>
@@ -1058,7 +1071,7 @@ namespace AutoShaker
 			// PullSpiceBerries
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_SpiceBerries()),
+				name: () => Constants.SpiceBerryName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_SpiceBerries()),
 				getValue: () => PullSpiceBerries,
 				setValue: val =>
@@ -1070,7 +1083,7 @@ namespace AutoShaker
 			// PullSweetPeas
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_SweetPeas()),
+				name: () => Constants.SweetPeaName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_SweetPeas()),
 				getValue: () => PullSweetPeas,
 				setValue: val =>
@@ -1087,7 +1100,7 @@ namespace AutoShaker
 			// PullHazelnuts
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Hazelnuts()),
+				name: () => Constants.HazelnutName,
 				tooltip: () => I18n.ToggleAction_Description_Note(
 					I18n.Action_Future_Forage().ToLowerInvariant(),
 					I18n.Subject_Hazelnuts(),
@@ -1102,7 +1115,7 @@ namespace AutoShaker
 			// PullWildPlums
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_WildPlums()),
+				name: () => Constants.WildPlumName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_WildPlums()),
 				getValue: () => PullWildPlums,
 				setValue: val =>
@@ -1119,7 +1132,7 @@ namespace AutoShaker
 			// PullCrocuses
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Crocuses()),
+				name: () => Constants.CrocusName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_Crocuses()),
 				getValue: () => PullCrocuses,
 				setValue: val =>
@@ -1131,7 +1144,7 @@ namespace AutoShaker
 			// PullCrystalFruits
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_CrystalFruits()),
+				name: () => Constants.CrystalFruitName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_CrystalFruits()),
 				getValue: () => PullCrystalFruits,
 				setValue: val =>
@@ -1143,7 +1156,7 @@ namespace AutoShaker
 			// PullHolly
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Holly()),
+				name: () => Constants.HollyName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_Holly()),
 				getValue: () => PullHolly,
 				setValue: val =>
@@ -1155,7 +1168,7 @@ namespace AutoShaker
 			// DigSnowYams
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_SnowYams()),
+				name: () => Constants.SnowYamName,
 				tooltip: () => I18n.ToggleAction_Description_Note(
 					I18n.Action_Future_Forage().ToLowerInvariant(),
 					I18n.Subject_SnowYams(),
@@ -1170,7 +1183,7 @@ namespace AutoShaker
 			// DigWinterRoots
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_WinterRoots()),
+				name: () => Constants.WinterRootName,
 				tooltip: () => I18n.ToggleAction_Description_Note(
 					I18n.Action_Future_Forage().ToLowerInvariant(),
 					I18n.Subject_WinterRoots(),
@@ -1190,7 +1203,7 @@ namespace AutoShaker
 			// PullChanterelles
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_ChanterelleMushrooms()),
+				name: () => Constants.ChanterelleName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_ChanterelleMushrooms()),
 				getValue: () => PullChanterelles,
 				setValue: val =>
@@ -1202,7 +1215,7 @@ namespace AutoShaker
 			// PullCommonMushrooms
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_CommonMushrooms()),
+				name: () => Constants.CommonMushroomName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_CommonMushrooms()),
 				getValue: () => PullCommonMushrooms,
 				setValue: val =>
@@ -1214,7 +1227,7 @@ namespace AutoShaker
 			// PullMagmaCaps
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_MagmaCaps()),
+				name: () => Constants.MagmaCapName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_MagmaCaps()),
 				getValue: () => PullMagmaCaps,
 				setValue: val =>
@@ -1226,7 +1239,7 @@ namespace AutoShaker
 			// PullMorels
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_MorelMushrooms()),
+				name: () => Constants.MorelName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_MorelMushrooms()),
 				getValue: () => PullMorels,
 				setValue: val =>
@@ -1238,7 +1251,7 @@ namespace AutoShaker
 			// PullPurpleMushrooms
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_PurpleMushrooms()),
+				name: () => Constants.PurpleMushroomName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_PurpleMushrooms()),
 				getValue: () => PullPurpleMushrooms,
 				setValue: val =>
@@ -1250,7 +1263,7 @@ namespace AutoShaker
 			// PullRedMushrooms
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_RedMushrooms()),
+				name: () => Constants.RedMushroomName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_RedMushrooms()),
 				getValue: () => PullRedMushrooms,
 				setValue: val =>
@@ -1267,7 +1280,7 @@ namespace AutoShaker
 			// PullClams
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Clams()),
+				name: () => Constants.ClamName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_Clams()),
 				getValue: () => PullClams,
 				setValue: val =>
@@ -1279,7 +1292,7 @@ namespace AutoShaker
 			// PullCockles
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Cockles()),
+				name: () => Constants.CockleName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_Cockles()),
 				getValue: () => PullCockles,
 				setValue: val =>
@@ -1291,7 +1304,7 @@ namespace AutoShaker
 			// PullCoral
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Coral()),
+				name: () => Constants.CoralName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_Coral()),
 				getValue: () => PullCoral,
 				setValue: val =>
@@ -1303,8 +1316,8 @@ namespace AutoShaker
 			// PullMussels
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_MorelMushrooms()),
-				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_MorelMushrooms()),
+				name: () => Constants.MusselName,
+				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_Mussels()),
 				getValue: () => PullMussels,
 				setValue: val =>
 				{
@@ -1315,7 +1328,7 @@ namespace AutoShaker
 			// PullNautilusShells
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_NautilusShells()),
+				name: () => Constants.NautilusName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_NautilusShells()),
 				getValue: () => PullNautilusShells,
 				setValue: val =>
@@ -1327,7 +1340,7 @@ namespace AutoShaker
 			// PullOysters
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Oysters()),
+				name: () => Constants.OysterName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_Oysters()),
 				getValue: () => PullOysters,
 				setValue: val =>
@@ -1339,7 +1352,7 @@ namespace AutoShaker
 			// PullRainbowShells
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_RainbowShells()),
+				name: () => Constants.RainbowShellName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_RainbowShells()),
 				getValue: () => PullRainbowShells,
 				setValue: val =>
@@ -1351,7 +1364,7 @@ namespace AutoShaker
 			// PullSeaUrchins
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_SeaUrchins()),
+				name: () => Constants.SeaUrchinName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_SeaUrchins()),
 				getValue: () => PullSeaUrchins,
 				setValue: val =>
@@ -1363,7 +1376,7 @@ namespace AutoShaker
 			// PullSeaweed
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Seaweed()),
+				name: () => Constants.SeaweedName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_Seaweed()),
 				getValue: () => PullSeaweed,
 				setValue: val =>
@@ -1377,10 +1390,10 @@ namespace AutoShaker
 				mod: manifest,
 				text: I18n.CaveSection_Text);
 
-			// PullfiddleheadFerns
+			// PullFiddleheadFerns
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_FiddleheadFerns()),
+				name: () => Constants.FiddleheadFernName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_FiddleheadFerns()),
 				getValue: () => PullFiddleheadFerns,
 				setValue: val =>
@@ -1397,12 +1410,27 @@ namespace AutoShaker
 			// PullCactusFruits
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_CactusFruits()),
+				name: () => Constants.CactusFruitName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_CactusFruits()),
 				getValue: () => PullCactusFruits,
 				setValue: val =>
 				{
 					PullCactusFruits = val;
+					UpdateEnabled();
+				});
+
+			// HarvestCoconuts
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				name: () => Constants.CoconutName,
+				tooltip:() => I18n.ToggleAction_Description_Note(
+					I18n.Action_Future_Forage().ToLowerInvariant(),
+					I18n.Subject_Coconuts(),
+					I18n.HarvestCoconuts_Note()),
+				getValue: () => HarvestCoconuts,
+				setValue: val =>
+				{
+					HarvestCoconuts = val;
 					UpdateEnabled();
 				});
 
@@ -1416,7 +1444,7 @@ namespace AutoShaker
 			// DigGinger
 			gmcmApi.AddBoolOption(
 				mod: manifest,
-				name: () => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_GingerRoots()),
+				name: () => Constants.GingerName,
 				tooltip: () => I18n.ToggleAction_Description(I18n.Action_Future_Forage().ToLowerInvariant(), I18n.Subject_GingerRoots()),
 				getValue: () => DigGinger,
 				setValue: val =>
@@ -1453,38 +1481,7 @@ namespace AutoShaker
 				|| ShakeTeaBushes
 				|| ShakeWalnutBushes;
 
-			AnyForageablesEnabled = PullDaffodils
-				|| PullDandelions
-				|| PullLeeks
-				|| PullSpringOnions
-				|| PullWildHorseradishes
-				|| PullGrapes
-				|| PullSpiceBerries
-				|| PullSweetPeas
-				|| PullHazelnuts
-				|| PullWildPlums
-				|| PullCrocuses
-				|| PullCrystalFruits
-				|| PullHolly
-				|| DigSnowYams
-				|| DigWinterRoots
-				|| PullChanterelles
-				|| PullCommonMushrooms
-				|| PullMagmaCaps
-				|| PullMorels
-				|| PullPurpleMushrooms
-				|| PullRedMushrooms
-				|| PullClams
-				|| PullCockles
-				|| PullCoral
-				|| PullMussels
-				|| PullNautilusShells
-				|| PullOysters
-				|| PullRainbowShells
-				|| PullSeaUrchins
-				|| PullSeaweed
-				|| PullFiddleheadFerns
-				|| DigGinger;
+			AnyForageablesEnabled = ForageableToggles > 0;
 
 			AnyShakeEnabled = AnyRegularTreeEnabled || AnyFruitTreeEnabled || AnyBushEnabled || AnyForageablesEnabled;
 		}
@@ -1493,11 +1490,11 @@ namespace AutoShaker
 		{
 			if (enabled)
 			{
-				ForageableToggles |= (int)forageble;
+				ForageableToggles |= (uint)forageble;
 			}
 			else
 			{
-				ForageableToggles &= ~(int)forageble;
+				ForageableToggles &= ~(uint)forageble;
 			}
 		}
 	}

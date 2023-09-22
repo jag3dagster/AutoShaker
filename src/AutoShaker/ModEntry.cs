@@ -353,7 +353,7 @@ namespace AutoShaker
 									case "8":
 										if (!_config.ShakeMangoTrees)
 										{
-											//Monitor.LogOnce(String.Format(disabledConfigString, "Mango trees", I18n.ShakeMangoTrees_Name()), LogLevel.Debug);
+											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_MangoTrees(), Constants.MangoName), LogLevel.Debug);
 											continue;
 										}
 
@@ -398,7 +398,7 @@ namespace AutoShaker
 									case "1":
 										if (!_config.PullSpringOnions)
 										{
-											//Monitor.LogOnce(String.Format(disabledConfigString, "Spring Onions", I18n.PullSpringOnions_Name()), LogLevel.Debug);
+											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_SpringOnions(), Constants.SpringOnionName), LogLevel.Debug);
 											continue;
 										}
 
@@ -410,14 +410,14 @@ namespace AutoShaker
 										hoeDirtFeature.destroyCrop(false);
 										Game1.playSound("harvest");
 
-										_trackingCounts["Forageables"].AddOrIncrement("Spring Onions");
+										_trackingCounts["Forageables"].AddOrIncrement(I18n.Subject_SpringOnions());
 										break;
 
 									// Ginger
 									case "2":
 										if (!_config.DigGinger)
 										{
-											//Monitor.LogOnce(String.Format(disabledConfigString, "Ginger Roots", I18n.DigGinger_Name()), LogLevel.Debug);
+											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_GingerRoots(), Constants.GingerName), LogLevel.Debug);
 											continue;
 										}
 
@@ -426,7 +426,7 @@ namespace AutoShaker
 										hoeDirtFeature.crop?.hitWithHoe((int)tile.X, (int)tile.Y, hoeDirtFeature.Location, hoeDirtFeature);
 										hoeDirtFeature.destroyCrop(false);
 
-										_trackingCounts["Forageables"].AddOrIncrement("Ginger roots");
+										_trackingCounts["Forageables"].AddOrIncrement(I18n.Subject_GingerRoots());
 										break;
 
 									default:
@@ -450,7 +450,7 @@ namespace AutoShaker
 					{
 						if (obj.isForage() && obj.IsSpawnedObject && !obj.questItem.Value)
 						{
-							if ((_config.ForageableToggles & (int)Constants.ForageableLookup[obj.QualifiedItemId]) > 0)
+							if ((_config.ForageableToggles & (uint)Constants.ForageableLookup[obj.QualifiedItemId]) > 0)
 							{
 								ForageItem(obj, vec, Utility.CreateDaySaveRandom(vec.X, vec.Y * 777f), 7, true);
 
@@ -462,13 +462,13 @@ namespace AutoShaker
 							}
 							else
 							{
-								//Monitor.LogOnce(String.Format(disabledConfigString, obj.DisplayName, Constants.ConfigNameLookup[obj.QualifiedItemId]()), LogLevel.Debug);
+								Monitor.LogOnce(I18n.DisabledConfig(obj.DisplayName, Constants.ConfigNameLookup[obj.QualifiedItemId]), LogLevel.Debug);
 								continue;
 							}
 						}
 						else if (obj.QualifiedItemId == "(O)590")
 						{
-							if (_forageablePredictions.ContainsKey(vec) && (_config.ForageableToggles & (int)Constants.ForageableLookup[_forageablePredictions[vec]]) > 0)
+							if (_forageablePredictions.ContainsKey(vec) && (_config.ForageableToggles & (uint)Constants.ForageableLookup[_forageablePredictions[vec]]) > 0)
 							{
 								Game1.currentLocation.digUpArtifactSpot((int)vec.X, (int)vec.Y, Game1.player);
 
@@ -480,11 +480,12 @@ namespace AutoShaker
 								Game1.currentLocation.playSound("hoeHit");
 								Game1.currentLocation.removeObject(vec, false);
 
+								_trackingCounts["Forageables"].AddOrIncrement(ItemRegistry.GetDataOrErrorItem(_forageablePredictions[vec]).DisplayName);
 								_forageablesCount += 1;
 							}
 							else if (_forageablePredictions.ContainsKey(vec))
 							{
-								//Monitor.LogOnce(String.Format(disabledConfigString, obj.DisplayName, Constants.ConfigNameLookup[_forageablePredictions[vec]]()), LogLevel.Debug);
+								Monitor.LogOnce(I18n.DisabledConfig(obj.DisplayName, Constants.ConfigNameLookup[_forageablePredictions[vec]]), LogLevel.Debug);
 								continue;
 							}
 						}
@@ -606,39 +607,39 @@ namespace AutoShaker
 
 					if (season.Equals("spring") && !_config.ShakeSalmonberriesBushes)
 					{
-						//Monitor.LogOnce(String.Format(disabledConfigString, "Salmonberry bushes", I18n.ShakeSalmonberries_Name()), LogLevel.Debug);
+						Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_SalmonberryBushes(), Constants.SalmonberryName), LogLevel.Debug);
 						return false;
 					}
 
 					if (season.Equals("fall") && !_config.ShakeBlackberriesBushes)
 					{
-						//Monitor.LogOnce(String.Format(disabledConfigString, "Blackberry bushes", I18n.ShakeBlackberries_Name()), LogLevel.Debug);
+						Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_BlackberryBushes(), Constants.BlackberryName), LogLevel.Debug);
 						return false;
 					}
 
-					_trackingCounts["Bushes"].AddOrIncrement(season.Equals("spring") ? "Salmonberry bushes" : "Blackberry bushes");
+					_trackingCounts["Bushes"].AddOrIncrement(season.Equals("spring") ? I18n.Subject_SalmonberryBushes() : I18n.Subject_BlackberryBushes());
 					break;
 
 				// Tea Bushes
 				case 3:
 					if (!_config.ShakeTeaBushes)
 					{
-						//Monitor.LogOnce(String.Format(disabledConfigString, "Tea bushes", I18n.ShakeTeaBushes_Name()), LogLevel.Debug);
+						Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_TeaBushes(), Constants.TeaName), LogLevel.Debug);
 						return false;
 					}
 
-					_trackingCounts["Bushes"].AddOrIncrement("Tea bushes");
+					_trackingCounts["Bushes"].AddOrIncrement(I18n.Subject_TeaBushes());
 					break;
 
 				// Walnut Bushes
 				case 4:
 					if (!_config.ShakeWalnutBushes)
 					{
-						//Monitor.LogOnce(String.Format(disabledConfigString, "Walnut bushes", I18n.ShakeWalnutBushes_Name()), LogLevel.Debug);
+						Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_WalnutBushes(), Constants.WalnutName), LogLevel.Debug);
 						return false;
 					}
 
-					_trackingCounts["Bushes"].AddOrIncrement("Walnut bushes");
+					_trackingCounts["Bushes"].AddOrIncrement(I18n.Subject_WalnutBushes());
 					break;
 
 				default:
