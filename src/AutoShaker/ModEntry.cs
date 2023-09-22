@@ -183,11 +183,11 @@ namespace AutoShaker
 									case "4": // Winter
 										if (!_config.ShakeOakTrees)
 										{
-											//Monitor.LogOnce(String.Format(disabledConfigString, "Oak trees", I18n.ShakeOakTrees_Name()), LogLevel.Debug);
+											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_OakTrees(), Constants.OakName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Seed Trees"].AddOrIncrement("Oak trees");
+										_trackingCounts["Seed Trees"].AddOrIncrement(I18n.Subject_OakTrees());
 										break;
 
 									// Maple Tree
@@ -195,33 +195,33 @@ namespace AutoShaker
 									case "5": // Winter
 										if (!_config.ShakeMapleTrees)
 										{
-											//Monitor.LogOnce(String.Format(disabledConfigString, "Maple trees", I18n.ShakeMapleTrees_Name()), LogLevel.Debug);
+											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_MapleTrees(), Constants.MapleName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Seed Trees"].AddOrIncrement("Maple trees");
+										_trackingCounts["Seed Trees"].AddOrIncrement(I18n.Subject_MapleTrees());
 										break;
 
 									// Pine Tree
 									case "3":
 										if (!_config.ShakePineTrees)
 										{
-											//Monitor.LogOnce(String.Format(disabledConfigString, "Pine trees", I18n.ShakePineTrees_Name()), LogLevel.Debug);
+											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_PineTrees(), Constants.PineName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Seed Trees"].AddOrIncrement("Pine trees");
+										_trackingCounts["Seed Trees"].AddOrIncrement(I18n.Subject_PineTrees());
 										break;
 
 									// Mahogany Tree
 									case "8":
 										if (!_config.ShakeMahoganyTrees)
 										{
-											//Monitor.LogOnce(String.Format(disabledConfigString, "Mahogany trees", I18n.ShakeMahoganyTrees_Name()), LogLevel.Debug);
+											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_MahoganyTrees(), Constants.MahoganyName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Seed Trees"].AddOrIncrement("Mahogany trees");
+										_trackingCounts["Seed Trees"].AddOrIncrement(I18n.Subject_MahoganyTrees());
 										break;
 
 									// Palm Tree
@@ -229,11 +229,11 @@ namespace AutoShaker
 									case "9": // Island
 										if (!_config.ShakePalmTrees)
 										{
-											//Monitor.LogOnce(String.Format(disabledConfigString, "Palm trees", I18n.ShakePalmTrees_Name()), LogLevel.Debug);
+											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_PalmTrees(), Constants.PalmName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Seed Trees"].AddOrIncrement("Palm trees");
+										_trackingCounts["Seed Trees"].AddOrIncrement(I18n.Subject_PalmTrees());
 										break;
 
 									default:
@@ -276,77 +276,77 @@ namespace AutoShaker
 									case "0":
 										if (!_config.ShakeCherryTrees)
 										{
-											//Monitor.LogOnce(String.Format(disabledConfigString, "Cherry trees", I18n.ShakeCherryTrees_Name()), LogLevel.Debug);
+											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_CherryTrees(), Constants.CherryName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Fruit Trees"].AddOrIncrement("Cherry trees");
+										_trackingCounts["Fruit Trees"].AddOrIncrement(I18n.Subject_CherryTrees());
 										break;
 
 									// Apricot Tree
 									case "1":
 										if (!_config.ShakeApricotTrees)
 										{
-											//Monitor.LogOnce(String.Format(disabledConfigString, "Apricot trees", I18n.ShakeApricotTrees_Name()), LogLevel.Debug);
+											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_ApricotTrees(), Constants.ApricotName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Fruit Trees"].AddOrIncrement("Apricot trees");
+										_trackingCounts["Fruit Trees"].AddOrIncrement(I18n.Subject_ApricotTrees());
 										break;
 
 									// Orange Tree
 									case "2":
 										if (!_config.ShakeOrangeTrees)
 										{
-											//Monitor.LogOnce(String.Format(disabledConfigString, "Orange trees", I18n.ShakeOrangeTrees_Name()), LogLevel.Debug);
+											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_OrangeTrees(), Constants.OrangeName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Fruit Trees"].AddOrIncrement("Orange trees");
+										_trackingCounts["Fruit Trees"].AddOrIncrement(I18n.Subject_OrangeTrees());
 										break;
 
 									// Peach Tree
 									case "3":
 										if (!_config.ShakePeachTrees)
 										{
-											//Monitor.LogOnce(String.Format(disabledConfigString, "Peach trees", I18n.ShakePeachTrees_Name()), LogLevel.Debug);
+											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_PeachTrees(), Constants.PeachName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Fruit Trees"].AddOrIncrement("Peach trees");
+										_trackingCounts["Fruit Trees"].AddOrIncrement(I18n.Subject_PeachTrees());
 										break;
 
 									// Pomegranate Tree
 									case "4":
 										if (!_config.ShakePomegranateTrees)
 										{
-											//Monitor.LogOnce(String.Format(disabledConfigString, "Pomegranate trees", I18n.ShakePomegranateTrees_Name()), LogLevel.Debug);
+											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_PomegranateTrees(), Constants.PomegranateName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Fruit Trees"].AddOrIncrement("Pomegranate trees");
+										_trackingCounts["Fruit Trees"].AddOrIncrement(I18n.Subject_PomegranateTrees());
 										break;
 
 									// Apple Tree
 									case "5":
 										if (!_config.ShakeAppleTrees)
 										{
-											//Monitor.LogOnce(String.Format(disabledConfigString, "Apple trees", I18n.ShakeAppleTrees_Name()), LogLevel.Debug);
+											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_AppleTrees(), Constants.AppleName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Fruit Trees"].AddOrIncrement("Apple trees");
+										_trackingCounts["Fruit Trees"].AddOrIncrement(I18n.Subject_AppleTrees());
 										break;
 
 									// Banana Tree
 									case "7":
 										if (!_config.ShakeBananaTrees)
 										{
-											//Monitor.LogOnce(String.Format(disabledConfigString, "Banana trees", I18n.ShakeBananaTrees_Name()), LogLevel.Debug);
+											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_BananaTrees(), Constants.BananaName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Fruit Trees"].AddOrIncrement("Banana trees");
+										_trackingCounts["Fruit Trees"].AddOrIncrement(I18n.Subject_BananaTrees());
 										break;
 
 									// Mango Tree
@@ -357,7 +357,7 @@ namespace AutoShaker
 											continue;
 										}
 
-										_trackingCounts["Fruit Trees"].AddOrIncrement("Mango trees");
+										_trackingCounts["Fruit Trees"].AddOrIncrement(I18n.Subject_MangoTrees());
 										break;
 
 									default:
