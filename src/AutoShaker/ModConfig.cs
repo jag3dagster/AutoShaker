@@ -771,7 +771,7 @@ namespace AutoShaker
 				name: () => Constants.AppleName,
 				tooltip: () => I18n.Option_ToggleAction_Description_Reward(
 					I18n.Action_Shake_Future().ToLowerInvariant(),
-					I18n.Subject_PineTrees(),
+					I18n.Subject_AppleTrees(),
 					I18n.Reward_Apples()),
 				getValue: () => ShakeAppleTrees,
 				setValue: val =>

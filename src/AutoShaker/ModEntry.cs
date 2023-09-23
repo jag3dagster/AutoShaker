@@ -23,11 +23,6 @@ namespace AutoShaker
 	/// </summary>
 	public class ModEntry : Mod
 	{
-		private static string BushKey => I18n.Key_Bushes();
-		private static string ForageableKey => I18n.Key_Forageables();
-		private static string FruitTreeKey => I18n.Key_FruitTrees();
-		private static string SeedTreeKey => I18n.Key_SeedTrees();
-
 		private ModConfig _config = new();
 
 		private Vector2 previousTilePosition;
@@ -36,13 +31,12 @@ namespace AutoShaker
 		private readonly HashSet<TerrainFeature> _interactedFeatures = new();
 
 		private readonly Dictionary<Vector2, string> _forageablePredictions = new();
-		private readonly Dictionary<string, Dictionary<string, int>> _trackingCounts = new()
-		{
-			{ BushKey, new() },
-			{ ForageableKey, new() },
-			{ FruitTreeKey, new() },
-			{ SeedTreeKey, new() }
-		};
+		private Dictionary<string, Dictionary<string, int>> _trackingCounts = new();
+
+		private string BushKey = string.Empty;
+		private string ForageableKey = string.Empty;
+		private string FruitTreeKey = string.Empty;
+		private string SeedTreeKey = string.Empty;
 
 		/// <summary>
 		/// The mod entry point, called after the mod is first loaded.
@@ -51,6 +45,19 @@ namespace AutoShaker
 		public override void Entry(IModHelper helper)
 		{
 			I18n.Init(helper.Translation);
+
+			BushKey = I18n.Key_Bushes();
+			ForageableKey = I18n.Key_Forageables();
+			FruitTreeKey = I18n.Key_FruitTrees();
+			SeedTreeKey = I18n.Key_SeedTrees();
+
+			_trackingCounts = new()
+			{
+				{ BushKey, new() },
+				{ ForageableKey, new() },
+				{ FruitTreeKey, new() },
+				{ SeedTreeKey, new() }
+			};
 
 			_config = helper.ReadConfig<ModConfig>();
 			_config.UpdateEnabled();
@@ -571,7 +578,7 @@ namespace AutoShaker
 					var message = I18n.Message_AutoShakerToggled(state());
 
 					Monitor.Log(message, LogLevel.Info);
-					Game1.addHUDMessage(new HUDMessage(message));
+					Game1.addHUDMessage(new HUDMessage(message) { noIcon = true });
 				}
 			}
 		}
