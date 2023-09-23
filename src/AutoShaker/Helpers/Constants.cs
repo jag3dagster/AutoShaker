@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoShaker.Helpers
 {
@@ -111,57 +108,57 @@ namespace AutoShaker.Helpers
 			{ "(O)88", Forageable.Coconut }
 		};
 
-		public static string AppleName => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_AppleTrees());
-		public static string ApricotName => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_ApricotTrees());
-		public static string BananaName => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_BananaTrees());
-		public static string BlackberryName => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_BlackberryBushes());
-		public static string CactusFruitName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_CactusFruits());
-		public static string ChanterelleName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_ChanterelleMushrooms());
-		public static string CherryName => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_CherryTrees());
-		public static string ClamName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Clams());
-		public static string CockleName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Cockles());
-		public static string CoconutName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Coconuts());
-		public static string CommonMushroomName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_CommonMushrooms());
-		public static string CoralName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Coral());
-		public static string CrocusName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Crocuses());
-		public static string CrystalFruitName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_CrystalFruits());
-		public static string DaffodilName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Daffodils());
-		public static string DandelionName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Dandelions());
-		public static string FiddleheadFernName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_FiddleheadFerns());
-		public static string GingerName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_GingerRoots());
-		public static string GrapeName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Grapes());
-		public static string HazelnutName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Hazelnuts());
-		public static string HollyName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Holly());
-		public static string LeekName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Leeks());
-		public static string MagmaCapName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_MagmaCaps());
-		public static string MahoganyName => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_MahoganyTrees());
-		public static string MangoName => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_MangoTrees());
-		public static string MapleName => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_MapleTrees());
-		public static string MorelName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_MorelMushrooms());
-		public static string MusselName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Mussels());
-		public static string NautilusName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_NautilusShells());
-		public static string OakName => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_OakTrees());
-		public static string OrangeName => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_OrangeTrees());
-		public static string OysterName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Oysters());
-		public static string PalmName => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_PalmTrees());
-		public static string PeachName => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_PeachTrees());
-		public static string PineName => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_PineTrees());
-		public static string PomegranateName => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_PomegranateTrees());
-		public static string PurpleMushroomName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_PurpleMushrooms());
-		public static string RainbowShellName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_RainbowShells());
-		public static string RedMushroomName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_RedMushrooms());
-		public static string SalmonberryName => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_SalmonberryBushes());
-		public static string SeaUrchinName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_SeaUrchins());
-		public static string SeaweedName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_Seaweed());
-		public static string SnowYamName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_SnowYams());
-		public static string SpiceBerryName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_SpiceBerries());
-		public static string SpringOnionName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_SpringOnions());
-		public static string SweetPeaName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_SweetPeas());
-		public static string TeaName => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_TeaBushes());
-		public static string WalnutName => I18n.ToggleAction_Name(I18n.Action_Future_Shake(), I18n.Subject_WalnutBushes());
-		public static string WildHorseradishName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_WildHorseradishes());
-		public static string WildPlumName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_WildPlums());
-		public static string WinterRootName => I18n.ToggleAction_Name(I18n.Action_Future_Forage(), I18n.Subject_WinterRoots());
+		public static string AppleName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_AppleTrees());
+		public static string ApricotName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_ApricotTrees());
+		public static string BananaName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_BananaTrees());
+		public static string BlackberryName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_BlackberryBushes());
+		public static string CactusFruitName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_CactusFruits());
+		public static string ChanterelleName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_ChanterelleMushrooms());
+		public static string CherryName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_CherryTrees());
+		public static string ClamName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_Clams());
+		public static string CockleName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_Cockles());
+		public static string CoconutName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_Coconuts());
+		public static string CommonMushroomName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_CommonMushrooms());
+		public static string CoralName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_Coral());
+		public static string CrocusName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_Crocuses());
+		public static string CrystalFruitName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_CrystalFruits());
+		public static string DaffodilName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_Daffodils());
+		public static string DandelionName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_Dandelions());
+		public static string FiddleheadFernName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_FiddleheadFerns());
+		public static string GingerName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_GingerRoots());
+		public static string GrapeName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_Grapes());
+		public static string HazelnutName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_Hazelnuts());
+		public static string HollyName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_Holly());
+		public static string LeekName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_Leeks());
+		public static string MagmaCapName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_MagmaCaps());
+		public static string MahoganyName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_MahoganyTrees());
+		public static string MangoName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_MangoTrees());
+		public static string MapleName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_MapleTrees());
+		public static string MorelName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_MorelMushrooms());
+		public static string MusselName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_Mussels());
+		public static string NautilusShellName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_NautilusShells());
+		public static string OakName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_OakTrees());
+		public static string OrangeName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_OrangeTrees());
+		public static string OysterName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_Oysters());
+		public static string PalmName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_PalmTrees());
+		public static string PeachName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_PeachTrees());
+		public static string PineName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_PineTrees());
+		public static string PomegranateName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_PomegranateTrees());
+		public static string PurpleMushroomName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_PurpleMushrooms());
+		public static string RainbowShellName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_RainbowShells());
+		public static string RedMushroomName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_RedMushrooms());
+		public static string SalmonberryName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_SalmonberryBushes());
+		public static string SeaUrchinName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_SeaUrchins());
+		public static string SeaweedName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_Seaweed());
+		public static string SnowYamName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_SnowYams());
+		public static string SpiceBerryName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_SpiceBerries());
+		public static string SpringOnionName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_SpringOnions());
+		public static string SweetPeaName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_SweetPeas());
+		public static string TeaName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_TeaBushes());
+		public static string WalnutName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_WalnutBushes());
+		public static string WildHorseradishName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_WildHorseradishes());
+		public static string WildPlumName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_WildPlums());
+		public static string WinterRootName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_WinterRoots());
 
 		public static readonly Dictionary<string, string> ConfigNameLookup = new()
 		{
@@ -200,7 +197,7 @@ namespace AutoShaker.Helpers
 			{ "(O)718", CockleName },
 			{ "(O)393", CoralName },
 			{ "(O)719", MusselName },
-			{ "(O)392", NautilusName },
+			{ "(O)392", NautilusShellName },
 			{ "(O)723", OysterName },
 			{ "(O)394", RainbowShellName },
 			{ "(O)397", SeaUrchinName },
@@ -212,6 +209,109 @@ namespace AutoShaker.Helpers
 			// Desert
 			{ "(O)90", CactusFruitName },
 			{ "(O)88", CoconutName }
+		};
+
+		public static readonly Dictionary<string, string> SubjectNameLookup = new()
+		{
+			// Spring
+			{ "(O)18", I18n.Subject_Daffodils() },
+			{ "(O)22", I18n.Subject_Dandelions() },
+			{ "(O)20", I18n.Subject_Leeks() },
+			{ "(O)16", I18n.Subject_WildHorseradishes() },
+
+			// Summer
+			{ "(O)398", I18n.Subject_Grapes() },
+			{ "(O)396", I18n.Subject_SpiceBerries() },
+			{ "(O)402", I18n.Subject_SweetPeas() },
+
+			// Fall
+			{ "(O)408", I18n.Subject_Hazelnuts() },
+			{ "(O)406", I18n.Subject_WildPlums() },
+
+			// Winter
+			{ "(O)418", I18n.Subject_Crocuses() },
+			{ "(O)414", I18n.Subject_CrystalFruits() },
+			{ "(O)283", I18n.Subject_Holly() },
+			{ "(O)416", I18n.Subject_SnowYams() },
+			{ "(O)412", I18n.Subject_WinterRoots() },
+
+			// Mushrooms
+			{ "(O)281", I18n.Subject_ChanterelleMushrooms() },
+			{ "(O)404", I18n.Subject_CommonMushrooms() },
+			{ "(O)851", I18n.Subject_MagmaCaps() },
+			{ "(O)257", I18n.Subject_MorelMushrooms() },
+			{ "(O)422", I18n.Subject_PurpleMushrooms() },
+			{ "(O)420", I18n.Subject_RedMushrooms() },
+
+			// Beach
+			{ "(O)372", I18n.Subject_Clams() },
+			{ "(O)718", I18n.Subject_Cockles() },
+			{ "(O)393", I18n.Subject_Coral() },
+			{ "(O)719", I18n.Subject_Mussels() },
+			{ "(O)392", I18n.Subject_NautilusShells() },
+			{ "(O)723", I18n.Subject_Oysters() },
+			{ "(O)394", I18n.Subject_RainbowShells() },
+			{ "(O)397", I18n.Subject_SeaUrchins() },
+			{ "(O)152", I18n.Subject_Seaweed() },
+
+			// Cave
+			{ "(O)259", I18n.Subject_FiddleheadFerns() },
+
+			// Desert
+			{ "(O)90", I18n.Subject_CactusFruits() },
+			{ "(O)88", I18n.Subject_Coconuts() }
+		};
+
+		public static readonly Dictionary<Func<string>, Func<string>> ActionLookup = new()
+		{
+			// Forageables
+			// Spring
+			{ I18n.Subject_Daffodils, I18n.Action_Forage_Past },
+			{ I18n.Subject_Dandelions, I18n.Action_Forage_Past },
+			{ I18n.Subject_Leeks, I18n.Action_Forage_Past },
+			{ I18n.Subject_WildHorseradishes, I18n.Action_Forage_Past },
+
+			// Summer
+			{ I18n.Subject_Grapes, I18n.Action_Forage_Past },
+			{ I18n.Subject_SpiceBerries, I18n.Action_Forage_Past },
+			{ I18n.Subject_SweetPeas, I18n.Action_Forage_Past },
+
+			// Fall
+			{ I18n.Subject_Hazelnuts, I18n.Action_Forage_Past },
+			{ I18n.Subject_WildPlums, I18n.Action_Forage_Past },
+
+			// Winter
+			{ I18n.Subject_Crocuses, I18n.Action_Forage_Past },
+			{ I18n.Subject_CrystalFruits, I18n.Action_Forage_Past },
+			{ I18n.Subject_Holly, I18n.Action_Forage_Past },
+			{ I18n.Subject_SnowYams, I18n.Action_Forage_Past },
+			{ I18n.Subject_WinterRoots, I18n.Action_Forage_Past },
+
+			// Mushrooms
+			{ I18n.Subject_ChanterelleMushrooms, I18n.Action_Forage_Past },
+			{ I18n.Subject_CommonMushrooms, I18n.Action_Forage_Past },
+			{ I18n.Subject_MagmaCaps, I18n.Action_Forage_Past },
+			{ I18n.Subject_MorelMushrooms, I18n.Action_Forage_Past },
+			{ I18n.Subject_PurpleMushrooms, I18n.Action_Forage_Past },
+			{ I18n.Subject_RedMushrooms, I18n.Action_Forage_Past },
+
+			// Beach
+			{ I18n.Subject_Clams, I18n.Action_Forage_Past },
+			{ I18n.Subject_Cockles, I18n.Action_Forage_Past },
+			{ I18n.Subject_Coral, I18n.Action_Forage_Past },
+			{ I18n.Subject_Mussels, I18n.Action_Forage_Past },
+			{ I18n.Subject_NautilusShells, I18n.Action_Forage_Past },
+			{ I18n.Subject_Oysters, I18n.Action_Forage_Past },
+			{ I18n.Subject_RainbowShells, I18n.Action_Forage_Past },
+			{ I18n.Subject_SeaUrchins, I18n.Action_Forage_Past },
+			{ I18n.Subject_Seaweed, I18n.Action_Forage_Past },
+
+			// Cave
+			{ I18n.Subject_FiddleheadFerns, I18n.Action_Forage_Past },
+
+			// Desert
+			{ I18n.Subject_CactusFruits, I18n.Action_Forage_Past },
+			{ I18n.Subject_Coconuts, I18n.Action_Forage_Past }
 		};
 	}
 }

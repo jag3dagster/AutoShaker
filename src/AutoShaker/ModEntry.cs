@@ -23,8 +23,10 @@ namespace AutoShaker
 	/// </summary>
 	public class ModEntry : Mod
 	{
-		static readonly string disabledConfigString = "{0} are not being interacted with due to the [{1}] config option being disabled.";
-		static readonly string eodStatMessage = Environment.NewLine + "\t[{0}] {1} shaken";
+		private static string BushKey => I18n.Key_Bushes();
+		private static string ForageableKey => I18n.Key_Forageables();
+		private static string FruitTreeKey => I18n.Key_FruitTrees();
+		private static string SeedTreeKey => I18n.Key_SeedTrees();
 
 		private ModConfig _config = new();
 
@@ -36,13 +38,11 @@ namespace AutoShaker
 		private readonly Dictionary<Vector2, string> _forageablePredictions = new();
 		private readonly Dictionary<string, Dictionary<string, int>> _trackingCounts = new()
 		{
-			{ "Seed Trees", new() },
-			{ "Fruit Trees", new() },
-			{ "Bushes", new() },
-			{ "Forageables", new() }
+			{ BushKey, new() },
+			{ ForageableKey, new() },
+			{ FruitTreeKey, new() },
+			{ SeedTreeKey, new() }
 		};
-
-		private int _forageablesCount;
 
 		/// <summary>
 		/// The mod entry point, called after the mod is first loaded.
@@ -142,11 +142,11 @@ namespace AutoShaker
 			var playerMagnetism = Game1.player.GetAppliedMagneticRadius();
 			var radius = _config.UsePlayerMagnetism ? playerMagnetism / Game1.tileSize : _config.ShakeDistance;
 
-			if (_config.AnyRegularTreeEnabled || _config.AnyFruitTreeEnabled || _config.AnyBushEnabled || _config.AnyForageablesEnabled)
+			if (_config.AnySeedTreeEnabled || _config.AnyFruitTreeEnabled || _config.AnyBushEnabled || _config.AnyForageablesEnabled)
 			{
 				foreach (var vec in GetTilesToCheck(playerTileLocationPoint, radius))
 				{
-					// Regular Trees, Fruit Trees, Bushes, Spring Onions, Ginger
+					// Seed Trees, Fruit Trees, Bushes, Spring Onions, Ginger
 					if (Game1.currentLocation.terrainFeatures.TryGetValue(vec, out var feature)
 						&& feature is Tree or FruitTree or Bush or HoeDirt
 						&& !_ignoredFeatures.Contains(feature)
@@ -159,7 +159,7 @@ namespace AutoShaker
 						{
 							// Tree Cases
 							case Tree treeFeature:
-								if (!_config.AnyRegularTreeEnabled) continue;
+								if (!_config.AnySeedTreeEnabled) continue;
 								if (treeFeature.stump.Value) toIgnore = true;
 								if (treeFeature.growthStage.Value < 5 || !treeFeature.hasSeed.Value) toIgnore = true;
 								if (Game1.player.ForagingLevel < 1) toIgnore = true;
@@ -183,11 +183,11 @@ namespace AutoShaker
 									case "4": // Winter
 										if (!_config.ShakeOakTrees)
 										{
-											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_OakTrees(), Constants.OakName), LogLevel.Debug);
+											Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_OakTrees(), Constants.OakName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Seed Trees"].AddOrIncrement(I18n.Subject_OakTrees());
+										_trackingCounts[SeedTreeKey].AddOrIncrement(I18n.Subject_OakTrees());
 										break;
 
 									// Maple Tree
@@ -195,33 +195,33 @@ namespace AutoShaker
 									case "5": // Winter
 										if (!_config.ShakeMapleTrees)
 										{
-											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_MapleTrees(), Constants.MapleName), LogLevel.Debug);
+											Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_MapleTrees(), Constants.MapleName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Seed Trees"].AddOrIncrement(I18n.Subject_MapleTrees());
+										_trackingCounts[SeedTreeKey].AddOrIncrement(I18n.Subject_MapleTrees());
 										break;
 
 									// Pine Tree
 									case "3":
 										if (!_config.ShakePineTrees)
 										{
-											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_PineTrees(), Constants.PineName), LogLevel.Debug);
+											Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_PineTrees(), Constants.PineName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Seed Trees"].AddOrIncrement(I18n.Subject_PineTrees());
+										_trackingCounts[SeedTreeKey].AddOrIncrement(I18n.Subject_PineTrees());
 										break;
 
 									// Mahogany Tree
 									case "8":
 										if (!_config.ShakeMahoganyTrees)
 										{
-											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_MahoganyTrees(), Constants.MahoganyName), LogLevel.Debug);
+											Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_MahoganyTrees(), Constants.MahoganyName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Seed Trees"].AddOrIncrement(I18n.Subject_MahoganyTrees());
+										_trackingCounts[SeedTreeKey].AddOrIncrement(I18n.Subject_MahoganyTrees());
 										break;
 
 									// Palm Tree
@@ -229,11 +229,11 @@ namespace AutoShaker
 									case "9": // Island
 										if (!_config.ShakePalmTrees)
 										{
-											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_PalmTrees(), Constants.PalmName), LogLevel.Debug);
+											Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_PalmTrees(), Constants.PalmName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Seed Trees"].AddOrIncrement(I18n.Subject_PalmTrees());
+										_trackingCounts[SeedTreeKey].AddOrIncrement(I18n.Subject_PalmTrees());
 										break;
 
 									default:
@@ -254,7 +254,7 @@ namespace AutoShaker
 
 								if (fruitTree.fruit.Count < _config.FruitsReadyToShake)
 								{
-									Monitor.LogOnce($"Fruit trees will not be shaken until they have the mnumber of fruits available specified by the [{I18n.FruitsReadyToShake_Name()}] config option. Expected Number of Fruits: [{_config.FruitsReadyToShake}]", LogLevel.Debug);
+									Monitor.LogOnce(I18n.Log_FruitNotReady(_config.FruitsReadyToShake, I18n.Option_FruitsReadyToShake_Name()), LogLevel.Debug);
 									toIgnore = true;
 								}
 
@@ -276,88 +276,88 @@ namespace AutoShaker
 									case "0":
 										if (!_config.ShakeCherryTrees)
 										{
-											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_CherryTrees(), Constants.CherryName), LogLevel.Debug);
+											Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_CherryTrees(), Constants.CherryName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Fruit Trees"].AddOrIncrement(I18n.Subject_CherryTrees());
+										_trackingCounts[FruitTreeKey].AddOrIncrement(I18n.Subject_CherryTrees());
 										break;
 
 									// Apricot Tree
 									case "1":
 										if (!_config.ShakeApricotTrees)
 										{
-											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_ApricotTrees(), Constants.ApricotName), LogLevel.Debug);
+											Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_ApricotTrees(), Constants.ApricotName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Fruit Trees"].AddOrIncrement(I18n.Subject_ApricotTrees());
+										_trackingCounts[FruitTreeKey].AddOrIncrement(I18n.Subject_ApricotTrees());
 										break;
 
 									// Orange Tree
 									case "2":
 										if (!_config.ShakeOrangeTrees)
 										{
-											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_OrangeTrees(), Constants.OrangeName), LogLevel.Debug);
+											Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_OrangeTrees(), Constants.OrangeName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Fruit Trees"].AddOrIncrement(I18n.Subject_OrangeTrees());
+										_trackingCounts[FruitTreeKey].AddOrIncrement(I18n.Subject_OrangeTrees());
 										break;
 
 									// Peach Tree
 									case "3":
 										if (!_config.ShakePeachTrees)
 										{
-											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_PeachTrees(), Constants.PeachName), LogLevel.Debug);
+											Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_PeachTrees(), Constants.PeachName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Fruit Trees"].AddOrIncrement(I18n.Subject_PeachTrees());
+										_trackingCounts[FruitTreeKey].AddOrIncrement(I18n.Subject_PeachTrees());
 										break;
 
 									// Pomegranate Tree
 									case "4":
 										if (!_config.ShakePomegranateTrees)
 										{
-											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_PomegranateTrees(), Constants.PomegranateName), LogLevel.Debug);
+											Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_PomegranateTrees(), Constants.PomegranateName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Fruit Trees"].AddOrIncrement(I18n.Subject_PomegranateTrees());
+										_trackingCounts[FruitTreeKey].AddOrIncrement(I18n.Subject_PomegranateTrees());
 										break;
 
 									// Apple Tree
 									case "5":
 										if (!_config.ShakeAppleTrees)
 										{
-											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_AppleTrees(), Constants.AppleName), LogLevel.Debug);
+											Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_AppleTrees(), Constants.AppleName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Fruit Trees"].AddOrIncrement(I18n.Subject_AppleTrees());
+										_trackingCounts[FruitTreeKey].AddOrIncrement(I18n.Subject_AppleTrees());
 										break;
 
 									// Banana Tree
 									case "7":
 										if (!_config.ShakeBananaTrees)
 										{
-											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_BananaTrees(), Constants.BananaName), LogLevel.Debug);
+											Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_BananaTrees(), Constants.BananaName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Fruit Trees"].AddOrIncrement(I18n.Subject_BananaTrees());
+										_trackingCounts[FruitTreeKey].AddOrIncrement(I18n.Subject_BananaTrees());
 										break;
 
 									// Mango Tree
 									case "8":
 										if (!_config.ShakeMangoTrees)
 										{
-											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_MangoTrees(), Constants.MangoName), LogLevel.Debug);
+											Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_MangoTrees(), Constants.MangoName), LogLevel.Debug);
 											continue;
 										}
 
-										_trackingCounts["Fruit Trees"].AddOrIncrement(I18n.Subject_MangoTrees());
+										_trackingCounts[FruitTreeKey].AddOrIncrement(I18n.Subject_MangoTrees());
 										break;
 
 									default:
@@ -398,7 +398,7 @@ namespace AutoShaker
 									case "1":
 										if (!_config.PullSpringOnions)
 										{
-											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_SpringOnions(), Constants.SpringOnionName), LogLevel.Debug);
+											Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_SpringOnions(), Constants.SpringOnionName), LogLevel.Debug);
 											continue;
 										}
 
@@ -410,14 +410,14 @@ namespace AutoShaker
 										hoeDirtFeature.destroyCrop(false);
 										Game1.playSound("harvest");
 
-										_trackingCounts["Forageables"].AddOrIncrement(I18n.Subject_SpringOnions());
+										_trackingCounts[ForageableKey].AddOrIncrement(I18n.Subject_SpringOnions());
 										break;
 
 									// Ginger
 									case "2":
 										if (!_config.DigGinger)
 										{
-											Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_GingerRoots(), Constants.GingerName), LogLevel.Debug);
+											Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_GingerRoots(), Constants.GingerName), LogLevel.Debug);
 											continue;
 										}
 
@@ -426,7 +426,7 @@ namespace AutoShaker
 										hoeDirtFeature.crop?.hitWithHoe((int)tile.X, (int)tile.Y, hoeDirtFeature.Location, hoeDirtFeature);
 										hoeDirtFeature.destroyCrop(false);
 
-										_trackingCounts["Forageables"].AddOrIncrement(I18n.Subject_GingerRoots());
+										_trackingCounts[ForageableKey].AddOrIncrement(I18n.Subject_GingerRoots());
 										break;
 
 									default:
@@ -434,7 +434,6 @@ namespace AutoShaker
 										continue;
 								}
 
-								_forageablesCount += 1;
 								_interactedFeatures.Add(hoeDirtFeature);
 								break;
 
@@ -457,18 +456,19 @@ namespace AutoShaker
 								Game1.player.currentLocation.removeObject(vec, showDestroyedObject: false);
 								Game1.playSound("harvest");
 
-								_trackingCounts["Forageables"].AddOrIncrement(obj.DisplayName);
-								_forageablesCount += 1;
+								_trackingCounts[ForageableKey].AddOrIncrement(Constants.SubjectNameLookup[obj.QualifiedItemId]);
 							}
 							else
 							{
-								Monitor.LogOnce(I18n.DisabledConfig(obj.DisplayName, Constants.ConfigNameLookup[obj.QualifiedItemId]), LogLevel.Debug);
+								Monitor.LogOnce(I18n.Log_DisabledConfig(obj.DisplayName, Constants.ConfigNameLookup[obj.QualifiedItemId]), LogLevel.Debug);
 								continue;
 							}
 						}
 						else if (obj.QualifiedItemId == "(O)590")
 						{
-							if (_forageablePredictions.ContainsKey(vec) && (_config.ForageableToggles & (uint)Constants.ForageableLookup[_forageablePredictions[vec]]) > 0)
+							var predictedId = _forageablePredictions[vec];
+
+							if (_forageablePredictions.ContainsKey(vec) && (_config.ForageableToggles & (uint)Constants.ForageableLookup[predictedId]) > 0)
 							{
 								Game1.currentLocation.digUpArtifactSpot((int)vec.X, (int)vec.Y, Game1.player);
 
@@ -480,12 +480,11 @@ namespace AutoShaker
 								Game1.currentLocation.playSound("hoeHit");
 								Game1.currentLocation.removeObject(vec, false);
 
-								_trackingCounts["Forageables"].AddOrIncrement(ItemRegistry.GetDataOrErrorItem(_forageablePredictions[vec]).DisplayName);
-								_forageablesCount += 1;
+								_trackingCounts[ForageableKey].AddOrIncrement(Constants.SubjectNameLookup[predictedId]);
 							}
 							else if (_forageablePredictions.ContainsKey(vec))
 							{
-								Monitor.LogOnce(I18n.DisabledConfig(obj.DisplayName, Constants.ConfigNameLookup[_forageablePredictions[vec]]), LogLevel.Debug);
+								Monitor.LogOnce(I18n.Log_DisabledConfig(obj.DisplayName, Constants.ConfigNameLookup[predictedId]), LogLevel.Debug);
 								continue;
 							}
 						}
@@ -526,18 +525,23 @@ namespace AutoShaker
 		private void OnDayEnding(object? sender, DayEndingEventArgs e)
 		{
 			StringBuilder statMessage = new($"{Environment.NewLine}{Utility.getDateString()}:{Environment.NewLine}");
-			statMessage.AppendLine($"[{_interactedFeatures.Count + _forageablesCount}] Total Interactions");
+			statMessage.AppendLine(I18n.Log_Eod_TotalStat(_trackingCounts.SumAll()));
 
 			foreach (var category in _trackingCounts)
 			{
 				if (category.Value.Count > 0)
 				{
-					statMessage.AppendLine($"{category.Key}:");
+					statMessage.AppendLine($"[{category.Value.SumAll()}] {category.Key}:");
 
 					foreach (var interactable in category.Value)
 					{
-						if (interactable.Value <= 0) Monitor.Log($"Invalid forageable value for {interactable.Key}: {interactable.Value}. How did we get here?", LogLevel.Warn);
-						statMessage.AppendLine(String.Format(eodStatMessage, interactable.Value, interactable.Key));
+						if (interactable.Value <= 0)
+						{
+							Monitor.Log($"Invalid forageable value for {interactable.Key}: {interactable.Value}. How did we get here?", LogLevel.Warn);
+							continue;
+						}
+
+						statMessage.AppendLine(I18n.Log_Eod_Stat(interactable.Value, interactable.Key));
 					}
 				}
 
@@ -551,7 +555,6 @@ namespace AutoShaker
 
 			_ignoredFeatures.Clear();
 			_interactedFeatures.Clear();
-			_forageablesCount = 0;
 		}
 
 		private void OnButtonsChanged(object? sender, ButtonsChangedEventArgs e)
@@ -562,11 +565,10 @@ namespace AutoShaker
 				{
 					_config.IsShakerActive = !_config.IsShakerActive;
 					Task.Run(() => Helper.WriteConfig(_config)).ContinueWith((t) =>
-						Monitor.Log(t.Status == TaskStatus.RanToCompletion
-							? "Config saved successfully!"
-							: $"Saving config unsuccessful {t.Status}"));
+						Monitor.Log(t.Status == TaskStatus.RanToCompletion ? "Config saved successfully!" : $"Saving config unsuccessful {t.Status}", LogLevel.Debug));
 
-					var message = "AutoShaker has been " + (_config.IsShakerActive ? "ACTIVATED" : "DEACTIVATED");
+					Func<string> state = _config.IsShakerActive ? I18n.State_Activated : I18n.State_Deactivated;
+					var message = I18n.Message_AutoShakerToggled(state());
 
 					Monitor.Log(message, LogLevel.Info);
 					Game1.addHUDMessage(new HUDMessage(message));
@@ -607,39 +609,39 @@ namespace AutoShaker
 
 					if (season.Equals("spring") && !_config.ShakeSalmonberriesBushes)
 					{
-						Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_SalmonberryBushes(), Constants.SalmonberryName), LogLevel.Debug);
+						Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_SalmonberryBushes(), Constants.SalmonberryName), LogLevel.Debug);
 						return false;
 					}
 
 					if (season.Equals("fall") && !_config.ShakeBlackberriesBushes)
 					{
-						Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_BlackberryBushes(), Constants.BlackberryName), LogLevel.Debug);
+						Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_BlackberryBushes(), Constants.BlackberryName), LogLevel.Debug);
 						return false;
 					}
 
-					_trackingCounts["Bushes"].AddOrIncrement(season.Equals("spring") ? I18n.Subject_SalmonberryBushes() : I18n.Subject_BlackberryBushes());
+					_trackingCounts[BushKey].AddOrIncrement(season.Equals("spring") ? I18n.Subject_SalmonberryBushes() : I18n.Subject_BlackberryBushes());
 					break;
 
 				// Tea Bushes
 				case 3:
 					if (!_config.ShakeTeaBushes)
 					{
-						Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_TeaBushes(), Constants.TeaName), LogLevel.Debug);
+						Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_TeaBushes(), Constants.TeaName), LogLevel.Debug);
 						return false;
 					}
 
-					_trackingCounts["Bushes"].AddOrIncrement(I18n.Subject_TeaBushes());
+					_trackingCounts[BushKey].AddOrIncrement(I18n.Subject_TeaBushes());
 					break;
 
 				// Walnut Bushes
 				case 4:
 					if (!_config.ShakeWalnutBushes)
 					{
-						Monitor.LogOnce(I18n.DisabledConfig(I18n.Subject_WalnutBushes(), Constants.WalnutName), LogLevel.Debug);
+						Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_WalnutBushes(), Constants.WalnutName), LogLevel.Debug);
 						return false;
 					}
 
-					_trackingCounts["Bushes"].AddOrIncrement(I18n.Subject_WalnutBushes());
+					_trackingCounts[BushKey].AddOrIncrement(I18n.Subject_WalnutBushes());
 					break;
 
 				default:

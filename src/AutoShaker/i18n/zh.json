@@ -1,19 +1,10 @@
 {
-  "IsShakerActive.Name": "开启自动摇树",
-  "IsShakerActive.Tooltip": "决定<自动摇树>的开启",
-
-  "ToggleShaker.Name": "自动摇树快捷键",
-  "ToggleShaker.Tooltip": "将自动摇树功能与特定键位绑定",
-
-  "UsePlayerMagnetism.Name": "磁力摇树",
-
-  "ShakeDistance.Name": "摇树距离",
-
-
-  "FruitsReadyToShake.Name": "多少果实才可摇果树",
-  "FruitsReadyToShake.Tooltip": "能触发自动摇树时，每棵果树至少要有多少果实。",
-
-
-  "ShakeTeaBushes.Name": "要摇茶树吗?",
-  "ShakeTeaBushes.Tooltip": "是否会摇动您走过的茶丛以获取茶叶。"
+  "Option.FruitsReadyToShake.Name": "多少果实才可摇果树",
+  "Option.FruitsReadyToShake.Tooltip": "能触发自动摇树时，每棵果树至少要有多少果实。",
+  "Option.IsShakerActive.Name": "开启自动摇树",
+  "Option.IsShakerActive.Tooltip": "决定<自动摇树>的开启",
+  "Option.ShakeDistance.Name": "摇树距离",
+  "Option.ToggleShaker.Name": "自动摇树快捷键",
+  "Option.ToggleShaker.Tooltip": "将自动摇树功能与特定键位绑定",
+  "Option.UsePlayerMagnetism.Name": "磁力摇树"
 }

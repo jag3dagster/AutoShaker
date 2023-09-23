@@ -5,8 +5,36 @@ namespace AutoShaker.Helpers
 {
 	public static class DictionaryExtensions
 	{
-		public static void AddOrIncrement<TKey>(this Dictionary<TKey, int> dict, TKey key) where TKey : IEquatable<TKey>
+		public static int SumAll(this Dictionary<string, int> dict)
 		{
+			var sum = 0;
+
+			foreach (var kvp in dict)
+			{
+				sum += kvp.Value;
+			}
+
+			return sum;
+		}
+
+		public static int SumAll(this Dictionary<string, Dictionary<string, int>> dict)
+		{
+			var sum = 0;
+
+			foreach (var kvp in dict)
+			{
+				if (kvp.Value == null) continue;
+
+				sum += kvp.Value.SumAll();
+			}
+
+			return sum;
+		}
+
+		public static void AddOrIncrement<TKey>(this Dictionary<TKey, int> dict, TKey key) where TKey : notnull
+		{
+			if (dict == null) throw new ArgumentNullException("Dictionary cannot be null");
+
 			if (dict.ContainsKey(key))
 			{
 				dict[key] += 1;

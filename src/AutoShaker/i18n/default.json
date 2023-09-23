@@ -1,12 +1,54 @@
 ﻿{
-  "DisabledConfig": "{{subjects}} are not being interacted because the [{{configName}}] config setting is currently disabled.",
-  "EodStatMessage": "\t[{{amount}}] {{subjects}} {{action}}",
+  "Action.Forage.Future": "Forage",
+  "Action.Forage.Past": "Foraged",
+  "Action.Shake.Future": "Shake",
+  "Action.Shake.Past": "Shaken",
 
-  "Action.Future.Forage": "Forage",
-  "Action.Future.Shake": "Shake",
+  "Key.Bushes": "Bushes",
+  "Key.Forageables": "Forageables",
+  "Key.FruitTrees": "Fruit Trees",
+  "Key.SeedTrees": "Seed Trees",
 
-  "Action.Past.Forage": "Foraged",
-  "Action.Past.Shake": "shaken",
+  "Link.BackToMain.Text": "@ Main Menu",
+  "Link.Bushes.Text": "Bush Toggles >",
+  "Link.Forageables.Text": "Forageable Toggles >",
+  "Link.FruitTrees.Text": "Fruit Tree Toggles >",
+  "Link.SeedTrees.Text": "Seed Tree Toggles >",
+
+  "Log.DisabledConfig": "{{subjects}} are not being interacted because the [{{configName}}] config setting is currently disabled.",
+  "Log.Eod.Stat": "\t[{{amount}}] {{subjects}}",
+  "Log.Eod.TotalStat": "[{{amount}}] Total Interactions",
+  "Log.FruitNotReady": "Fruit trees will not be shaken until they have {{amount}} fruits available. This can be set with the {{configName}} config setting.",
+
+  "Message.AutoShakerToggled": "AutoShaker has been {{state}}",
+
+  "Note.ArtifactSpot": "This checks Artifact Spots, a.k.a 'worms', 'stems', or 'twigs', and will only dig up the spot if it holds a {{subject}}",
+  "Note.ForageCoconuts": "This is separate from Coconuts that come from shaking Palm trees",
+  "Note.ForageHazelnuts": "This is separate from Hazelnuts that come from shaking Maple trees",
+  "Note.ShakeMapleTrees": "This is separate from forageable Hazelnuts",
+  "Note.ShakePalmTrees": "This is separate from forageable Coconuts",
+  "Note.ShakeWalnutBushes": "These walnuts are meant to be end game content and difficult to find. Enabling this option does trivialize this content to some degree",
+
+  "Option.FruitsReadyToShake.Name": "Minimum Fruits Ready to Shake",
+  "Option.FruitsReadyToShake.Tooltip": "Minimum amount of fruits a Fruit Tree should have ready before the AutoShaker shakes the tree.",
+  "Option.IsShakerActive.Name": "Shaker Is Active?",
+  "Option.IsShakerActive.Tooltip": "Whether or not the AutoShaker mod is active.",
+  "Option.ShakeDistance.Name": "Shake Distance",
+  "Option.ShakeDistance.Tooltip": "Distance to shake bushes when '{{playerMagnetismName}}' is disabled.",
+  "Option.ToggleAction.Name": "{{action}} {{subjects}}?",
+  "Option.ToggleAction.Description": "Whether or not to {{action}} {{subject}}.",
+  "Option.ToggleAction.Description.Note": "Whether or not to {{action}} {{subject}}. NOTE: {{note}}.",
+  "Option.ToggleAction.Description.Reward": "Whether or not to {{action}} {{subject}} for {{reward}}.",
+  "Option.ToggleAction.Description.Reward.Note": "Whether or not to {{action}} {{subject}} for {{reward}}. NOTE: {{note}}.",
+  "Option.ToggleShaker.Name": "Toggle Shaker Keybind",
+  "Option.ToggleShaker.Tooltip": "Keybinding to toggle the AutoShaker on and off.",
+  "Option.UsePlayerMagnetism.Name": "Use Player Magnetism Distance?",
+  "Option.UsePlayerMagnetism.Tooltip": "Whether or not the AutoShaker will shake bushes at the same distance players can pick up items. Note: Overrides '{{shakeDistanceName}}'",
+
+  "Page.Bushes.Title": "Bushes",
+  "Page.Forageables.Title": "Forageables",
+  "Page.FruitTrees.Title": "Fruit Trees",
+  "Page.SeedTrees.Title": "Seed Trees",
 
   "Reward.Acorns": "Acorns",
   "Reward.Apples": "Apples",
@@ -25,6 +67,25 @@
   "Reward.Pomegranates": "Pomegranates",
   "Reward.Salmonberries": "Salmonberries",
   "Reward.TeaLeaves": "Tea Leaves",
+
+  "Section.Beach.Text": "Beach Forageable Toggles",
+  "Section.Bushes.Text": "Bush Toggles",
+  "Section.Cave.Text": "Cave Forageable Toggles",
+  "Section.Desert.Text": "Desert Forageable Toggles",
+  "Section.Fall.Text": "Fall Forageable Toggles",
+  "Section.Forageables.Text": "Forageable Toggles",
+  "Section.FruitTrees.Text": "Fruit Tree Toggles",
+  "Section.General.Text": "General Options",
+  "Section.Island.Text": "Island Forageable Toggles",
+  "Section.Links.Text": "Toggle Option Category Pages",
+  "Section.Mushrooms.Text": "Mushroom Toggles",
+  "Section.SeedTree.Text": "Seed Tree Toggles",
+  "Section.Spring.Text": "Spring Forageable Toggles",
+  "Section.Summer.Text": "Summer Forageable Toggles",
+  "Section.Winter.Text": "Winter Forageable Toggles",
+
+  "State.Activated": "ACTIVATED",
+  "State.Deactivated": "DEACTIVATED",
 
   "Subject.AppleTrees": "Apple trees",
   "Subject.ApricotTrees": "Apricot trees",
@@ -78,64 +139,5 @@
   "Subject.WildHorseradishes": "Wild Horseradishes",
   "Subject.WildPlums": "Wild Plums",
   "Subject.WinterRoots": "Winter Roots",
-  "Subject.WinterRoot": "Winter Root",
-
-
-  "GeneralSection.Text": "General Options",
-
-  "IsShakerActive.Name": "Shaker Is Active?",
-  "IsShakerActive.Tooltip": "Whether or not the AutoShaker mod is active.",
-
-  "ToggleShaker.Name": "Toggle Shaker Keybind",
-  "ToggleShaker.Tooltip": "Keybinding to toggle the AutoShaker on and off.",
-
-  "UsePlayerMagnetism.Name": "Use Player Magnetism Distance?",
-  "UsePlayerMagnetism.Tooltip": "Whether or not the AutoShaker will shake bushes at the same distance players can pick up items. Note: Overrides '{{shakeDistanceName}}'",
-
-  "ShakeDistance.Name": "Shake Distance",
-  "ShakeDistance.Tooltip": "Distance to shake bushes when '{{playerMagnetismName}}' is disabled.",
-
-  "LinkSection.Text": "Toggle Option Category Pages",
-  "LinkSection.Link.RegularTrees": "Seed Tree Toggles >",
-  "LinkSection.Link.FruitTrees": "Fruit Tree Toggles >",
-  "LinkSection.Link.Bushes": "Bush Toggles >",
-  "LinkSection.Link.Forageables": "Forageable Toggles >",
-  "LinkSection.Link.BackToMain": "@ Main Menu",
-
-
-  "ToggleAction.Name": "{{action}} {{subjects}}?",
-  "ToggleAction.Description": "Whether or not to {{action}} {{subject}}.",
-  "ToggleAction.Description.Note": "Whether or not to {{action}} {{subject}}. NOTE: {{note}}.",
-  "ToggleAction.Description.Reward": "Whether or not to {{action}} {{subject}} for {{reward}}.",
-  "ToggleAction.Description.Reward.Note": "Whether or not to {{action}} {{subject}} for {{reward}}. NOTE: {{note}}.",
-
-
-  "BushesPage.Title": "Bushes",
-  "ForageablesPage.Title": "Forageables",
-  "FruitTreePage.Title": "Fruit Trees",
-  "RegularTreePage.Title": "Seed Trees",
-
-  "BeachSection.Text": "Beach Forageable Toggles",
-  "BushesSection.Text": "Bush Toggles",
-  "CaveSection.Text": "Cave Forageable Toggles",
-  "DesertSection.Text": "Desert Forageable Toggles",
-  "FallSection.Text": "Fall Forageable Toggles",
-  "ForageablesSection.Text": "Forageable Toggles",
-  "FruitTreeSection.Text": "Fruit Tree Toggles",
-  "IslandSection.Text": "Island Forageable Toggles",
-  "MushroomSection.Text": "Mushroom Toggles",
-  "RegularTreeSection.Text": "Seed Tree Toggles",
-  "SpringSection.Text": "Spring Forageable Toggles",
-  "SummerSection.Text": "Summer Forageable Toggles",
-  "WinterSection.Text": "Winter Forageable Toggles",
-
-  "ArtifactSpot.Note": "This checks Artifact Spots, a.k.a 'worms', 'stems', or 'twigs', and will only dig up the spot if it holds a {{subject}}",
-  "HarvestCoconuts.Note": "This is separate from Coconuts that come from shaking Palm trees",
-  "HarvestHazelnuts.Note": "This is separate from Hazelnuts that come from shaking Maple trees",
-  "ShakeMapleTrees.Note": "This is separate from forageable Hazelnuts",
-  "ShakePalmTrees.Note": "This is separate from forageable Coconuts",
-  "ShakeWalnutBushes.Note": "These walnuts are meant to be end game content and difficult to find. Enabling this option does trivialize this content to some degree",
-
-  "FruitsReadyToShake.Name": "Minimum Fruits Ready to Shake",
-  "FruitsReadyToShake.Tooltip": "Minimum amount of fruits a Fruit Tree should have ready before the AutoShaker shakes the tree."
+  "Subject.WinterRoot": "Winter Root"
 }
