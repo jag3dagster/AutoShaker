@@ -11,6 +11,7 @@ using StardewValley.Extensions;
 using StardewValley.GameData.Locations;
 using StardewValley.Internal;
 using StardewValley.TerrainFeatures;
+using StardewValley.Tools;
 using AutoShaker.Helpers;
 
 using Constants = AutoShaker.Helpers.Constants;
@@ -428,6 +429,12 @@ namespace AutoShaker
 											continue;
 										}
 
+										if (_config.RequireHoe && !Game1.player.Items.Any(i => i is Hoe))
+										{
+											Monitor.LogOnce(I18n.Log_MissingHoe(I18n.Subject_GingerRoots(), I18n.Option_RequireHoe_Name()), LogLevel.Debug);
+											continue;
+										}
+
 										tile = hoeDirtFeature.Tile;
 
 										hoeDirtFeature.crop?.hitWithHoe((int)tile.X, (int)tile.Y, hoeDirtFeature.Location, hoeDirtFeature);
@@ -473,9 +480,17 @@ namespace AutoShaker
 						}
 						else if (obj.QualifiedItemId == "(O)590")
 						{
+							if (!_forageablePredictions.ContainsKey(vec)) continue;
+
 							var predictedId = _forageablePredictions[vec];
 
-							if (_forageablePredictions.ContainsKey(vec) && (_config.ForageableToggles & (uint)Constants.ForageableLookup[predictedId]) > 0)
+							if (_config.RequireHoe && !Game1.player.Items.Any(i => i is Hoe))
+							{
+								Monitor.LogOnce(I18n.Log_MissingHoe(Constants.SubjectNameLookup[predictedId], I18n.Option_RequireHoe_Name()), LogLevel.Debug);
+								continue;
+							}
+
+							if ((_config.ForageableToggles & (uint)Constants.ForageableLookup[predictedId]) > 0)
 							{
 								Game1.currentLocation.digUpArtifactSpot((int)vec.X, (int)vec.Y, Game1.player);
 

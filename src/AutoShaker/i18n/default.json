@@ -19,6 +19,7 @@
   "Log.Eod.Stat": "\t[{{amount}}] {{subjects}}",
   "Log.Eod.TotalStat": "[{{amount}}] Total Interactions",
   "Log.FruitNotReady": "Fruit trees will not be shaken until they have {{amount}} fruits available. This can be set with the {{configName}} config setting.",
+  "Log.MissingHoe": "{{subject}} will not foraged because no Hoe was found in the player's inventory. This settings can be turned off by disabling {{configName}}",
 
   "Message.AutoShakerToggled": "AutoShaker has been {{state}}",
 

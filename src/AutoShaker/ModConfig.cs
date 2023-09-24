@@ -21,6 +21,7 @@ namespace AutoShaker
 		public KeybindList ToggleShakerKeybind { get; set; } = new KeybindList();
 		public bool UsePlayerMagnetism { get; set; }
 		public int ShakeDistance { get; set; }
+		public bool RequireHoe { get; set; }
 
 		public bool AnyShakeEnabled { get; set; }
 
@@ -477,6 +478,7 @@ namespace AutoShaker
 
 			UsePlayerMagnetism = false;
 			ShakeDistance = 2;
+			RequireHoe = true;
 
 			AnyShakeEnabled = true;
 
@@ -621,6 +623,15 @@ namespace AutoShaker
 				tooltip: () => I18n.Option_ShakeDistance_Tooltip(I18n.Option_UsePlayerMagnetism_Name()),
 				getValue: () => ShakeDistance,
 				setValue: val => ShakeDistance = val);
+
+			// RequireHoe
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				fieldId: "AutoShaker.RequireHoe",
+				name: I18n.Option_RequireHoe_Name,
+				tooltip: I18n.Option_RequireHoe_Tooltip,
+				getValue: () => RequireHoe,
+				setValue: val => RequireHoe = val);
 
 			/* Page Links Section */
 

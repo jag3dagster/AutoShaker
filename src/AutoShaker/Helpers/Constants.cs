@@ -261,57 +261,5 @@ namespace AutoShaker.Helpers
 			{ "(O)90", I18n.Subject_CactusFruits() },
 			{ "(O)88", I18n.Subject_Coconuts() }
 		};
-
-		public static readonly Dictionary<Func<string>, Func<string>> ActionLookup = new()
-		{
-			// Forageables
-			// Spring
-			{ I18n.Subject_Daffodils, I18n.Action_Forage_Past },
-			{ I18n.Subject_Dandelions, I18n.Action_Forage_Past },
-			{ I18n.Subject_Leeks, I18n.Action_Forage_Past },
-			{ I18n.Subject_WildHorseradishes, I18n.Action_Forage_Past },
-
-			// Summer
-			{ I18n.Subject_Grapes, I18n.Action_Forage_Past },
-			{ I18n.Subject_SpiceBerries, I18n.Action_Forage_Past },
-			{ I18n.Subject_SweetPeas, I18n.Action_Forage_Past },
-
-			// Fall
-			{ I18n.Subject_Hazelnuts, I18n.Action_Forage_Past },
-			{ I18n.Subject_WildPlums, I18n.Action_Forage_Past },
-
-			// Winter
-			{ I18n.Subject_Crocuses, I18n.Action_Forage_Past },
-			{ I18n.Subject_CrystalFruits, I18n.Action_Forage_Past },
-			{ I18n.Subject_Holly, I18n.Action_Forage_Past },
-			{ I18n.Subject_SnowYams, I18n.Action_Forage_Past },
-			{ I18n.Subject_WinterRoots, I18n.Action_Forage_Past },
-
-			// Mushrooms
-			{ I18n.Subject_ChanterelleMushrooms, I18n.Action_Forage_Past },
-			{ I18n.Subject_CommonMushrooms, I18n.Action_Forage_Past },
-			{ I18n.Subject_MagmaCaps, I18n.Action_Forage_Past },
-			{ I18n.Subject_MorelMushrooms, I18n.Action_Forage_Past },
-			{ I18n.Subject_PurpleMushrooms, I18n.Action_Forage_Past },
-			{ I18n.Subject_RedMushrooms, I18n.Action_Forage_Past },
-
-			// Beach
-			{ I18n.Subject_Clams, I18n.Action_Forage_Past },
-			{ I18n.Subject_Cockles, I18n.Action_Forage_Past },
-			{ I18n.Subject_Coral, I18n.Action_Forage_Past },
-			{ I18n.Subject_Mussels, I18n.Action_Forage_Past },
-			{ I18n.Subject_NautilusShells, I18n.Action_Forage_Past },
-			{ I18n.Subject_Oysters, I18n.Action_Forage_Past },
-			{ I18n.Subject_RainbowShells, I18n.Action_Forage_Past },
-			{ I18n.Subject_SeaUrchins, I18n.Action_Forage_Past },
-			{ I18n.Subject_Seaweed, I18n.Action_Forage_Past },
-
-			// Cave
-			{ I18n.Subject_FiddleheadFerns, I18n.Action_Forage_Past },
-
-			// Desert
-			{ I18n.Subject_CactusFruits, I18n.Action_Forage_Past },
-			{ I18n.Subject_Coconuts, I18n.Action_Forage_Past }
-		};
 	}
 }
