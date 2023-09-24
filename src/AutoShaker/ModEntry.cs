@@ -387,7 +387,7 @@ namespace AutoShaker
 
 							// Forageable Cases
 							case HoeDirt hoeDirtFeature:
-								if (!_config.PullSpringOnions && !_config.DigGinger) continue;
+								if (!_config.ForageSpringOnions && !_config.ForageGinger) continue;
 								if (hoeDirtFeature.crop == null || !hoeDirtFeature.crop.forageCrop.Value || hoeDirtFeature.crop.whichForageCrop.Value.IsNullOrEmpty()) toIgnore = true;
 
 								if (toIgnore)
@@ -403,7 +403,7 @@ namespace AutoShaker
 								{
 									// Spring Onion
 									case "1":
-										if (!_config.PullSpringOnions)
+										if (!_config.ForageSpringOnions)
 										{
 											Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_SpringOnions(), Constants.SpringOnionName), LogLevel.Debug);
 											continue;
@@ -422,7 +422,7 @@ namespace AutoShaker
 
 									// Ginger
 									case "2":
-										if (!_config.DigGinger)
+										if (!_config.ForageGinger)
 										{
 											Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_GingerRoots(), Constants.GingerName), LogLevel.Debug);
 											continue;
@@ -568,7 +568,7 @@ namespace AutoShaker
 		{
 			if (Game1.activeClickableMenu == null)
 			{
-				if (_config.ToggleShaker.JustPressed())
+				if (_config.ToggleShakerKeybind.JustPressed())
 				{
 					_config.IsShakerActive = !_config.IsShakerActive;
 					Task.Run(() => Helper.WriteConfig(_config)).ContinueWith((t) =>
@@ -614,13 +614,13 @@ namespace AutoShaker
 
 					if (!season.Equals("spring") && !season.Equals("fall")) return false;
 
-					if (season.Equals("spring") && !_config.ShakeSalmonberriesBushes)
+					if (season.Equals("spring") && !_config.ShakeSalmonberryBushes)
 					{
 						Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_SalmonberryBushes(), Constants.SalmonberryName), LogLevel.Debug);
 						return false;
 					}
 
-					if (season.Equals("fall") && !_config.ShakeBlackberriesBushes)
+					if (season.Equals("fall") && !_config.ShakeBlackberryBushes)
 					{
 						Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_BlackberryBushes(), Constants.BlackberryName), LogLevel.Debug);
 						return false;

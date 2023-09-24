@@ -18,7 +18,7 @@ namespace AutoShaker
 		#region General Properties
 
 		public bool IsShakerActive { get; set; }
-		public KeybindList ToggleShaker { get; set; } = new KeybindList();
+		public KeybindList ToggleShakerKeybind { get; set; } = new KeybindList();
 		public bool UsePlayerMagnetism { get; set; }
 		public int ShakeDistance { get; set; }
 
@@ -60,8 +60,8 @@ namespace AutoShaker
 
 		#region Bush Properties
 
-		public bool ShakeSalmonberriesBushes { get; set; }
-		public bool ShakeBlackberriesBushes { get; set; }
+		public bool ShakeSalmonberryBushes { get; set; }
+		public bool ShakeBlackberryBushes { get; set; }
 		public bool ShakeTeaBushes { get; set; }
 		public bool ShakeWalnutBushes { get; set; }
 
@@ -73,48 +73,48 @@ namespace AutoShaker
 
 		#region Spring Forageable Properties
 
-		private bool _pullDaffodils;
-		public bool PullDaffodils
+		private bool _forageDaffodils;
+		public bool ForageDaffodils
 		{
-			get => _pullDaffodils;
+			get => _forageDaffodils;
 			set 
 			{
-				_pullDaffodils = value;
+				_forageDaffodils = value;
 				UpdateForageableBit(Forageable.Daffodil, value);
 			}
 		}
 
-		private bool _pullDandelions;
-		public bool PullDandelions
+		private bool _forageDandelions;
+		public bool ForageDandelions
 		{
-			get => _pullDandelions;
+			get => _forageDandelions;
 			set
 			{
-				_pullDandelions = value;
+				_forageDandelions = value;
 				UpdateForageableBit(Forageable.Dandelion, value);
 			}
 		}
 
-		private bool _pullLeeks;
-		public bool PullLeeks
+		private bool _forageLeeks;
+		public bool ForageLeeks
 		{
-			get => _pullLeeks;
+			get => _forageLeeks;
 			set
 			{
-				_pullLeeks = value;
+				_forageLeeks = value;
 				UpdateForageableBit(Forageable.Leek, value);
 			}
 		}
 
-		public bool PullSpringOnions { get; set; }
+		public bool ForageSpringOnions { get; set; }
 
-		private bool _pullWildHorseradishes;
-		public bool PullWildHorseradishes
+		private bool _forageWildHorseradishes;
+		public bool ForageWildHorseradishes
 		{
-			get => _pullWildHorseradishes;
+			get => _forageWildHorseradishes;
 			set
 			{
-				_pullWildHorseradishes = value;
+				_forageWildHorseradishes = value;
 				UpdateForageableBit(Forageable.WildHorseradish, value);
 			}
 		}
@@ -123,35 +123,35 @@ namespace AutoShaker
 
 		#region Summer Forageable Properties
 
-		private bool _pullGrapes;
-		public bool PullGrapes
+		private bool _forageGrapes;
+		public bool ForageGrapes
 		{
-			get => _pullGrapes;
+			get => _forageGrapes;
 			set
 			{
-				_pullGrapes = value;
+				_forageGrapes = value;
 				UpdateForageableBit(Forageable.Grape, value);
 			}
 		}
 
-		private bool _pullSpiceBerries;
-		public bool PullSpiceBerries
+		private bool _forageSpiceBerries;
+		public bool ForageSpiceBerries
 		{
-			get => _pullSpiceBerries;
+			get => _forageSpiceBerries;
 			set
 			{
-				_pullSpiceBerries = value;
+				_forageSpiceBerries = value;
 				UpdateForageableBit(Forageable.SpiceBerry, value);
 			}
 		}
 
-		private bool _pullSweetPeas;
-		public bool PullSweetPeas
+		private bool _forageSweetPeas;
+		public bool ForageSweetPeas
 		{
-			get => _pullSweetPeas;
+			get => _forageSweetPeas;
 			set
 			{
-				_pullSweetPeas = value;
+				_forageSweetPeas = value;
 				UpdateForageableBit(Forageable.SweetPea, value);
 			}
 		}
@@ -160,24 +160,24 @@ namespace AutoShaker
 
 		#region Fall Forageable Properties
 
-		private bool _pullHazelnuts;
-		public bool PullHazelnuts
+		private bool _forageHazelnuts;
+		public bool ForageHazelnuts
 		{
-			get => _pullHazelnuts;
+			get => _forageHazelnuts;
 			set
 			{
-				_pullHazelnuts = value;
+				_forageHazelnuts = value;
 				UpdateForageableBit(Forageable.Hazelnut, value);
 			}
 		}
 
-		private bool _pullWildPlums;
-		public bool PullWildPlums
+		private bool _forageWildPlums;
+		public bool ForageWildPlums
 		{
-			get => _pullWildPlums;
+			get => _forageWildPlums;
 			set
 			{
-				_pullWildPlums = value;
+				_forageWildPlums = value;
 				UpdateForageableBit(Forageable.WildPlum, value);
 			}
 		}
@@ -186,58 +186,58 @@ namespace AutoShaker
 
 		#region Winter Forageable Properties
 
-		private bool _pullCrocuses;
-		public bool PullCrocuses
+		private bool _forageCrocuses;
+		public bool ForageCrocuses
 		{
-			get => _pullCrocuses;
+			get => _forageCrocuses;
 			set
 			{
-				_pullCrocuses = value;
+				_forageCrocuses = value;
 				UpdateForageableBit(Forageable.Crocus, value);
 			}
 		}
 
 
-		private bool _pullCrystalFruits;
-		public bool PullCrystalFruits
+		private bool _forageCrystalFruits;
+		public bool ForageCrystalFruits
 		{
-			get => _pullCrystalFruits;
+			get => _forageCrystalFruits;
 			set
 			{
-				_pullCrystalFruits = value;
+				_forageCrystalFruits = value;
 				UpdateForageableBit(Forageable.CrystalFruit, value);
 			}
 		}
 
-		private bool _pullHolly;
-		public bool PullHolly
+		private bool _forageHolly;
+		public bool ForageHolly
 		{
-			get => _pullHolly;
+			get => _forageHolly;
 			set
 			{
-				_pullHolly = value;
+				_forageHolly = value;
 				UpdateForageableBit(Forageable.Holly, value);
 			}
 		}
 
-		private bool _digSnowYams;
-		public bool DigSnowYams
+		private bool _forageSnowYams;
+		public bool ForageSnowYams
 		{
-			get => _digSnowYams;
+			get => _forageSnowYams;
 			set
 			{
-				_digSnowYams = value;
+				_forageSnowYams = value;
 				UpdateForageableBit(Forageable.SnowYam, value);
 			}
 		}
 
-		private bool _digWinterRoots;
-		public bool DigWinterRoots
+		private bool _forageWinterRoots;
+		public bool ForageWinterRoots
 		{
-			get => _digWinterRoots;
+			get => _forageWinterRoots;
 			set
 			{
-				_digWinterRoots = value;
+				_forageWinterRoots = value;
 				UpdateForageableBit(Forageable.WinterRoot, value);
 			}
 		}
@@ -246,68 +246,68 @@ namespace AutoShaker
 
 		#region Mushroom Forageable Properties
 
-		private bool _pullChanterelles;
-		public bool PullChanterelles
+		private bool _forageChanterelles;
+		public bool ForageChanterelles
 		{
-			get => _pullChanterelles;
+			get => _forageChanterelles;
 			set
 			{
-				_pullChanterelles = value;
+				_forageChanterelles = value;
 				UpdateForageableBit(Forageable.Chanterelle, value);
 			}
 		}
 
-		private bool _pullCommonMushrooms;
-		public bool PullCommonMushrooms
+		private bool _forageCommonMushrooms;
+		public bool ForageCommonMushrooms
 		{
-			get => _pullCommonMushrooms;
+			get => _forageCommonMushrooms;
 			set
 			{
-				_pullCommonMushrooms = value;
+				_forageCommonMushrooms = value;
 				UpdateForageableBit(Forageable.CommonMushroom, value);
 			}
 		}
 
-		private bool _pullMagmaCaps;
-		public bool PullMagmaCaps
+		private bool _forageMagmaCaps;
+		public bool ForageMagmaCaps
 		{
-			get => _pullMagmaCaps;
+			get => _forageMagmaCaps;
 			set
 			{
-				_pullMagmaCaps = value;
+				_forageMagmaCaps = value;
 				UpdateForageableBit(Forageable.MagmaCap, value);
 			}
 		}
 
-		private bool _pullMorels;
-		public bool PullMorels
+		private bool _forageMorels;
+		public bool ForageMorels
 		{
-			get => _pullMorels;
+			get => _forageMorels;
 			set
 			{
-				_pullMorels = value;
+				_forageMorels = value;
 				UpdateForageableBit(Forageable.Morel, value);
 			}
 		}
 
-		private bool _pullPurpleMushrooms;
-		public bool PullPurpleMushrooms
+		private bool _foragePurpleMushrooms;
+		public bool ForagePurpleMushrooms
 		{
-			get => _pullPurpleMushrooms;
+			get => _foragePurpleMushrooms;
 			set
 			{
-				_pullPurpleMushrooms = value;
+				_foragePurpleMushrooms = value;
 				UpdateForageableBit(Forageable.PurpleMushroom, value);
 			}
 		}
 
-		private bool _pullRedMushrooms;
-		public bool PullRedMushrooms
+		private bool _forageRedMushrooms;
+		public bool ForageRedMushrooms
 		{
-			get => _pullRedMushrooms;
+			get => _forageRedMushrooms;
 			set
 			{
-				_pullRedMushrooms = value;
+				_forageRedMushrooms = value;
 				UpdateForageableBit(Forageable.RedMushroom, value);
 			}
 		}
@@ -316,101 +316,101 @@ namespace AutoShaker
 
 		#region Beach Forageable Properties
 
-		private bool _pullClams;
-		public bool PullClams
+		private bool _forageClams;
+		public bool ForageClams
 		{
-			get => _pullClams;
+			get => _forageClams;
 			set
 			{
-				_pullClams = value;
+				_forageClams = value;
 				UpdateForageableBit(Forageable.Clam, value);
 			}
 		}
 
-		private bool _pullCockles;
-		public bool PullCockles
+		private bool _forageCockles;
+		public bool ForageCockles
 		{
-			get => _pullCockles;
+			get => _forageCockles;
 			set
 			{
-				_pullCockles = value;
+				_forageCockles = value;
 				UpdateForageableBit(Forageable.Cockle, value);
 			}
 		}
 
-		private bool _pullCoral;
-		public bool PullCoral
+		private bool _forageCoral;
+		public bool ForageCoral
 		{
-			get => _pullCoral;
+			get => _forageCoral;
 			set
 			{
-				_pullCoral = value;
+				_forageCoral = value;
 				UpdateForageableBit(Forageable.Coral, value);
 			}
 		}
 
-		private bool _pullMussels;
-		public bool PullMussels
+		private bool _forageMussels;
+		public bool ForageMussels
 		{
-			get => _pullMussels;
+			get => _forageMussels;
 			set
 			{
-				_pullMussels = value;
+				_forageMussels = value;
 				UpdateForageableBit(Forageable.Mussel, value);
 			}
 		}
 
-		private bool _pullNautilusShells;
-		public bool PullNautilusShells
+		private bool _forageNautilusShells;
+		public bool ForageNautilusShells
 		{
-			get => _pullNautilusShells;
+			get => _forageNautilusShells;
 			set
 			{
-				_pullNautilusShells = value;
+				_forageNautilusShells = value;
 				UpdateForageableBit(Forageable.NautilusShell, value);
 			}
 		}
 
-		private bool _pullOysters;
-		public bool PullOysters
+		private bool _forageOysters;
+		public bool ForageOysters
 		{
-			get => _pullOysters;
+			get => _forageOysters;
 			set
 			{
-				_pullOysters = value;
+				_forageOysters = value;
 				UpdateForageableBit(Forageable.Oyster, value);
 			}
 		}
 
-		private bool _pullRainbowShells;
-		public bool PullRainbowShells
+		private bool _forageRainbowShells;
+		public bool ForageRainbowShells
 		{
-			get => _pullRainbowShells;
+			get => _forageRainbowShells;
 			set
 			{
-				_pullRainbowShells = value;
+				_forageRainbowShells = value;
 				UpdateForageableBit(Forageable.RainbowShell, value);
 			}
 		}
 
-		private bool _pullSeaUrchins;
-		public bool PullSeaUrchins
+		private bool _forageSeaUrchins;
+		public bool ForageSeaUrchins
 		{
-			get => _pullSeaUrchins;
+			get => _forageSeaUrchins;
 			set
 			{
-				_pullSeaUrchins = value;
+				_forageSeaUrchins = value;
 				UpdateForageableBit(Forageable.SeaUrchin, value);
 			}
 		}
 
-		private bool _pullSeaweed;
-		public bool PullSeaweed
+		private bool _forageSeaweed;
+		public bool ForageSeaweed
 		{
-			get => _pullSeaweed;
+			get => _forageSeaweed;
 			set
 			{
-				_pullSeaweed = value;
+				_forageSeaweed = value;
 				UpdateForageableBit(Forageable.Seaweed, value);
 			}
 		}
@@ -419,13 +419,13 @@ namespace AutoShaker
 
 		#region Cave Forageable Properties
 
-		private bool _pullFiddleheadFerns;
-		public bool PullFiddleheadFerns
+		private bool _forageFiddleheadFerns;
+		public bool ForageFiddleheadFerns
 		{
-			get => _pullFiddleheadFerns;
+			get => _forageFiddleheadFerns;
 			set
 			{
-				_pullFiddleheadFerns = value;
+				_forageFiddleheadFerns = value;
 				UpdateForageableBit(Forageable.FiddleheadFern, value);
 			}
 		}
@@ -434,24 +434,24 @@ namespace AutoShaker
 
 		#region Desert Forageable Properties
 
-		private bool _pullCactusFruits;
-		public bool PullCactusFruits
+		private bool _forageCactusFruits;
+		public bool ForageCactusFruits
 		{
-			get => _pullCactusFruits;
+			get => _forageCactusFruits;
 			set
 			{
-				_pullCactusFruits = value;
+				_forageCactusFruits = value;
 				UpdateForageableBit(Forageable.CactusFruit, value);
 			}
 		}
 
-		private bool _harvestCoconuts;
-		public bool HarvestCoconuts
+		private bool _forageCoconuts;
+		public bool ForageCoconuts
 		{
-			get => _harvestCoconuts;
+			get => _forageCoconuts;
 			set
 			{
-				_harvestCoconuts = value;
+				_forageCoconuts = value;
 				UpdateForageableBit(Forageable.Coconut, value);
 			}
 		}
@@ -460,7 +460,7 @@ namespace AutoShaker
 
 		#region Island Forageable Properties
 
-		public bool DigGinger { get; set; }
+		public bool ForageGinger { get; set; }
 
 		#endregion Island Forageable Properties
 
@@ -471,7 +471,7 @@ namespace AutoShaker
 		public void ResetToDefault()
 		{
 			IsShakerActive = true;
-			ToggleShaker = new KeybindList(
+			ToggleShakerKeybind = new KeybindList(
 				new Keybind(SButton.LeftAlt, SButton.H),
 				new Keybind(SButton.RightAlt, SButton.H));
 
@@ -503,8 +503,8 @@ namespace AutoShaker
 			AnyFruitTreeEnabled = true;
 
 			// Bushes
-			ShakeSalmonberriesBushes = true;
-			ShakeBlackberriesBushes = true;
+			ShakeSalmonberryBushes = true;
+			ShakeBlackberryBushes = true;
 			ShakeTeaBushes = true;
 			ShakeWalnutBushes = false;
 
@@ -512,55 +512,55 @@ namespace AutoShaker
 
 			// Forageables
 			// Spring
-			PullDaffodils = false;
-			PullDandelions = false;
-			PullLeeks = false;
-			PullSpringOnions = false;
-			PullWildHorseradishes = false;
+			ForageDaffodils = false;
+			ForageDandelions = false;
+			ForageLeeks = false;
+			ForageSpringOnions = false;
+			ForageWildHorseradishes = false;
 
 			// Summer
-			PullGrapes = false;
-			PullSpiceBerries = false;
-			PullSweetPeas = false;
+			ForageGrapes = false;
+			ForageSpiceBerries = false;
+			ForageSweetPeas = false;
 
 			// Fall
-			PullHazelnuts = false;
-			PullWildPlums = false;
+			ForageHazelnuts = false;
+			ForageWildPlums = false;
 
 			// Winter
-			PullCrocuses = false;
-			PullCrystalFruits = false;
-			PullHolly = false;
-			DigSnowYams = false;
-			DigWinterRoots = false;
+			ForageCrocuses = false;
+			ForageCrystalFruits = false;
+			ForageHolly = false;
+			ForageSnowYams = false;
+			ForageWinterRoots = false;
 
 			// Mushrooms
-			PullChanterelles = false;
-			PullCommonMushrooms = false;
-			PullMagmaCaps = false;
-			PullMorels = false;
-			PullPurpleMushrooms = false;
-			PullRedMushrooms = false;
+			ForageChanterelles = false;
+			ForageCommonMushrooms = false;
+			ForageMagmaCaps = false;
+			ForageMorels = false;
+			ForagePurpleMushrooms = false;
+			ForageRedMushrooms = false;
 
 			// Beach
-			PullClams = false;
-			PullCockles = false;
-			PullCoral = false;
-			PullMussels = false;
-			PullNautilusShells = false;
-			PullOysters = false;
-			PullRainbowShells = false;
-			PullSeaUrchins = false;
-			PullSeaweed = false;
+			ForageClams = false;
+			ForageCockles = false;
+			ForageCoral = false;
+			ForageMussels = false;
+			ForageNautilusShells = false;
+			ForageOysters = false;
+			ForageRainbowShells = false;
+			ForageSeaUrchins = false;
+			ForageSeaweed = false;
 
 			// Caves
-			PullFiddleheadFerns = false;
+			ForageFiddleheadFerns = false;
 
 			// Desert
-			PullCactusFruits = false;
+			ForageCactusFruits = false;
 
 			// Island
-			DigGinger = false;
+			ForageGinger = false;
 
 			AnyForageablesEnabled = false;
 			ForageableToggles = 0;
@@ -601,8 +601,8 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ToggleShaker",
 				name: I18n.Option_ToggleShaker_Name,
 				tooltip: I18n.Option_ToggleShaker_Tooltip,
-				getValue: () => ToggleShaker,
-				setValue: val => ToggleShaker = val);
+				getValue: () => ToggleShakerKeybind,
+				setValue: val => ToggleShakerKeybind = val);
 
 			// UsePlayerMagnetism
 			gmcmApi.AddBoolOption(
@@ -917,10 +917,10 @@ namespace AutoShaker
 					I18n.Action_Shake_Future().ToLowerInvariant(),
 					I18n.Subject_SalmonberryBushes(),
 					I18n.Reward_Salmonberries()),
-				getValue: () => ShakeSalmonberriesBushes,
+				getValue: () => ShakeSalmonberryBushes,
 				setValue: val =>
 				{
-					ShakeSalmonberriesBushes = val;
+					ShakeSalmonberryBushes = val;
 					UpdateEnabled();
 				});
 
@@ -933,10 +933,10 @@ namespace AutoShaker
 					I18n.Action_Shake_Future().ToLowerInvariant(),
 					I18n.Subject_BlackberryBushes(),
 					I18n.Reward_Blackberries()),
-				getValue: () => ShakeBlackberriesBushes,
+				getValue: () => ShakeBlackberryBushes,
 				setValue: val =>
 				{
-					ShakeBlackberriesBushes = val;
+					ShakeBlackberryBushes = val;
 					UpdateEnabled();
 				});
 
@@ -996,10 +996,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageDaffodils",
 				name: () => Constants.DaffodilName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Daffodils()),
-				getValue: () => PullDaffodils,
+				getValue: () => ForageDaffodils,
 				setValue: val =>
 				{
-					PullDaffodils = val;
+					ForageDaffodils = val;
 					UpdateEnabled();
 				});
 
@@ -1009,10 +1009,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageDandelions",
 				name: () => Constants.DandelionName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Dandelions()),
-				getValue: () => PullDandelions,
+				getValue: () => ForageDandelions,
 				setValue: val =>
 				{
-					PullDandelions = val;
+					ForageDandelions = val;
 					UpdateEnabled();
 				});
 
@@ -1022,10 +1022,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageLeeks",
 				name: () => Constants.LeekName,
 				tooltip:  () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Leeks()),
-				getValue: () => PullLeeks,
+				getValue: () => ForageLeeks,
 				setValue: val =>
 				{
-					PullLeeks = val;
+					ForageLeeks = val;
 					UpdateEnabled();
 				});
 
@@ -1035,10 +1035,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageSpringOnions",
 				name: () => Constants.SpringOnionName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_SpringOnions()),
-				getValue: () => PullSpringOnions,
+				getValue: () => ForageSpringOnions,
 				setValue: val =>
 				{
-					PullSpringOnions = val;
+					ForageSpringOnions = val;
 					UpdateEnabled();
 				});
 
@@ -1048,10 +1048,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageWildHorseradishes",
 				name: () => Constants.WildHorseradishName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_WildHorseradishes()),
-				getValue: () => PullWildHorseradishes,
+				getValue: () => ForageWildHorseradishes,
 				setValue: val =>
 				{
-					PullWildHorseradishes = val;
+					ForageWildHorseradishes = val;
 					UpdateEnabled();
 				});
 
@@ -1066,10 +1066,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageGrapes",
 				name: () => Constants.GrapeName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Grapes()),
-				getValue: () => PullGrapes,
+				getValue: () => ForageGrapes,
 				setValue: val =>
 				{
-					PullGrapes = val;
+					ForageGrapes = val;
 					UpdateEnabled();
 				});
 
@@ -1079,10 +1079,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageSpiceBerries",
 				name: () => Constants.SpiceBerryName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_SpiceBerries()),
-				getValue: () => PullSpiceBerries,
+				getValue: () => ForageSpiceBerries,
 				setValue: val =>
 				{
-					PullSpiceBerries = val;
+					ForageSpiceBerries = val;
 					UpdateEnabled();
 				});
 
@@ -1092,10 +1092,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageSweetPeas",
 				name: () => Constants.SweetPeaName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_SweetPeas()),
-				getValue: () => PullSweetPeas,
+				getValue: () => ForageSweetPeas,
 				setValue: val =>
 				{
-					PullSweetPeas = val;
+					ForageSweetPeas = val;
 					UpdateEnabled();
 				});
 
@@ -1113,10 +1113,10 @@ namespace AutoShaker
 					I18n.Action_Forage_Future().ToLowerInvariant(),
 					I18n.Subject_Hazelnuts(),
 					I18n.Note_ForageHazelnuts()),
-				getValue: () => PullHazelnuts,
+				getValue: () => ForageHazelnuts,
 				setValue: val =>
 				{
-					PullHazelnuts = val;
+					ForageHazelnuts = val;
 					UpdateEnabled();
 				});
 
@@ -1126,10 +1126,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageWildPlums",
 				name: () => Constants.WildPlumName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_WildPlums()),
-				getValue: () => PullWildPlums,
+				getValue: () => ForageWildPlums,
 				setValue: val =>
 				{
-					PullWildPlums = val;
+					ForageWildPlums = val;
 					UpdateEnabled();
 				});
 
@@ -1144,10 +1144,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageCrocuses",
 				name: () => Constants.CrocusName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Crocuses()),
-				getValue: () => PullCrocuses,
+				getValue: () => ForageCrocuses,
 				setValue: val =>
 				{
-					PullCrocuses = val;
+					ForageCrocuses = val;
 					UpdateEnabled();
 				});
 
@@ -1157,10 +1157,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageCrystalFruits",
 				name: () => Constants.CrystalFruitName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_CrystalFruits()),
-				getValue: () => PullCrystalFruits,
+				getValue: () => ForageCrystalFruits,
 				setValue: val =>
 				{
-					PullCrystalFruits = val;
+					ForageCrystalFruits = val;
 					UpdateEnabled();
 				});
 
@@ -1170,10 +1170,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageHolly",
 				name: () => Constants.HollyName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Holly()),
-				getValue: () => PullHolly,
+				getValue: () => ForageHolly,
 				setValue: val =>
 				{
-					PullHolly = val;
+					ForageHolly = val;
 					UpdateEnabled();
 				});
 
@@ -1186,10 +1186,10 @@ namespace AutoShaker
 					I18n.Action_Forage_Future().ToLowerInvariant(),
 					I18n.Subject_SnowYams(),
 					I18n.Note_ArtifactSpot(I18n.Subject_SnowYam())),
-				getValue: () => DigSnowYams,
+				getValue: () => ForageSnowYams,
 				setValue: val =>
 				{
-					DigSnowYams = val;
+					ForageSnowYams = val;
 					UpdateEnabled();
 				});
 
@@ -1202,10 +1202,10 @@ namespace AutoShaker
 					I18n.Action_Forage_Future().ToLowerInvariant(),
 					I18n.Subject_WinterRoots(),
 					I18n.Note_ArtifactSpot(I18n.Subject_WinterRoot())),
-				getValue: () => DigWinterRoots,
+				getValue: () => ForageWinterRoots,
 				setValue: val =>
 				{
-					DigWinterRoots = val;
+					ForageWinterRoots = val;
 					UpdateEnabled();
 				});
 
@@ -1220,10 +1220,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageChanterelles",
 				name: () => Constants.ChanterelleName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_ChanterelleMushrooms()),
-				getValue: () => PullChanterelles,
+				getValue: () => ForageChanterelles,
 				setValue: val =>
 				{
-					PullChanterelles = val;
+					ForageChanterelles = val;
 					UpdateEnabled();
 				});
 
@@ -1233,10 +1233,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageCommonMushrooms",
 				name: () => Constants.CommonMushroomName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_CommonMushrooms()),
-				getValue: () => PullCommonMushrooms,
+				getValue: () => ForageCommonMushrooms,
 				setValue: val =>
 				{
-					PullCommonMushrooms = val;
+					ForageCommonMushrooms = val;
 					UpdateEnabled();
 				});
 
@@ -1246,10 +1246,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageMagmaCaps",
 				name: () => Constants.MagmaCapName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_MagmaCaps()),
-				getValue: () => PullMagmaCaps,
+				getValue: () => ForageMagmaCaps,
 				setValue: val =>
 				{
-					PullMagmaCaps = val;
+					ForageMagmaCaps = val;
 					UpdateEnabled();
 				});
 
@@ -1259,10 +1259,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageMorels",
 				name: () => Constants.MorelName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_MorelMushrooms()),
-				getValue: () => PullMorels,
+				getValue: () => ForageMorels,
 				setValue: val =>
 				{
-					PullMorels = val;
+					ForageMorels = val;
 					UpdateEnabled();
 				});
 
@@ -1272,10 +1272,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForagePurpleMushrooms",
 				name: () => Constants.PurpleMushroomName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_PurpleMushrooms()),
-				getValue: () => PullPurpleMushrooms,
+				getValue: () => ForagePurpleMushrooms,
 				setValue: val =>
 				{
-					PullPurpleMushrooms = val;
+					ForagePurpleMushrooms = val;
 					UpdateEnabled();
 				});
 
@@ -1285,10 +1285,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageRedMushrooms",
 				name: () => Constants.RedMushroomName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_RedMushrooms()),
-				getValue: () => PullRedMushrooms,
+				getValue: () => ForageRedMushrooms,
 				setValue: val =>
 				{
-					PullRedMushrooms = val;
+					ForageRedMushrooms = val;
 					UpdateEnabled();
 				});
 
@@ -1303,10 +1303,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageClams",
 				name: () => Constants.ClamName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Clams()),
-				getValue: () => PullClams,
+				getValue: () => ForageClams,
 				setValue: val =>
 				{
-					PullClams = val;
+					ForageClams = val;
 					UpdateEnabled();
 				});
 
@@ -1316,10 +1316,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageCockles",
 				name: () => Constants.CockleName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Cockles()),
-				getValue: () => PullCockles,
+				getValue: () => ForageCockles,
 				setValue: val =>
 				{
-					PullCockles = val;
+					ForageCockles = val;
 					UpdateEnabled();
 				});
 
@@ -1329,10 +1329,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageCoral",
 				name: () => Constants.CoralName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Coral()),
-				getValue: () => PullCoral,
+				getValue: () => ForageCoral,
 				setValue: val =>
 				{
-					PullCoral = val;
+					ForageCoral = val;
 					UpdateEnabled();
 				});
 
@@ -1342,10 +1342,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageMussels",
 				name: () => Constants.MusselName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Mussels()),
-				getValue: () => PullMussels,
+				getValue: () => ForageMussels,
 				setValue: val =>
 				{
-					PullMussels = val;
+					ForageMussels = val;
 					UpdateEnabled();
 				});
 
@@ -1355,10 +1355,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageNautilusShells",
 				name: () => Constants.NautilusShellName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_NautilusShells()),
-				getValue: () => PullNautilusShells,
+				getValue: () => ForageNautilusShells,
 				setValue: val =>
 				{
-					PullNautilusShells = val;
+					ForageNautilusShells = val;
 					UpdateEnabled();
 				});
 
@@ -1368,10 +1368,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageOysters",
 				name: () => Constants.OysterName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Oysters()),
-				getValue: () => PullOysters,
+				getValue: () => ForageOysters,
 				setValue: val =>
 				{
-					PullOysters = val;
+					ForageOysters = val;
 					UpdateEnabled();
 				});
 
@@ -1381,10 +1381,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageRainbowShells",
 				name: () => Constants.RainbowShellName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_RainbowShells()),
-				getValue: () => PullRainbowShells,
+				getValue: () => ForageRainbowShells,
 				setValue: val =>
 				{
-					PullRainbowShells = val;
+					ForageRainbowShells = val;
 					UpdateEnabled();
 				});
 
@@ -1394,10 +1394,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageSeaUrchins",
 				name: () => Constants.SeaUrchinName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_SeaUrchins()),
-				getValue: () => PullSeaUrchins,
+				getValue: () => ForageSeaUrchins,
 				setValue: val =>
 				{
-					PullSeaUrchins = val;
+					ForageSeaUrchins = val;
 					UpdateEnabled();
 				});
 
@@ -1407,10 +1407,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageSeaweed",
 				name: () => Constants.SeaweedName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Seaweed()),
-				getValue: () => PullSeaweed,
+				getValue: () => ForageSeaweed,
 				setValue: val =>
 				{
-					PullSeaweed = val;
+					ForageSeaweed = val;
 					UpdateEnabled();
 				});
 
@@ -1425,10 +1425,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageFiddleheadFerns",
 				name: () => Constants.FiddleheadFernName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_FiddleheadFerns()),
-				getValue: () => PullFiddleheadFerns,
+				getValue: () => ForageFiddleheadFerns,
 				setValue: val =>
 				{
-					PullFiddleheadFerns = val;
+					ForageFiddleheadFerns = val;
 					UpdateEnabled();
 				});
 
@@ -1443,10 +1443,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageCactusFruits",
 				name: () => Constants.CactusFruitName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_CactusFruits()),
-				getValue: () => PullCactusFruits,
+				getValue: () => ForageCactusFruits,
 				setValue: val =>
 				{
-					PullCactusFruits = val;
+					ForageCactusFruits = val;
 					UpdateEnabled();
 				});
 
@@ -1459,10 +1459,10 @@ namespace AutoShaker
 					I18n.Action_Forage_Future().ToLowerInvariant(),
 					I18n.Subject_Coconuts(),
 					I18n.Note_ForageCoconuts()),
-				getValue: () => HarvestCoconuts,
+				getValue: () => ForageCoconuts,
 				setValue: val =>
 				{
-					HarvestCoconuts = val;
+					ForageCoconuts = val;
 					UpdateEnabled();
 				});
 
@@ -1479,10 +1479,10 @@ namespace AutoShaker
 				fieldId: "AutoShaker.ForageGinger",
 				name: () => Constants.GingerName,
 				tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_GingerRoots()),
-				getValue: () => DigGinger,
+				getValue: () => ForageGinger,
 				setValue: val =>
 				{
-					DigGinger = val;
+					ForageGinger = val;
 					UpdateEnabled();
 				});
 
@@ -1509,8 +1509,8 @@ namespace AutoShaker
 				|| ShakePeachTrees
 				|| ShakePomegranateTrees;
 
-			AnyBushEnabled = ShakeSalmonberriesBushes
-				|| ShakeBlackberriesBushes
+			AnyBushEnabled = ShakeSalmonberryBushes
+				|| ShakeBlackberryBushes
 				|| ShakeTeaBushes
 				|| ShakeWalnutBushes;
 

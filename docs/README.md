@@ -10,53 +10,25 @@ This mod checks for:
 - Forageables on the ground or in artifact spots
 
 ### Config
-* IsShakerActive
-    * Whether or not the AutoShaker will shake bushes / trees
-    * *Default* - true
-* ToggleShaker
-    * Which button will toggle the AutoShaker on and off when pressed while holding either Alt key
-    * *Default* - LeftAlt + H, RightAlt + H
-* ShakeRegularTrees
-    * Whether or not the AutoShaker should try and shake regular trees for seeds
-    * *Default* - true
-* ShakeFruitTrees
-    * Whether or not the AutoShaker should try and shake fruit trees for fruit
-    * *Default* - true
-* FruitsReadyToShake
-    * Number of fruits (1-3) that need to be on a fruit tree before it is shaken
-    * *Default* - 1
-* ShakeTeaBushes
-    * Whether or not the AutoShaker should try and shake tea bushes
-    * *Default* - true
-* ShakeBushes
-    * Whether or not the AutoShaker should try and shake bushes
-    * *Default* - true
-* UsePlayerMagnetism
-    * Whether or not to use the players current magnetism distance when looking for things to shake
-    * This overrides the *ShakeDistance* config value
-    * *Default* - false
-* ShakeDistance
-    * Distance in tiles that the AutoShaker will look for things to shake
-    * This value is ignored if *UsePlayerMagnetism* is set to **true**
-    * *Default* - 2
+_Check out a breakdown of the config values [here](config.md)_
 
 ### Translation
-&nbsp;     | No Translation                     | Partial Translation                  | Full Translation
-:--------- | :--------------------------------- | :----------------------------------- | :--------------------------------
-Chinese    | <span style="color:green">X</span> | <span style="color:orange">✓</span> | <span style="color:red">X</span>
-French     | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
-German     | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
-Hungarian  | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
-Italian    | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
-Japanese   | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
-Korean     | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
-Polish     | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
-Portuguese | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
-Russian    | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
-Spanish    | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
-Thai       | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
-Turkish    | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
-Ukrainian  | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
+&nbsp;     | No Translation  | Partial Translation  | Full Translation
+:--------- | :-------------: | :------------------: | :---------------:
+Chinese    | ➖             | ✔                   | ❌
+French     | ✔             | ❌                   | ❌
+German     | ✔             | ❌                   | ❌
+Hungarian  | ✔             | ❌                   | ❌
+Italian    | ✔             | ❌                   | ❌
+Japanese   | ✔             | ❌                   | ❌
+Korean     | ✔             | ❌                   | ❌
+Polish     | ✔             | ❌                   | ❌
+Portuguese | ✔             | ❌                   | ❌
+Russian    | ✔             | ❌                   | ❌
+Spanish    | ✔             | ❌                   | ❌
+Thai       | ✔             | ❌                   | ❌
+Turkish    | ✔             | ❌                   | ❌
+Ukrainian  | ✔             | ❌                   | ❌
 
 ### Install
 1. Install the latest version of [SMAPI](https://smapi.io)
