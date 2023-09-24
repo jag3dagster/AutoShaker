@@ -40,6 +40,23 @@ This mod checks for:
     * This value is ignored if *UsePlayerMagnetism* is set to **true**
     * *Default* - 2
 
+### Translation
+&nbsp;     | No Translation                     | Partial Translation                  | Full Translation
+:--------- | :--------------------------------- | :----------------------------------- | :--------------------------------
+Chinese    | <span style="color:green">X</span> | <span style="color:orange">✓</span> | <span style="color:red">X</span>
+French     | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
+German     | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
+Hungarian  | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
+Italian    | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
+Japanese   | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
+Korean     | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
+Polish     | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
+Portuguese | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
+Russian    | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
+Spanish    | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
+Thai       | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
+Turkish    | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
+Ukrainian  | <span style="color:">✓</span>      | <span style="color:red">X</span>    | <span style="color:red">X</span>
 
 ### Install
 1. Install the latest version of [SMAPI](https://smapi.io)
