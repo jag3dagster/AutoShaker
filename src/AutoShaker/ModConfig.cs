@@ -1482,8 +1482,6 @@ namespace AutoShaker
 				mod: manifest,
 				text: I18n.Section_Island_Text);
 
-			// $TODO: Toggle to require a hoe in the inventory
-
 			// ForageGinger
 			gmcmApi.AddBoolOption(
 				mod: manifest,

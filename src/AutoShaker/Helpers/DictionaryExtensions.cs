@@ -33,8 +33,6 @@ namespace AutoShaker.Helpers
 
 		public static void AddOrIncrement<TKey>(this Dictionary<TKey, int> dict, TKey key) where TKey : notnull
 		{
-			if (dict == null) throw new ArgumentNullException("Dictionary cannot be null");
-
 			if (dict.ContainsKey(key))
 			{
 				dict[key] += 1;
