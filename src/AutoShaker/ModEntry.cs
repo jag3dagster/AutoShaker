@@ -556,7 +556,6 @@ namespace AutoShaker
 			previousTilePosition = Game1.player.Tile;
 		}
 
-		// $TODO - Update to I18n.
 		private void OnDayEnding(object? sender, DayEndingEventArgs e)
 		{
 			StringBuilder statMessage = new($"{Environment.NewLine}{Utility.getDateString()}:{Environment.NewLine}");

@@ -12,6 +12,9 @@ This mod checks for:
 ### Config
 _Check out a breakdown of the config values [here](config.md)_
 
+### API
+If you are interested in extending functionality of the AutoShaker to include your custom trees / bushes / forageables feel free to check out the [API Documentation](api.md).
+
 ### Translation
 &nbsp;     | No Translation  | Partial Translation  | Full Translation
 :--------- | :-------------: | :------------------: | :---------------:
