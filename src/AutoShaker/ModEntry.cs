@@ -34,6 +34,7 @@ namespace AutoShaker
 		private readonly Dictionary<Vector2, string> _forageablePredictions = new();
 		private Dictionary<string, Dictionary<string, int>> _trackingCounts = new();
 
+		private DateTime _nextErrorMessage = DateTime.UtcNow;
 		private string BushKey = string.Empty;
 		private string ForageableKey = string.Empty;
 		private string FruitTreeKey = string.Empty;
@@ -431,7 +432,13 @@ namespace AutoShaker
 
 										if (_config.RequireHoe && !Game1.player.Items.Any(i => i is Hoe))
 										{
-											Monitor.LogOnce(I18n.Log_MissingHoe(I18n.Subject_GingerRoots(), I18n.Option_RequireHoe_Name()), LogLevel.Debug);
+											if (_nextErrorMessage < DateTime.UtcNow)
+											{
+												Game1.addHUDMessage(new HUDMessage(I18n.Message_MissingHoe(I18n.Subject_GingerRoots()), HUDMessage.error_type));
+												_nextErrorMessage = DateTime.UtcNow.AddSeconds(10);
+											}
+
+											Monitor.LogOnce(I18n.Log_MissingHoe(I18n.Subject_GingerRoots(), I18n.Option_RequireHoe_Name(" ")), LogLevel.Debug);
 											continue;
 										}
 
@@ -486,7 +493,13 @@ namespace AutoShaker
 
 							if (_config.RequireHoe && !Game1.player.Items.Any(i => i is Hoe))
 							{
-								Monitor.LogOnce(I18n.Log_MissingHoe(Constants.SubjectNameLookup[predictedId], I18n.Option_RequireHoe_Name()), LogLevel.Debug);
+								if (_nextErrorMessage < DateTime.UtcNow)
+								{
+									Game1.addHUDMessage(new HUDMessage(I18n.Message_MissingHoe(Constants.SubjectNameLookup[predictedId]), HUDMessage.error_type));
+									_nextErrorMessage = DateTime.UtcNow.AddSeconds(10);
+								}
+
+								Monitor.LogOnce(I18n.Log_MissingHoe(Constants.SubjectNameLookup[predictedId], I18n.Option_RequireHoe_Name(" ")), LogLevel.Debug);
 								continue;
 							}
 

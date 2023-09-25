@@ -628,7 +628,7 @@ namespace AutoShaker
 			gmcmApi.AddBoolOption(
 				mod: manifest,
 				fieldId: "AutoShaker.RequireHoe",
-				name: I18n.Option_RequireHoe_Name,
+				name: () => I18n.Option_RequireHoe_Name(Environment.NewLine),
 				tooltip: I18n.Option_RequireHoe_Tooltip,
 				getValue: () => RequireHoe,
 				setValue: val => RequireHoe = val);
