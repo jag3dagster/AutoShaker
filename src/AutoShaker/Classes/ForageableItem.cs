@@ -25,26 +25,20 @@ namespace AutoShaker.Classes
 			set => _isEnabled = value;
 		}
 
-		public ForageableItem(ISpawnItemData data, bool enabled = false)
-		{
-			_qualifiedItemId = data.ItemId;
-			_displayName = data.ObjectDisplayName;
-			_isEnabled = enabled;
-		}
-
-		public ForageableItem(ParsedItemData data)
-		{
-			_qualifiedItemId = data.QualifiedItemId;
-			_displayName = data.DisplayName;
-			_isEnabled = true;
-		}
-
 		public ForageableItem(string itemId, string displayName, bool enabled = false)
 		{
 			_qualifiedItemId = itemId;
 			_displayName = displayName;
 			_isEnabled = enabled;
 		}
+
+		public ForageableItem(ISpawnItemData data, bool enabled = false)
+			: this(data.ItemId, data.ObjectDisplayName, enabled)
+		{ }
+
+		public ForageableItem(ParsedItemData data)
+			: this(data.QualifiedItemId, data.DisplayName, true)
+		{ }
 
 		public static IEnumerable<ForageableItem> Parse(Dictionary<string, FruitTreeData> data)
 		{
@@ -82,7 +76,7 @@ namespace AutoShaker.Classes
 			return forageItems;
 		}
 
-		public static IEnumerable<ForageableItem> Parse(Dictionary<string, ObjectData> oData, Dictionary<string, LocationData> lData)
+		public static IEnumerable<ForageableItem> Parse(Dictionary<string, ObjectData> oData, Dictionary<string, LocationData> lData, List<string> overrideItemIds)
 		{
 			var forageItems = new List<ForageableItem>();
 
@@ -93,14 +87,18 @@ namespace AutoShaker.Classes
 
 				foreach (var artifact in artifactSpots)
 				{
-					List<string> itemIds = null;
-					if (artifact.ItemId == null && artifact.RandomItemId != null)
+					List<string> itemIds;
+					if (artifact.RandomItemId != null)
 					{
 						itemIds = artifact.RandomItemId;
 					}
 					else if (artifact.ItemId != null)
 					{
 						itemIds = new() { artifact.ItemId };
+					}
+					else
+					{
+						continue;
 					}
 
 					foreach (var itemId in itemIds)
@@ -109,9 +107,15 @@ namespace AutoShaker.Classes
 						if (!oData.ContainsKey(artifactId)) continue;
 
 						var objData = oData[artifactId];
-						if (objData?.ContextTags == null) continue;
+						if (objData == null) continue;
+						if (objData.ContextTags == null
+							&& !overrideItemIds.Contains(itemId))
+						{
+							continue;
+						}
 
-						if (objData.ContextTags.Contains("forage_item"))
+						if ((objData.ContextTags?.Contains("forage_item") ?? false)
+							|| overrideItemIds.Contains(itemId))
 						{
 							forageItems.Add(new ForageableItem(itemId, objData.DisplayName, true));
 						}

@@ -40,6 +40,7 @@ namespace AutoShaker
 		private readonly HashSet<TerrainFeature> _ignoredFeatures = new();
 		private readonly HashSet<TerrainFeature> _interactedFeatures = new();
 
+		private readonly List<string> _overrideItemIds = new();
 		private readonly List<ForageableItem> _wildTreeItems = new();
 		private readonly List<ForageableItem> _fruitTreeItems = new();
 		private readonly List<ForageableItem> _artifactItems = new();
@@ -66,6 +67,8 @@ namespace AutoShaker
 			ForageableKey = I18n.Key_Forageables();
 			FruitTreeKey = I18n.Key_FruitTrees();
 			SeedTreeKey = I18n.Key_SeedTrees();
+
+			_overrideItemIds.Add("(O)416");
 
 			_trackingCounts = new()
 			{
@@ -114,7 +117,7 @@ namespace AutoShaker
 				var objectData = Game1.content.Load<Dictionary<string, ObjectData>>(ObjectsAssetName);
 				var locationData = Game1.content.Load<Dictionary<string, LocationData>>(LocationsAssetName);
 				_artifactItems.Clear();
-				_artifactItems.AddRange(ForageableItem.Parse(objectData, locationData));
+				_artifactItems.AddRange(ForageableItem.Parse(objectData, locationData, _overrideItemIds));
 			}
 		}
 
