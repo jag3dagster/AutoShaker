@@ -42,5 +42,17 @@ namespace AutoShaker.Helpers
 				dict.Add(key, 1);
 			}
 		}
+
+		public static void AddOrReplace(this Dictionary<string, object> dict, string key, object value)
+		{
+			if (dict.ContainsKey(key) && dict[key] != value)
+			{
+				dict[key] = value;
+			}
+			else if (!dict.ContainsKey(key))
+			{
+				dict.Add(key, value);
+			}
+		}
 	}
 }
