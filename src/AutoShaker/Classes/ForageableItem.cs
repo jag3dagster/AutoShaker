@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using AutoShaker.Helpers;
 using StardewValley;
 using StardewValley.GameData;
 using StardewValley.GameData.FruitTrees;
@@ -12,6 +13,9 @@ namespace AutoShaker.Classes
 {
 	public class ForageableItem
 	{
+		private readonly string _itemId;
+		public string ItemId => _itemId;
+
 		private readonly string _qualifiedItemId;
 		public string QualifiedItemId => _qualifiedItemId;
 
@@ -25,15 +29,16 @@ namespace AutoShaker.Classes
 			set => _isEnabled = value;
 		}
 
-		public ForageableItem(string itemId, string displayName, bool enabled = false)
+		public ForageableItem(string itemId, string qualifiedItemId, string displayName, bool enabled = false)
 		{
-			_qualifiedItemId = itemId;
+			_itemId = itemId;
+			_qualifiedItemId = qualifiedItemId;
 			_displayName = displayName;
 			_isEnabled = enabled;
 		}
 
 		public ForageableItem(ParsedItemData data, bool enabled = false)
-			: this(data.QualifiedItemId, data.DisplayName, enabled)
+			: this(data.ItemId, data.QualifiedItemId, data.DisplayName, enabled)
 		{ }
 
 		public static IEnumerable<ForageableItem> Parse(IDictionary<string, FruitTreeData> data)
@@ -44,62 +49,45 @@ namespace AutoShaker.Classes
 			{
 				foreach (var fruit in kvp.Value.Fruit)
 				{
-					forageItems.Add(new ForageableItem(ItemRegistry.GetData(fruit.ItemId)));
+					if (kvp.Value.CustomFields == null || !kvp.Value.CustomFields.ContainsKey(Constants.CustomFieldKey)) continue;
+
+					forageItems.Add(new ForageableItem(ItemRegistry.GetData(fruit.ItemId), true));
 				}
 			}
 
 			return forageItems;
 		}
 
-		public static IEnumerable<ForageableItem> Parse(Dictionary<string, WildTreeData> data)
+		public static IEnumerable<ForageableItem> Parse(IDictionary<string, WildTreeData> data)
 		{
 			var forageItems = new List<ForageableItem>();
 
 			foreach (var kvp in data)
 			{
-				// Mushroom trees aren't real. They can't hurt you
-				if (kvp.Key == "7") continue;
+				if (kvp.Value.CustomFields == null|| !kvp.Value.CustomFields.ContainsKey(Constants.CustomFieldKey)) continue;
 
-				forageItems.Add(new ForageableItem(ItemRegistry.GetData(kvp.Value.SeedItemId)));
-
-				var dropItems = kvp.Value.SeedDropItems;
-				if (dropItems != null)
-				{
-					foreach (var seedDrop in kvp.Value.SeedDropItems)
-					{
-						forageItems.Add(new ForageableItem(ItemRegistry.GetData(seedDrop.ItemId)));
-					}
-				}
+				forageItems.Add(new ForageableItem(ItemRegistry.GetData(kvp.Value.SeedItemId), true));
 			}
 
 			return forageItems;
 		}
 
-		public static IEnumerable<ForageableItem> Parse(IDictionary<string, ObjectData> data, List<string> overrideItemIds)
+		public static IEnumerable<ForageableItem> Parse(IDictionary<string, ObjectData> data)
 		{
 			var forageItems = new List<ForageableItem>();
 
 			foreach (var kvp in data)
 			{
+				if (kvp.Value.CustomFields == null || !kvp.Value.CustomFields.ContainsKey(Constants.CustomFieldKey)) continue;
+
 				var qualifiedItemId = "(O)" + kvp.Key;
-
-				if (kvp.Value.ContextTags == null
-					&& !overrideItemIds.Contains(qualifiedItemId))
-				{
-					continue;
-				}
-
-				if ((kvp.Value.ContextTags?.Contains("forage_item") ?? false)
-					|| overrideItemIds.Contains(qualifiedItemId))
-				{
-					forageItems.Add(new ForageableItem(qualifiedItemId, kvp.Value.DisplayName, true));
-				}
+				forageItems.Add(new ForageableItem(ItemRegistry.GetData(qualifiedItemId), true));
 			}
 
 			return forageItems;
 		}
 
-		public static IEnumerable<ForageableItem> Parse(IDictionary<string, ObjectData> oData, Dictionary<string, LocationData> lData, List<string> overrideItemIds)
+		public static IEnumerable<ForageableItem> Parse(IDictionary<string, ObjectData> oData, IDictionary<string, LocationData> lData)
 		{
 			var forageItems = new List<ForageableItem>();
 
@@ -130,18 +118,10 @@ namespace AutoShaker.Classes
 						if (!oData.ContainsKey(artifactId)) continue;
 
 						var objData = oData[artifactId];
-						if (objData == null) continue;
-						if (objData.ContextTags == null
-							&& !overrideItemIds.Contains(itemId))
-						{
-							continue;
-						}
-
-						if ((objData.ContextTags?.Contains("forage_item") ?? false)
-							|| overrideItemIds.Contains(itemId))
-						{
-							forageItems.Add(new ForageableItem(itemId, objData.DisplayName, true));
-						}
+						if (objData == null || objData.CustomFields == null || !objData.CustomFields.ContainsKey(Constants.CustomFieldKey)) continue;
+						
+						
+						forageItems.Add(new ForageableItem(ItemRegistry.GetData(itemId), true));
 					}
 				}
 			}

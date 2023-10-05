@@ -20,7 +20,6 @@ using StardewValley.GameData.FruitTrees;
 using StardewValley.GameData.WildTrees;
 using AutoShaker.Classes;
 using StardewValley.GameData.Objects;
-using StardewValley.Menus;
 
 namespace AutoShaker
 {
@@ -29,7 +28,6 @@ namespace AutoShaker
 	/// </summary>
 	public class ModEntry : Mod
 	{
-		private const string CustomFieldKey = "Jag3Dagster.AutoShaker/Forageable";
 		private const string FruitTreeAssetName = "Data/FruitTrees";
 		private const string LocationsAssetName = "Data/Locations";
 		private const string ObjectsAssetName = "Data/Objects";
@@ -145,18 +143,6 @@ namespace AutoShaker
 			helper.Events.GameLoop.GameLaunched += OnGameLaunched;
 			helper.Events.Content.AssetReady += OnAssetReady;
 			helper.Events.Content.AssetRequested += OnAssetRequested;
-
-			helper.Events.Display.RenderedActiveMenu += OnRenderedActiveMenu;
-		}
-
-		private void OnRenderedActiveMenu(object? sender, RenderedActiveMenuEventArgs e)
-		{
-			//Monitor.Log($"{Game1.activeClickableMenu.GetType()}", LogLevel.Info);
-			if (Game1.activeClickableMenu is TitleMenu)
-			{
-				Monitor.Log($"{Game1.fruitTreeData == null}; {Game1.objectData == null}");
-				Helper.Events.Display.RenderedActiveMenu -= OnRenderedActiveMenu;
-			}
 		}
 
 		private void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
@@ -170,7 +156,7 @@ namespace AutoShaker
 					var fruitTreeData = asset.AsDictionary<string, FruitTreeData>();
 					foreach (var fruitTree in fruitTreeData.Data)
 					{
-						fruitTree.Value.CustomFields.AddOrUpdate(CustomFieldKey, "true");
+						fruitTree.Value.CustomFields.AddOrUpdate(Constants.CustomFieldKey, "true");
 					}
 				});
 			}
@@ -181,14 +167,10 @@ namespace AutoShaker
 					var objectData = asset.AsDictionary<string, ObjectData>();
 					foreach (var obj in objectData.Data)
 					{
-						var objValue = obj.Value;
-
-						if (objValue.ContextTags == null && !_overrideItemIds.Contains(obj.Key)) continue;
-
-						if ((objValue.ContextTags?.Contains("forage_item") ?? false)
+						if ((obj.Value.ContextTags?.Contains("forage_item") ?? false)
 							|| _overrideItemIds.Any(i => obj.Key.Equals(i.Substring(3))))
 						{
-							obj.Value.CustomFields.AddOrUpdate(CustomFieldKey, "true");
+							obj.Value.CustomFields.AddOrUpdate(Constants.CustomFieldKey, "true");
 						}
 					}
 				});
@@ -200,7 +182,10 @@ namespace AutoShaker
 					var wildTreeData = asset.AsDictionary<string, WildTreeData>();
 					foreach (var wildTree in wildTreeData.Data)
 					{
-						wildTree.Value.CustomFields.AddOrUpdate(CustomFieldKey, "true");
+						// Just say no to mushroom trees
+						if (wildTree.Key.Equals("7")) continue;
+
+						wildTree.Value.CustomFields.AddOrUpdate(Constants.CustomFieldKey, "true");
 					}
 				});
 			}
@@ -983,18 +968,23 @@ namespace AutoShaker
 			}
 			else if (data is Dictionary<string, LocationData> locationData)
 			{
+				if (ObjectCache == null ||  ObjectCache.Count == 0)
+				{
+					ObjectCache = Game1.content.Load<Dictionary<string, ObjectData>>(ObjectsAssetName);
+				}
+
 				_artifactItems.Clear();
-				_artifactItems.AddRange(ForageableItem.Parse(_objectCache, locationData, _overrideItemIds));
+				_artifactItems.AddRange(ForageableItem.Parse(ObjectCache, locationData));
 			}
 			else if (data is Dictionary<string, ObjectData> objectData)
 			{
 				_objectItems.Clear();
-				_objectItems.AddRange(ForageableItem.Parse(objectData, _overrideItemIds));
+				_objectItems.AddRange(ForageableItem.Parse(objectData));
 
 				if (LocationCache != null && LocationCache.Count > 0)
 				{
 					_artifactItems.Clear();
-					_artifactItems.AddRange(ForageableItem.Parse(objectData, LocationCache, _overrideItemIds));
+					_artifactItems.AddRange(ForageableItem.Parse(objectData, LocationCache));
 				}
 			}
 			else if (data is Dictionary<string, WildTreeData> wildTreeData)

@@ -5,6 +5,8 @@ namespace AutoShaker.Helpers
 {
 	public static class Constants
 	{
+		public const string CustomFieldKey = "Jag3Dagster.AutoShaker/Forageable";
+
 		[Flags]
 		public enum Forageable : uint
 		{
