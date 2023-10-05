@@ -43,9 +43,11 @@ namespace AutoShaker.Helpers
 			}
 		}
 
-		public static void AddOrReplace(this Dictionary<string, object> dict, string key, object value)
+		public static void AddOrUpdate<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, TValue value)
+			where TKey : notnull
+			where TValue : notnull
 		{
-			if (dict.ContainsKey(key) && dict[key] != value)
+			if (dict.ContainsKey(key) && !dict[key].Equals(value))
 			{
 				dict[key] = value;
 			}

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using StardewValley;
 using StardewValley.GameData;
 using StardewValley.GameData.FruitTrees;
@@ -32,15 +32,11 @@ namespace AutoShaker.Classes
 			_isEnabled = enabled;
 		}
 
-		public ForageableItem(ISpawnItemData data, bool enabled = false)
-			: this(data.ItemId, data.ObjectDisplayName, enabled)
+		public ForageableItem(ParsedItemData data, bool enabled = false)
+			: this(data.QualifiedItemId, data.DisplayName, enabled)
 		{ }
 
-		public ForageableItem(ParsedItemData data)
-			: this(data.QualifiedItemId, data.DisplayName, true)
-		{ }
-
-		public static IEnumerable<ForageableItem> Parse(Dictionary<string, FruitTreeData> data)
+		public static IEnumerable<ForageableItem> Parse(IDictionary<string, FruitTreeData> data)
 		{
 			var forageItems = new List<ForageableItem>();
 
@@ -48,7 +44,7 @@ namespace AutoShaker.Classes
 			{
 				foreach (var fruit in kvp.Value.Fruit)
 				{
-					forageItems.Add(new ForageableItem(fruit, true));
+					forageItems.Add(new ForageableItem(ItemRegistry.GetData(fruit.ItemId)));
 				}
 			}
 
@@ -61,6 +57,9 @@ namespace AutoShaker.Classes
 
 			foreach (var kvp in data)
 			{
+				// Mushroom trees aren't real. They can't hurt you
+				if (kvp.Key == "7") continue;
+
 				forageItems.Add(new ForageableItem(ItemRegistry.GetData(kvp.Value.SeedItemId)));
 
 				var dropItems = kvp.Value.SeedDropItems;
@@ -68,7 +67,7 @@ namespace AutoShaker.Classes
 				{
 					foreach (var seedDrop in kvp.Value.SeedDropItems)
 					{
-						forageItems.Add(new ForageableItem(seedDrop));
+						forageItems.Add(new ForageableItem(ItemRegistry.GetData(seedDrop.ItemId)));
 					}
 				}
 			}
@@ -76,7 +75,31 @@ namespace AutoShaker.Classes
 			return forageItems;
 		}
 
-		public static IEnumerable<ForageableItem> Parse(Dictionary<string, ObjectData> oData, Dictionary<string, LocationData> lData, List<string> overrideItemIds)
+		public static IEnumerable<ForageableItem> Parse(IDictionary<string, ObjectData> data, List<string> overrideItemIds)
+		{
+			var forageItems = new List<ForageableItem>();
+
+			foreach (var kvp in data)
+			{
+				var qualifiedItemId = "(O)" + kvp.Key;
+
+				if (kvp.Value.ContextTags == null
+					&& !overrideItemIds.Contains(qualifiedItemId))
+				{
+					continue;
+				}
+
+				if ((kvp.Value.ContextTags?.Contains("forage_item") ?? false)
+					|| overrideItemIds.Contains(qualifiedItemId))
+				{
+					forageItems.Add(new ForageableItem(qualifiedItemId, kvp.Value.DisplayName, true));
+				}
+			}
+
+			return forageItems;
+		}
+
+		public static IEnumerable<ForageableItem> Parse(IDictionary<string, ObjectData> oData, Dictionary<string, LocationData> lData, List<string> overrideItemIds)
 		{
 			var forageItems = new List<ForageableItem>();
 

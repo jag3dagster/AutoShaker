@@ -20,6 +20,7 @@ using StardewValley.GameData.FruitTrees;
 using StardewValley.GameData.WildTrees;
 using AutoShaker.Classes;
 using StardewValley.GameData.Objects;
+using StardewValley.Menus;
 
 namespace AutoShaker
 {
@@ -28,6 +29,7 @@ namespace AutoShaker
 	/// </summary>
 	public class ModEntry : Mod
 	{
+		private const string CustomFieldKey = "Jag3Dagster.AutoShaker/Forageable";
 		private const string FruitTreeAssetName = "Data/FruitTrees";
 		private const string LocationsAssetName = "Data/Locations";
 		private const string ObjectsAssetName = "Data/Objects";
@@ -41,12 +43,61 @@ namespace AutoShaker
 		private readonly HashSet<TerrainFeature> _interactedFeatures = new();
 
 		private readonly List<string> _overrideItemIds = new();
-		private readonly List<ForageableItem> _wildTreeItems = new();
-		private readonly List<ForageableItem> _fruitTreeItems = new();
 		private readonly List<ForageableItem> _artifactItems = new();
+		private readonly List<ForageableItem> _fruitTreeItems = new();
+		private readonly List<ForageableItem> _objectItems = new();
+		private readonly List<ForageableItem> _wildTreeItems = new();
 
 		private readonly Dictionary<Vector2, string> _forageablePredictions = new();
 		private Dictionary<string, Dictionary<string, int>> _trackingCounts = new();
+
+		#region Cache Properties
+
+		private Dictionary<string, FruitTreeData> _fruitTreeCache = new();
+		private Dictionary<string, FruitTreeData> FruitTreeCache
+		{
+			get => _fruitTreeCache;
+			set
+			{
+				_fruitTreeCache = value;
+				ParseAssets(value);
+			}
+		}
+
+		private Dictionary<string, LocationData> _locationCache = new();
+		private Dictionary<string, LocationData> LocationCache
+		{
+			get => _locationCache;
+			set
+			{
+				_locationCache = value;
+				ParseAssets(value);
+			}
+		}
+
+		private Dictionary<string, ObjectData> _objectCache = new();
+		private Dictionary<string, ObjectData> ObjectCache
+		{
+			get => _objectCache;
+			set
+			{
+				_objectCache = value;
+				ParseAssets(value);
+			}
+		}
+
+		private Dictionary<string, WildTreeData> _wildTreeCache = new();
+		private Dictionary<string, WildTreeData> WildTreeCache
+		{
+			get => _wildTreeCache;
+			set
+			{
+				_wildTreeCache = value;
+				ParseAssets(value);
+			}
+		}
+
+		#endregion Cache Properties
 
 		private DateTime _nextErrorMessage = DateTime.UtcNow;
 		private string BushKey = string.Empty;
@@ -68,7 +119,11 @@ namespace AutoShaker
 			FruitTreeKey = I18n.Key_FruitTrees();
 			SeedTreeKey = I18n.Key_SeedTrees();
 
-			_overrideItemIds.Add("(O)416");
+			// Overrides (hopefully can be removed if the trello card is addressed)
+			_overrideItemIds.Add("(O)152"); // Seaweed
+			_overrideItemIds.Add("(O)296"); // Salmonberry
+			_overrideItemIds.Add("(O)416"); // Snow Yam
+			_overrideItemIds.Add("(O)851"); // Magma Cap
 
 			_trackingCounts = new()
 			{
@@ -87,81 +142,100 @@ namespace AutoShaker
 			helper.Events.GameLoop.DayEnding += OnDayEnding;
 			helper.Events.Input.ButtonsChanged += OnButtonsChanged;
 			helper.Events.Player.Warped += OnPlayerWarped;
-			helper.Events.GameLoop.GameLaunched += (_,_) => _config.RegisterModConfigMenu(helper, ModManifest);
 			helper.Events.GameLoop.GameLaunched += OnGameLaunched;
 			helper.Events.Content.AssetReady += OnAssetReady;
+			helper.Events.Content.AssetRequested += OnAssetRequested;
+
+			helper.Events.Display.RenderedActiveMenu += OnRenderedActiveMenu;
+		}
+
+		private void OnRenderedActiveMenu(object? sender, RenderedActiveMenuEventArgs e)
+		{
+			//Monitor.Log($"{Game1.activeClickableMenu.GetType()}", LogLevel.Info);
+			if (Game1.activeClickableMenu is TitleMenu)
+			{
+				Monitor.Log($"{Game1.fruitTreeData == null}; {Game1.objectData == null}");
+				Helper.Events.Display.RenderedActiveMenu -= OnRenderedActiveMenu;
+			}
+		}
+
+		private void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
+		{
+			var assetName = e.Name.BaseName;
+
+			if (assetName.Equals(FruitTreeAssetName))
+			{
+				e.Edit(asset =>
+				{
+					var fruitTreeData = asset.AsDictionary<string, FruitTreeData>();
+					foreach (var fruitTree in fruitTreeData.Data)
+					{
+						fruitTree.Value.CustomFields.AddOrUpdate(CustomFieldKey, "true");
+					}
+				});
+			}
+			else if (assetName.Equals(ObjectsAssetName))
+			{
+				e.Edit(asset =>
+				{
+					var objectData = asset.AsDictionary<string, ObjectData>();
+					foreach (var obj in objectData.Data)
+					{
+						var objValue = obj.Value;
+
+						if (objValue.ContextTags == null && !_overrideItemIds.Contains(obj.Key)) continue;
+
+						if ((objValue.ContextTags?.Contains("forage_item") ?? false)
+							|| _overrideItemIds.Any(i => obj.Key.Equals(i.Substring(3))))
+						{
+							obj.Value.CustomFields.AddOrUpdate(CustomFieldKey, "true");
+						}
+					}
+				});
+			}
+			else if (assetName.Equals(WildTreeAssetName))
+			{
+				e.Edit(asset =>
+				{
+					var wildTreeData = asset.AsDictionary<string, WildTreeData>();
+					foreach (var wildTree in wildTreeData.Data)
+					{
+						wildTree.Value.CustomFields.AddOrUpdate(CustomFieldKey, "true");
+					}
+				});
+			}
 		}
 
 		private void OnAssetReady(object? sender, AssetReadyEventArgs e)
 		{
-			var name = e.NameWithoutLocale.Name;
+			var name = e.Name.BaseName;
 
-			if (name.Equals(WildTreeAssetName))
+			switch (name)
 			{
-				Monitor.Log($"Updating wild tree asset", LogLevel.Debug);
-				var wildData = Game1.content.Load<Dictionary<string, WildTreeData>>(WildTreeAssetName);
-				_wildTreeItems.Clear();
-				_wildTreeItems.AddRange(ForageableItem.Parse(wildData));
-			}
-			else if (name.Equals(FruitTreeAssetName))
-			{
-				Monitor.Log("Updating fruit tree asset", LogLevel.Debug);
-				var fruitData = Game1.content.Load<Dictionary<string, FruitTreeData>>(FruitTreeAssetName);
-				_fruitTreeItems.Clear();
-				_fruitTreeItems.AddRange(ForageableItem.Parse(fruitData));
-			}
-			else if (name.Equals(ObjectsAssetName) || name.Equals(LocationsAssetName))
-			{
-				
-				Monitor.Log($"Updating forageable asset: {name}", LogLevel.Debug);
-				var objectData = Game1.content.Load<Dictionary<string, ObjectData>>(ObjectsAssetName);
-				var locationData = Game1.content.Load<Dictionary<string, LocationData>>(LocationsAssetName);
-				_artifactItems.Clear();
-				_artifactItems.AddRange(ForageableItem.Parse(objectData, locationData, _overrideItemIds));
+				case FruitTreeAssetName:
+					FruitTreeCache = Game1.content.Load<Dictionary<string, FruitTreeData>>(FruitTreeAssetName);
+					break;
+				case LocationsAssetName:
+					LocationCache = Game1.content.Load<Dictionary<string, LocationData>>(LocationsAssetName);
+					break;
+				case ObjectsAssetName:
+					ObjectCache = Game1.content.Load<Dictionary<string, ObjectData>>(ObjectsAssetName);
+					break;
+				case WildTreeAssetName:
+					WildTreeCache = Game1.content.Load<Dictionary<string, WildTreeData>>(WildTreeAssetName);
+					break;
 			}
 		}
 
 		private void OnGameLaunched(object? sender, GameLaunchedEventArgs e)
 		{
-			Game1.content.Load<Dictionary<string, WildTreeData>>(WildTreeAssetName);
-			Game1.content.Load<Dictionary<string, FruitTreeData>>(FruitTreeAssetName);
-			//foreach (var kvp in Tree.GetWildTreeDataDictionary())
-			//{
-			//	var seedDrops = new List<string>();
-			//	foreach (var item in kvp.Value.SeedDropItems ?? new())
-			//	{
-			//		seedDrops.Add(item.ItemId);
-			//	}
+			FruitTreeCache = Game1.content.Load<Dictionary<string, FruitTreeData>>(FruitTreeAssetName);
+			WildTreeCache = Game1.content.Load<Dictionary<string, WildTreeData>>(WildTreeAssetName);
+			ObjectCache = Game1.content.Load<Dictionary<string, ObjectData>>(ObjectsAssetName);
+			LocationCache = Game1.content.Load<Dictionary<string, LocationData>>(LocationsAssetName);
 
-			//	Monitor.Log($"Wild Tree: Key: {kvp.Key}; Q Seed: {kvp.Value.SeedItemId}; Drops: {string.Join(", ", seedDrops)}", LogLevel.Trace);
-			//}
-
-			//var fruitData = Game1.content.Load<Dictionary<string, FruitTreeData>>("Data/FruitTrees");
-			//foreach (var kvp in Game1.fruitTreeData)
-			//{
-			//	var fruitIds = new List<string>();
-			//	foreach (var fruit in kvp.Value.Fruit)
-			//	{
-			//		fruitIds.Add(fruit.ItemId);
-			//	}
-
-			//	Monitor.Log($"Fruit Tree: Key: {kvp.Key}; Name: {TokenParser.ParseText(kvp.Value.DisplayName)}; Fruit: {string.Join(", ", fruitIds)}", LogLevel.Trace);
-			//}
-
-			//var locData = Game1.content.Load<Dictionary<string, LocationData>>("Data/Locations");
-			//foreach (var kvp in locData)
-			//{
-			//	var forages = new List<string>();
-			//	foreach (var forage in kvp.Value.Forage)
-			//	{
-			//		forages.Add(forage.ItemId);
-			//	}
-
-			//	if (forages.Any())
-			//	{
-			//		Monitor.Log($"Forageables: Key: {kvp.Key}; Loc: {TokenParser.ParseText(kvp.Value.DisplayName)}; Forages: {string.Join(", ", forages)}", LogLevel.Trace);
-			//	}
-			//}
+			// $TODO - Figure out how to register / update GMCM
+			//_config.RegisterModConfigMenu(Helper, ModManifest);
 		}
 
 		private void OnPlayerWarped(object? sender, WarpedEventArgs e)
@@ -231,6 +305,8 @@ namespace AutoShaker
 			if (Game1.currentLocation == null || Game1.player == null) return;
 			if (Game1.player.Tile.Equals(previousTilePosition)) return;
 
+			
+
 			previousTilePosition = Game1.player.Tile;
 			var playerTileLocationPoint = Game1.player.TilePoint;
 			var playerMagnetism = Game1.player.GetAppliedMagneticRadius();
@@ -278,12 +354,33 @@ namespace AutoShaker
 							Monitor.Log($"Fruit Tree not shaken: {string.Join(",", itemIds)}", LogLevel.Debug);
 						}
 					}
+					else if (feature is Bush bush)
+					{
+						if (!CheckBush(bush)) continue;
+
+						bush.performUseAction(bush.Tile);
+					}
+					else if (feature is HoeDirt hoeDirt)
+					{
+
+					}
 				}
 
 				if (Game1.currentLocation.Objects.TryGetValue(vec, out var obj))
 				{
+					// Forageable Items
+					if (obj.isForage() && obj.IsSpawnedObject && !obj.questItem.Value)
+					{
+						if (_objectItems.Any(i => i.QualifiedItemId.Equals(obj.QualifiedItemId) && i.IsEnabled))
+						{
+							ForageItem(obj, vec, Utility.CreateDaySaveRandom(vec.X, vec.Y * 777f), 7, true);
+
+							Game1.player.currentLocation.removeObject(vec, false);
+							Game1.playSound("harvest");
+						}
+					}
 					// Artifact Spot
-					if (obj.QualifiedItemId.Equals("(O)590") && _forageablePredictions.ContainsKey(vec))
+					else if (obj.QualifiedItemId.Equals("(O)590") && _forageablePredictions.ContainsKey(vec))
 					{
 						var prediction = _forageablePredictions[vec];
 						if (_artifactItems.Any(i => i.QualifiedItemId.Equals(prediction) && i.IsEnabled))
@@ -875,6 +972,36 @@ namespace AutoShaker
 			}
 
 			return true;
+		}
+
+		private void ParseAssets<T>(Dictionary<string, T> data)
+		{
+			if (data is Dictionary<string, FruitTreeData> fruitTreeData)
+			{
+				_fruitTreeItems.Clear();
+				_fruitTreeItems.AddRange(ForageableItem.Parse(fruitTreeData));
+			}
+			else if (data is Dictionary<string, LocationData> locationData)
+			{
+				_artifactItems.Clear();
+				_artifactItems.AddRange(ForageableItem.Parse(_objectCache, locationData, _overrideItemIds));
+			}
+			else if (data is Dictionary<string, ObjectData> objectData)
+			{
+				_objectItems.Clear();
+				_objectItems.AddRange(ForageableItem.Parse(objectData, _overrideItemIds));
+
+				if (LocationCache != null && LocationCache.Count > 0)
+				{
+					_artifactItems.Clear();
+					_artifactItems.AddRange(ForageableItem.Parse(objectData, LocationCache, _overrideItemIds));
+				}
+			}
+			else if (data is Dictionary<string, WildTreeData> wildTreeData)
+			{
+				_wildTreeItems.Clear();
+				_wildTreeItems.AddRange(ForageableItem.Parse(wildTreeData));
+			}
 		}
 
 		private static void ForageItem(Object obj, Vector2 vec, Random random, int xpGained = 0, bool checkGatherer = false)
