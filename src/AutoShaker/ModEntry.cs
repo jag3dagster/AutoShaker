@@ -17,9 +17,9 @@ using AutoShaker.Helpers;
 using Constants = AutoShaker.Helpers.Constants;
 using Object = StardewValley.Object;
 using StardewValley.GameData.FruitTrees;
+using StardewValley.GameData.Objects;
 using StardewValley.GameData.WildTrees;
 using AutoShaker.Classes;
-using StardewValley.GameData.Objects;
 
 namespace AutoShaker
 {
@@ -28,26 +28,29 @@ namespace AutoShaker
 	/// </summary>
 	public class ModEntry : Mod
 	{
-		private const string FruitTreeAssetName = "Data/FruitTrees";
-		private const string LocationsAssetName = "Data/Locations";
-		private const string ObjectsAssetName = "Data/Objects";
-		private const string WildTreeAssetName = "Data/WildTrees";
+		private const string BushKey = "Key.Bushes";
+		private const string ForageableKey = "Key.Forageables";
+		private const string FruitTreeKey = "Key.FruitTrees";
+		private const string WildTreeKey = "Key.WildTrees";
 
-		private ModConfig _config = new();
+		private ModConfig _config;
 
-		private Vector2 previousTilePosition;
+		private bool _gameStarted;
+		private Vector2 _previousTilePosition;
 
-		private readonly HashSet<TerrainFeature> _ignoredFeatures = new();
-		private readonly HashSet<TerrainFeature> _interactedFeatures = new();
+		//private readonly HashSet<TerrainFeature> _ignoredFeatures = new();
+		//private readonly HashSet<TerrainFeature> _interactedFeatures = new();
 
-		private readonly List<string> _overrideItemIds = new();
-		private readonly List<ForageableItem> _artifactItems = new();
-		private readonly List<ForageableItem> _fruitTreeItems = new();
-		private readonly List<ForageableItem> _objectItems = new();
-		private readonly List<ForageableItem> _wildTreeItems = new();
+		private readonly List<string> _overrideItemIds;
 
-		private readonly Dictionary<Vector2, string> _forageablePredictions = new();
-		private Dictionary<string, Dictionary<string, int>> _trackingCounts = new();
+		private readonly List<ForageableItem> _artifactForageables;
+		private readonly List<ForageableItem> _fruitTreeForageables;
+		private readonly List<ForageableItem> _objectForageables;
+		private readonly List<ForageableItem> _wildTreeForageables;
+
+		private readonly Dictionary<Vector2, string> _artifactPredictions;
+
+		private readonly Dictionary<string, Dictionary<string, int>> _trackingCounts;
 
 		#region Cache Properties
 
@@ -97,12 +100,38 @@ namespace AutoShaker
 
 		#endregion Cache Properties
 
-		private DateTime _nextErrorMessage = DateTime.UtcNow;
-		private string BushKey = string.Empty;
-		private string ForageableKey = string.Empty;
-		private string FruitTreeKey = string.Empty;
-		private string SeedTreeKey = string.Empty;
+		private DateTime _nextErrorMessage;
 
+		public ModEntry()
+		{
+			_config = new();
+			_gameStarted = false;
+
+			_overrideItemIds = new()
+			{
+				"(O)152", // Seaweed
+				"(O)296", // Salmonberry
+				"(O)416", // Snow Yam
+				"(O)851"  // Magma Cap
+			};
+
+			_artifactForageables = new();
+			_fruitTreeForageables = new();
+			_objectForageables = new();
+			_wildTreeForageables = new();
+
+			_artifactPredictions = new();
+
+			_trackingCounts = new()
+			{
+				{ BushKey, new() },
+				{ ForageableKey, new() },
+				{ FruitTreeKey, new() },
+				{ WildTreeKey, new() }
+			};
+
+			_nextErrorMessage = DateTime.MinValue;
+		}
 
 		/// <summary>
 		/// The mod entry point, called after the mod is first loaded.
@@ -111,25 +140,6 @@ namespace AutoShaker
 		public override void Entry(IModHelper helper)
 		{
 			I18n.Init(helper.Translation);
-
-			BushKey = I18n.Key_Bushes();
-			ForageableKey = I18n.Key_Forageables();
-			FruitTreeKey = I18n.Key_FruitTrees();
-			SeedTreeKey = I18n.Key_SeedTrees();
-
-			// Overrides (hopefully can be removed if the trello card is addressed)
-			_overrideItemIds.Add("(O)152"); // Seaweed
-			_overrideItemIds.Add("(O)296"); // Salmonberry
-			_overrideItemIds.Add("(O)416"); // Snow Yam
-			_overrideItemIds.Add("(O)851"); // Magma Cap
-
-			_trackingCounts = new()
-			{
-				{ BushKey, new() },
-				{ ForageableKey, new() },
-				{ FruitTreeKey, new() },
-				{ SeedTreeKey, new() }
-			};
 
 			_config = helper.ReadConfig<ModConfig>();
 			_config.UpdateEnabled();
@@ -149,83 +159,62 @@ namespace AutoShaker
 		{
 			var assetName = e.Name.BaseName;
 
-			if (assetName.Equals(FruitTreeAssetName))
+			if (assetName.Equals(Constants.FruitTreeAssetName))
 			{
-				e.Edit(asset =>
-				{
-					var fruitTreeData = asset.AsDictionary<string, FruitTreeData>();
-					foreach (var fruitTree in fruitTreeData.Data)
-					{
-						fruitTree.Value.CustomFields.AddOrUpdate(Constants.CustomFieldKey, "true");
-					}
-				});
+				e.Edit(EditFruitTrees);
 			}
-			else if (assetName.Equals(ObjectsAssetName))
+			else if (assetName.Equals(Constants.ObjectsAssetName))
 			{
-				e.Edit(asset =>
-				{
-					var objectData = asset.AsDictionary<string, ObjectData>();
-					foreach (var obj in objectData.Data)
-					{
-						if ((obj.Value.ContextTags?.Contains("forage_item") ?? false)
-							|| _overrideItemIds.Any(i => obj.Key.Equals(i.Substring(3))))
-						{
-							obj.Value.CustomFields.AddOrUpdate(Constants.CustomFieldKey, "true");
-						}
-					}
-				});
+				e.Edit(EditObjects);
 			}
-			else if (assetName.Equals(WildTreeAssetName))
+			else if (assetName.Equals(Constants.WildTreeAssetName))
 			{
-				e.Edit(asset =>
-				{
-					var wildTreeData = asset.AsDictionary<string, WildTreeData>();
-					foreach (var wildTree in wildTreeData.Data)
-					{
-						// Just say no to mushroom trees
-						if (wildTree.Key.Equals("7")) continue;
-
-						wildTree.Value.CustomFields.AddOrUpdate(Constants.CustomFieldKey, "true");
-					}
-				});
+				e.Edit(EditWildTrees);
 			}
 		}
 
 		private void OnAssetReady(object? sender, AssetReadyEventArgs e)
 		{
+			if (!_gameStarted) return;
+
 			var name = e.Name.BaseName;
 
-			switch (name)
+			if (name.Equals(Constants.FruitTreeAssetName))
 			{
-				case FruitTreeAssetName:
-					FruitTreeCache = Game1.content.Load<Dictionary<string, FruitTreeData>>(FruitTreeAssetName);
-					break;
-				case LocationsAssetName:
-					LocationCache = Game1.content.Load<Dictionary<string, LocationData>>(LocationsAssetName);
-					break;
-				case ObjectsAssetName:
-					ObjectCache = Game1.content.Load<Dictionary<string, ObjectData>>(ObjectsAssetName);
-					break;
-				case WildTreeAssetName:
-					WildTreeCache = Game1.content.Load<Dictionary<string, WildTreeData>>(WildTreeAssetName);
-					break;
+				FruitTreeCache = Game1.content.Load<Dictionary<string, FruitTreeData>>(Constants.FruitTreeAssetName);
 			}
+			else if (name.Equals(Constants.LocationsAssetName))
+			{
+				LocationCache = Game1.content.Load<Dictionary<string, LocationData>>(Constants.LocationsAssetName);
+			}
+			else if (name.Equals(Constants.ObjectsAssetName))
+			{
+				ObjectCache = Game1.content.Load<Dictionary<string, ObjectData>>(Constants.ObjectsAssetName);
+			}
+			else if (name.Equals(Constants.WildTreeAssetName))
+			{
+				WildTreeCache = Game1.content.Load<Dictionary<string, WildTreeData>>(Constants.WildTreeAssetName);
+			}
+
+			
 		}
 
 		private void OnGameLaunched(object? sender, GameLaunchedEventArgs e)
 		{
-			FruitTreeCache = Game1.content.Load<Dictionary<string, FruitTreeData>>(FruitTreeAssetName);
-			WildTreeCache = Game1.content.Load<Dictionary<string, WildTreeData>>(WildTreeAssetName);
-			ObjectCache = Game1.content.Load<Dictionary<string, ObjectData>>(ObjectsAssetName);
-			LocationCache = Game1.content.Load<Dictionary<string, LocationData>>(LocationsAssetName);
+			FruitTreeCache = Game1.content.Load<Dictionary<string, FruitTreeData>>(Constants.FruitTreeAssetName);
+			WildTreeCache = Game1.content.Load<Dictionary<string, WildTreeData>>(Constants.WildTreeAssetName);
+			ObjectCache = Game1.content.Load<Dictionary<string, ObjectData>>(Constants.ObjectsAssetName);
+			LocationCache = Game1.content.Load<Dictionary<string, LocationData>>(Constants.LocationsAssetName);
 
 			// $TODO - Figure out how to register / update GMCM
-			//_config.RegisterModConfigMenu(Helper, ModManifest);
+			_config.RegisterModConfigMenu(Helper, ModManifest, _artifactForageables, _fruitTreeForageables, _objectForageables, _wildTreeForageables);
+
+			_gameStarted = true;
 		}
 
 		private void OnPlayerWarped(object? sender, WarpedEventArgs e)
 		{
-			_forageablePredictions.Clear();
+			_artifactPredictions.Clear();
 
 			var mapLoc = e.NewLocation;
 			var objsPairs = mapLoc.Objects.Pairs;
@@ -237,21 +226,21 @@ namespace AutoShaker
 				var y = (int)vec.Y;
 				var obj = objPair.Value;
 
+				// $NOTE - Sourced from GameLocation.digUpArtifactSpot
 				if (obj.QualifiedItemId == "(O)590")
 				{
 					var random = Utility.CreateDaySaveRandom(x * 2000, y);
-					var dict = Game1.content.Load<Dictionary<string, LocationData>>("Data\\Locations");
 					var locData = mapLoc.GetData();
 					var context = new ItemQueryContext(mapLoc, Game1.player, random);
-					IEnumerable<ArtifactSpotDropData> enumerable = dict["Default"].ArtifactSpots;
+					IEnumerable<ArtifactSpotDropData> artifactSpotDrops = LocationCache["Default"].ArtifactSpots;
 
 					if (locData != null && locData.ArtifactSpots?.Count > 0)
 					{
-						enumerable = enumerable.Concat(locData.ArtifactSpots);
+						artifactSpotDrops = artifactSpotDrops.Concat(locData.ArtifactSpots);
 					}
 
-					enumerable = enumerable.OrderBy((ArtifactSpotDropData p) => p.Precedence);
-					foreach (var drop in enumerable)
+					artifactSpotDrops = artifactSpotDrops.OrderBy(p => p.Precedence);
+					foreach (var drop in artifactSpotDrops)
 					{
 						if (!random.NextBool(drop.Chance) || (drop.Condition != null && !GameStateQuery.CheckConditions(drop.Condition, mapLoc, Game1.player, null, null, random)))
 						{
@@ -260,7 +249,7 @@ namespace AutoShaker
 
 						var item = ItemQueryResolver.TryResolveRandomItem(drop, context, avoidRepeat: false, null, null, null, delegate (string query, string error)
 						{
-							Monitor.Log($"Error on query resolve.", LogLevel.Debug);
+							Monitor.Log($"Error on query resolve: {mapLoc.NameOrUniqueName} ({drop.ItemId}): {query}{Environment.NewLine}{error}", LogLevel.Debug);
 						});
 
 						if (item == null)
@@ -270,9 +259,9 @@ namespace AutoShaker
 
 						Monitor.Log($"[{x}, {y}] {item.QualifiedItemId}", LogLevel.Info);
 
-						if (_artifactItems.Any(i => i.QualifiedItemId.Equals(item.QualifiedItemId)))
+						if (_artifactForageables.Any(i => i.QualifiedItemId.Equals(item.QualifiedItemId)))
 						{
-							_forageablePredictions.Add(vec, item.QualifiedItemId);
+							_artifactPredictions.Add(vec, item.QualifiedItemId);
 						}
 
 						if (!drop.ContinueOnDrop)
@@ -288,11 +277,11 @@ namespace AutoShaker
 		{
 			if (!Context.IsPlayerFree) return;
 			if (Game1.currentLocation == null || Game1.player == null) return;
-			if (Game1.player.Tile.Equals(previousTilePosition)) return;
+			if (Game1.player.Tile.Equals(_previousTilePosition)) return;
 
 			
 
-			previousTilePosition = Game1.player.Tile;
+			_previousTilePosition = Game1.player.Tile;
 			var playerTileLocationPoint = Game1.player.TilePoint;
 			var playerMagnetism = Game1.player.GetAppliedMagneticRadius();
 			var radius = _config.UsePlayerMagnetism ? playerMagnetism / Game1.tileSize : _config.ShakeDistance;
@@ -310,7 +299,7 @@ namespace AutoShaker
 						if (!tree.isActionable()) continue;
 
 						var itemIds = tree.GetSeedAndSeedItemIds();
-						if (_wildTreeItems.Any(i => itemIds.Contains(i.QualifiedItemId) && i.IsEnabled))
+						if (_wildTreeForageables.Any(i => itemIds.Contains(i.QualifiedItemId) && i.IsEnabled))
 						{
 							tree.performUseAction(tree.Tile);
 							Monitor.Log($"Tree shaken: {string.Join(", ", itemIds)}", LogLevel.Debug);
@@ -329,7 +318,7 @@ namespace AutoShaker
 						if (fruitCount <= 0 || fruitCount < _config.FruitsReadyToShake) continue;
 
 						var itemIds = fruitTree.GetFruitItemIds();
-						if (_fruitTreeItems.Any(i => itemIds.Contains(i.QualifiedItemId) && i.IsEnabled))
+						if (_fruitTreeForageables.Any(i => itemIds.Contains(i.QualifiedItemId) && i.IsEnabled))
 						{
 							fruitTree.performUseAction(fruitTree.Tile);
 							Monitor.Log($"Fruit Tree shaken: {string.Join(", ", itemIds)}", LogLevel.Debug);
@@ -356,7 +345,7 @@ namespace AutoShaker
 					// Forageable Items
 					if (obj.isForage() && obj.IsSpawnedObject && !obj.questItem.Value)
 					{
-						if (_objectItems.Any(i => i.QualifiedItemId.Equals(obj.QualifiedItemId) && i.IsEnabled))
+						if (_objectForageables.Any(i => i.QualifiedItemId.Equals(obj.QualifiedItemId) && i.IsEnabled))
 						{
 							ForageItem(obj, vec, Utility.CreateDaySaveRandom(vec.X, vec.Y * 777f), 7, true);
 
@@ -365,10 +354,10 @@ namespace AutoShaker
 						}
 					}
 					// Artifact Spot
-					else if (obj.QualifiedItemId.Equals("(O)590") && _forageablePredictions.ContainsKey(vec))
+					else if (obj.QualifiedItemId.Equals("(O)590") && _artifactPredictions.ContainsKey(vec))
 					{
-						var prediction = _forageablePredictions[vec];
-						if (_artifactItems.Any(i => i.QualifiedItemId.Equals(prediction) && i.IsEnabled))
+						var prediction = _artifactPredictions[vec];
+						if (_artifactForageables.Any(i => i.QualifiedItemId.Equals(prediction) && i.IsEnabled))
 						{
 							Game1.currentLocation.digUpArtifactSpot((int)vec.X, (int)vec.Y, Game1.player);
 
@@ -825,7 +814,7 @@ namespace AutoShaker
 
 		private void OnDayStarted(object? sender, DayStartedEventArgs e)
 		{
-			previousTilePosition = Game1.player.Tile;
+			_previousTilePosition = Game1.player.Tile;
 		}
 
 		private void OnDayEnding(object? sender, DayEndingEventArgs e)
@@ -859,8 +848,8 @@ namespace AutoShaker
 			// Reset
 			Monitor.Log("Resetting daily counts...", LogLevel.Trace);
 
-			_ignoredFeatures.Clear();
-			_interactedFeatures.Clear();
+			//_ignoredFeatures.Clear();
+			//_interactedFeatures.Clear();
 		}
 
 		private void OnButtonsChanged(object? sender, ButtonsChangedEventArgs e)
@@ -899,7 +888,7 @@ namespace AutoShaker
 
 			if (toIgnore)
 			{
-				_ignoredFeatures.Add(bush);
+				//_ignoredFeatures.Add(bush);
 				return false;
 			}
 
@@ -915,13 +904,13 @@ namespace AutoShaker
 
 					if (season.Equals("spring") && !_config.ShakeSalmonberryBushes)
 					{
-						Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_SalmonberryBushes(), Constants.SalmonberryName), LogLevel.Debug);
+						//Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_SalmonberryBushes(), Constants.SalmonberryName), LogLevel.Debug);
 						return false;
 					}
 
 					if (season.Equals("fall") && !_config.ShakeBlackberryBushes)
 					{
-						Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_BlackberryBushes(), Constants.BlackberryName), LogLevel.Debug);
+						//Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_BlackberryBushes(), Constants.BlackberryName), LogLevel.Debug);
 						return false;
 					}
 
@@ -932,7 +921,7 @@ namespace AutoShaker
 				case 3:
 					if (!_config.ShakeTeaBushes)
 					{
-						Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_TeaBushes(), Constants.TeaName), LogLevel.Debug);
+						//Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_TeaBushes(), Constants.TeaName), LogLevel.Debug);
 						return false;
 					}
 
@@ -943,7 +932,7 @@ namespace AutoShaker
 				case 4:
 					if (!_config.ShakeWalnutBushes)
 					{
-						Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_WalnutBushes(), Constants.WalnutName), LogLevel.Debug);
+						//Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_WalnutBushes(), Constants.WalnutName), LogLevel.Debug);
 						return false;
 					}
 
@@ -952,7 +941,7 @@ namespace AutoShaker
 
 				default:
 					Monitor.Log($"Unknown Bush size: [{bush.size.Value}]", LogLevel.Warn);
-					_ignoredFeatures.Add(bush);
+					//_ignoredFeatures.Add(bush);
 					return false;
 			}
 
@@ -963,34 +952,83 @@ namespace AutoShaker
 		{
 			if (data is Dictionary<string, FruitTreeData> fruitTreeData)
 			{
-				_fruitTreeItems.Clear();
-				_fruitTreeItems.AddRange(ForageableItem.Parse(fruitTreeData));
+				_fruitTreeForageables.Clear();
+				_fruitTreeForageables.AddRange(ForageableItem.Parse(fruitTreeData));
+				_fruitTreeForageables.SortByDisplayName();
 			}
 			else if (data is Dictionary<string, LocationData> locationData)
 			{
 				if (ObjectCache == null ||  ObjectCache.Count == 0)
 				{
-					ObjectCache = Game1.content.Load<Dictionary<string, ObjectData>>(ObjectsAssetName);
+					ObjectCache = Game1.content.Load<Dictionary<string, ObjectData>>(Constants.ObjectsAssetName);
 				}
 
-				_artifactItems.Clear();
-				_artifactItems.AddRange(ForageableItem.Parse(ObjectCache, locationData));
+				_artifactForageables.Clear();
+				_artifactForageables.AddRange(ForageableItem.Parse(ObjectCache, locationData));
+				_artifactForageables.SortByDisplayName();
 			}
 			else if (data is Dictionary<string, ObjectData> objectData)
 			{
-				_objectItems.Clear();
-				_objectItems.AddRange(ForageableItem.Parse(objectData));
+				_objectForageables.Clear();
+				_objectForageables.AddRange(ForageableItem.Parse(objectData));
+				_objectForageables.SortByDisplayName();
 
 				if (LocationCache != null && LocationCache.Count > 0)
 				{
-					_artifactItems.Clear();
-					_artifactItems.AddRange(ForageableItem.Parse(objectData, LocationCache));
+					_artifactForageables.Clear();
+					_artifactForageables.AddRange(ForageableItem.Parse(objectData, LocationCache));
+					_artifactForageables.SortByDisplayName();
 				}
 			}
 			else if (data is Dictionary<string, WildTreeData> wildTreeData)
 			{
-				_wildTreeItems.Clear();
-				_wildTreeItems.AddRange(ForageableItem.Parse(wildTreeData));
+				_wildTreeForageables.Clear();
+				_wildTreeForageables.AddRange(ForageableItem.Parse(wildTreeData));
+				_wildTreeForageables.SortByDisplayName();
+			}
+		}
+
+		private static void EditFruitTrees(IAssetData asset)
+		{
+			var fruitTreeData = asset.AsDictionary<string, FruitTreeData>();
+			foreach (var fruitTree in fruitTreeData.Data)
+			{
+				fruitTree.Value.CustomFields.AddOrUpdate(Constants.CustomFieldForageableKey, "true");
+			}
+		}
+
+		private void EditObjects(IAssetData asset)
+		{
+			var objectData = asset.AsDictionary<string, ObjectData>();
+			foreach (var obj in objectData.Data)
+			{
+				if ((obj.Value.ContextTags?.Contains("forage_item") ?? false)
+					|| _overrideItemIds.Any(i => obj.Key.Equals(i.Substring(3))))
+				{
+					obj.Value.CustomFields.AddOrUpdate(Constants.CustomFieldForageableKey, "true");
+				}
+
+				// $TODO - Setup categories for known forageables
+				if (obj.Key == "851")
+				{
+					obj.Value.CustomFields.AddOrUpdate(Constants.CustomFieldCategoryKey, "Mushroom");
+				}
+				else if (obj.Key == "392")
+				{
+					obj.Value.CustomFields.AddOrUpdate(Constants.CustomFieldCategoryKey, "Beach");
+				}
+			}
+		}
+
+		private static void EditWildTrees(IAssetData asset)
+		{
+			var wildTreeData = asset.AsDictionary<string, WildTreeData>();
+			foreach (var wildTree in wildTreeData.Data)
+			{
+				// Just say no to mushroom trees
+				if (wildTree.Key.Equals("7")) continue;
+
+				wildTree.Value.CustomFields.AddOrUpdate(Constants.CustomFieldForageableKey, "true");
 			}
 		}
 

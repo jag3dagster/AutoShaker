@@ -1,4 +1,4 @@
-﻿{
+{
   "Action.Forage.Future": "Forage",
   "Action.Forage.Past": "Foraged",
   "Action.Shake.Future": "Shake",
@@ -7,13 +7,13 @@
   "Key.Bushes": "Bushes",
   "Key.Forageables": "Forageables",
   "Key.FruitTrees": "Fruit Trees",
-  "Key.SeedTrees": "Seed Trees",
+  "Key.WildTrees": "Wild Trees",
 
   "Link.BackToMain.Text": "@ Main Menu",
   "Link.Bushes.Text": "Bush Toggles >",
   "Link.Forageables.Text": "Forageable Toggles >",
   "Link.FruitTrees.Text": "Fruit Tree Toggles >",
-  "Link.SeedTrees.Text": "Seed Tree Toggles >",
+  "Link.WildTrees.Text": "Wild Tree Toggles >",
 
   "Log.DisabledConfig": "{{subjects}} are not being interacted because the [{{configName}}] config setting is currently disabled.",
   "Log.Eod.Stat": "\t[{{amount}}] {{subjects}}",
@@ -39,7 +39,7 @@
   "Option.IsShakerActive.Tooltip": "Whether or not the AutoShaker will shake trees and bushes and forage for objects.",
   "Option.ShakeDistance.Name": "Shake Distance",
   "Option.ShakeDistance.Tooltip": "Distance to shake bushes when '{{playerMagnetismName}}' is disabled.",
-  "Option.ToggleAction.Name": "{{action}} {{subjects}}?",
+  "Option.ToggleAction.Name": "Forage any {{subject}}?",
   "Option.ToggleAction.Description": "Whether or not to {{action}} {{subject}}.",
   "Option.ToggleAction.Description.Note": "Whether or not to {{action}} {{subject}}. NOTE: {{note}}.",
   "Option.ToggleAction.Description.Reward": "Whether or not to {{action}} {{subject}} for {{reward}}.",
@@ -50,9 +50,13 @@
   "Option.UsePlayerMagnetism.Tooltip": "Whether or not to use the player's current magnetism distance when looking for things to shake or forage. Note: Overrides '{{shakeDistanceName}}'",
 
   "Page.Bushes.Title": "Bushes",
+  "Page.Bushes.Description": "Whether or not to shake the following items out of Bushes:",
   "Page.Forageables.Title": "Forageables",
+  "Page.Forageables.Description": "Whether or not the following items should be foraged for:",
   "Page.FruitTrees.Title": "Fruit Trees",
-  "Page.SeedTrees.Title": "Seed Trees",
+  "Page.FruitTrees.Description": "Whether or not the following items should be shaken from Fruit Trees:",
+  "Page.WildTrees.Title": "Wild Trees",
+  "Page.WildTrees.Description": "Whether or not the following items should be shaken from Wild Trees:",
 
   "Reward.Acorns": "Acorns",
   "Reward.Apples": "Apples",
@@ -83,7 +87,7 @@
   "Section.Island.Text": "Island Forageable Toggles",
   "Section.Links.Text": "Toggle Option Category Pages",
   "Section.Mushrooms.Text": "Mushroom Toggles",
-  "Section.SeedTree.Text": "Seed Tree Toggles",
+  "Section.WildTree.Text": "Wild Tree Toggles",
   "Section.Spring.Text": "Spring Forageable Toggles",
   "Section.Summer.Text": "Summer Forageable Toggles",
   "Section.Winter.Text": "Winter Forageable Toggles",

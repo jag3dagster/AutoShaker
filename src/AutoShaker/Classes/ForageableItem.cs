@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
-using AutoShaker.Helpers;
 using StardewValley;
-using StardewValley.GameData;
 using StardewValley.GameData.FruitTrees;
 using StardewValley.GameData.Locations;
 using StardewValley.GameData.Objects;
 using StardewValley.GameData.WildTrees;
 using StardewValley.ItemTypeDefinitions;
+using AutoShaker.Helpers;
 
 namespace AutoShaker.Classes
 {
@@ -22,6 +20,9 @@ namespace AutoShaker.Classes
 		private readonly string _displayName;
 		public string DisplayName => TokenParser.ParseText(_displayName);
 
+		private readonly Dictionary<string, string> _customFields;
+		public Dictionary<string, string> CustomFields => _customFields;
+
 		private bool _isEnabled;
 		public bool IsEnabled
 		{
@@ -29,16 +30,17 @@ namespace AutoShaker.Classes
 			set => _isEnabled = value;
 		}
 
-		public ForageableItem(string itemId, string qualifiedItemId, string displayName, bool enabled = false)
+		public ForageableItem(string itemId, string qualifiedItemId, string displayName, Dictionary<string, string> customFields, bool enabled = false)
 		{
 			_itemId = itemId;
 			_qualifiedItemId = qualifiedItemId;
 			_displayName = displayName;
+			_customFields = customFields;
 			_isEnabled = enabled;
 		}
 
-		public ForageableItem(ParsedItemData data, bool enabled = false)
-			: this(data.ItemId, data.QualifiedItemId, data.DisplayName, enabled)
+		public ForageableItem(ParsedItemData data, Dictionary<string, string> customFields, bool enabled = false)
+			: this(data.ItemId, data.QualifiedItemId, data.DisplayName, customFields, enabled)
 		{ }
 
 		public static IEnumerable<ForageableItem> Parse(IDictionary<string, FruitTreeData> data)
@@ -49,9 +51,10 @@ namespace AutoShaker.Classes
 			{
 				foreach (var fruit in kvp.Value.Fruit)
 				{
-					if (kvp.Value.CustomFields == null || !kvp.Value.CustomFields.ContainsKey(Constants.CustomFieldKey)) continue;
+					var customFields = kvp.Value.CustomFields;
+					if (customFields == null || !customFields.ContainsKey(Constants.CustomFieldForageableKey)) continue;
 
-					forageItems.Add(new ForageableItem(ItemRegistry.GetData(fruit.ItemId), true));
+					forageItems.AddDistinct(new ForageableItem(ItemRegistry.GetData(fruit.ItemId), customFields, true));
 				}
 			}
 
@@ -64,9 +67,10 @@ namespace AutoShaker.Classes
 
 			foreach (var kvp in data)
 			{
-				if (kvp.Value.CustomFields == null|| !kvp.Value.CustomFields.ContainsKey(Constants.CustomFieldKey)) continue;
+				var customFields = kvp.Value.CustomFields;
+				if (customFields == null|| !customFields.ContainsKey(Constants.CustomFieldForageableKey)) continue;
 
-				forageItems.Add(new ForageableItem(ItemRegistry.GetData(kvp.Value.SeedItemId), true));
+				forageItems.AddDistinct(new ForageableItem(ItemRegistry.GetData(kvp.Value.SeedItemId), customFields, true));
 			}
 
 			return forageItems;
@@ -78,10 +82,11 @@ namespace AutoShaker.Classes
 
 			foreach (var kvp in data)
 			{
-				if (kvp.Value.CustomFields == null || !kvp.Value.CustomFields.ContainsKey(Constants.CustomFieldKey)) continue;
+				var customFields = kvp.Value.CustomFields;
+				if (customFields == null || !customFields.ContainsKey(Constants.CustomFieldForageableKey)) continue;
 
 				var qualifiedItemId = "(O)" + kvp.Key;
-				forageItems.Add(new ForageableItem(ItemRegistry.GetData(qualifiedItemId), true));
+				forageItems.AddDistinct(new ForageableItem(ItemRegistry.GetData(qualifiedItemId), customFields, true));
 			}
 
 			return forageItems;
@@ -118,10 +123,9 @@ namespace AutoShaker.Classes
 						if (!oData.ContainsKey(artifactId)) continue;
 
 						var objData = oData[artifactId];
-						if (objData == null || objData.CustomFields == null || !objData.CustomFields.ContainsKey(Constants.CustomFieldKey)) continue;
-						
-						
-						forageItems.Add(new ForageableItem(ItemRegistry.GetData(itemId), true));
+						if (objData == null || objData.CustomFields == null || !objData.CustomFields.ContainsKey(Constants.CustomFieldForageableKey)) continue;
+
+						forageItems.AddDistinct(new ForageableItem(ItemRegistry.GetData(itemId), objData.CustomFields, true));
 					}
 				}
 			}
