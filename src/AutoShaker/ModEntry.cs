@@ -1006,16 +1006,11 @@ namespace AutoShaker
 					|| _overrideItemIds.Any(i => obj.Key.Equals(i.Substring(3))))
 				{
 					obj.Value.CustomFields.AddOrUpdate(Constants.CustomFieldForageableKey, "true");
-				}
 
-				// $TODO - Setup categories for known forageables
-				if (obj.Key == "851")
-				{
-					obj.Value.CustomFields.AddOrUpdate(Constants.CustomFieldCategoryKey, "Mushroom");
-				}
-				else if (obj.Key == "392")
-				{
-					obj.Value.CustomFields.AddOrUpdate(Constants.CustomFieldCategoryKey, "Beach");
+					if (Constants.KnownCategoryLookup.ContainsKey(obj.Key))
+					{
+						obj.Value.CustomFields.AddOrUpdate(Constants.CustomFieldCategoryKey, Constants.KnownCategoryLookup[obj.Key]);
+					}
 				}
 			}
 		}
