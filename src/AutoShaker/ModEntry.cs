@@ -1007,9 +1007,9 @@ namespace AutoShaker
 				{
 					obj.Value.CustomFields.AddOrUpdate(Constants.CustomFieldForageableKey, "true");
 
-					if (Constants.KnownCategoryLookup.ContainsKey(obj.Key))
+					if (Constants.KnownCategoryLookup.TryGetValue(obj.Key, out var value))
 					{
-						obj.Value.CustomFields.AddOrUpdate(Constants.CustomFieldCategoryKey, Constants.KnownCategoryLookup[obj.Key]);
+						obj.Value.CustomFields.AddOrUpdate(Constants.CustomFieldCategoryKey, value);
 					}
 				}
 			}
