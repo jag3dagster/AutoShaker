@@ -39,8 +39,10 @@ namespace AutoShaker.Helpers
 			{ "18", "Spring" }, // Daffodil
 			{ "22", "Spring" }, // Dandelion
 			{ "20", "Spring" }, // Leek
+			{ "399", "Spring" }, // Spring Onion
 			{ "16", "Spring" }, // Wild Horseradish
 
+			{ "259", "Summer" }, // Fiddlehead Fern
 			{ "398", "Summer" }, // Grapes
 			{ "396", "Summer" }, // Spice Berry
 			{ "402", "Summer" }, // Sweet Pea
@@ -71,10 +73,13 @@ namespace AutoShaker.Helpers
 			{ "397", "Beach" }, // Sea Urchin
 			{ "152", "Beach" }, // Seaweed
 
-			{ "259", "Cave" }, // Fiddlehead Fern
+			{ "410", "Cave" }, // Blackberry
+			{ "296", "Cave" }, // Salmonberry
 
 			{ "90", "Desert" }, // Cactus Fruit
-			{ "88", "Desert" } // Coconut
+			{ "88", "Desert" }, // Coconut
+
+			{ "829", "Island" } // Ginger
 		};
 
 		[Flags]

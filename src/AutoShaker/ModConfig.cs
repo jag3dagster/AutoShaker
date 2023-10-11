@@ -5,7 +5,7 @@ using AutoShaker.Classes;
 using AutoShaker.Helpers;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
-
+using StardewValley.TerrainFeatures;
 using Constants = AutoShaker.Helpers.Constants;
 using Forageable = AutoShaker.Helpers.Constants.Forageable;
 
@@ -13,8 +13,15 @@ namespace AutoShaker
 {
 	internal class ModConfig
 	{
+		private const string BushKey = "BushToggles";
+		private const string ForagingKey = "ForagingToggles";
+		private const string FruitTreeKey = "FruitTreeToggles";
+		private const string WildTreeKey = "WildTreeToggles";
+
 		private const int MinFruitsReady = 1;
 		private const int MaxFruitsReady = 3;
+
+		private ForageableItemTracker _forageableTracker;
 
 		private int _fruitsReadyToShake;
 		public uint ForageableToggles;
@@ -24,24 +31,24 @@ namespace AutoShaker
 		#region General Properties
 
 		public bool IsShakerActive { get; set; }
-		public KeybindList ToggleShakerKeybind { get; set; } = new KeybindList();
+		public KeybindList ToggleShakerKeybind { get; set; } = new();
 		public bool UsePlayerMagnetism { get; set; }
 		public int ShakeDistance { get; set; }
 		public bool RequireHoe { get; set; }
 
-		public bool AnyShakeEnabled { get; set; }
+		public Dictionary<string, Dictionary<string, bool>> ForageToggles { get; set; } = new();
 
 		#endregion General Properties
 
 		#region Seed Tree Properties
 
-		public bool ShakeMahoganyTrees { get; set; }
-		public bool ShakeMapleTrees { get; set; }
-		public bool ShakeOakTrees { get; set; }
-		public bool ShakePalmTrees { get; set; }
-		public bool ShakePineTrees { get; set; }
+		//public bool ShakeMahoganyTrees { get; set; }
+		//public bool ShakeMapleTrees { get; set; }
+		//public bool ShakeOakTrees { get; set; }
+		//public bool ShakePalmTrees { get; set; }
+		//public bool ShakePineTrees { get; set; }
 
-		public bool AnySeedTreeEnabled { get; set; }
+		//public bool AnySeedTreeEnabled { get; set; }
 
 		#endregion Seed Tree Properties
 
@@ -52,27 +59,27 @@ namespace AutoShaker
 			get => _fruitsReadyToShake;
 			set => _fruitsReadyToShake = Math.Clamp(value, MinFruitsReady, MaxFruitsReady);
 		}
-		public bool ShakeAppleTrees { get; set; }
-		public bool ShakeApricotTrees { get; set; }
-		public bool ShakeBananaTrees { get; set; }
-		public bool ShakeCherryTrees { get; set; }
-		public bool ShakeMangoTrees { get; set; }
-		public bool ShakeOrangeTrees { get; set; }
-		public bool ShakePeachTrees { get; set; }
-		public bool ShakePomegranateTrees { get; set; }
+		//public bool ShakeAppleTrees { get; set; }
+		//public bool ShakeApricotTrees { get; set; }
+		//public bool ShakeBananaTrees { get; set; }
+		//public bool ShakeCherryTrees { get; set; }
+		//public bool ShakeMangoTrees { get; set; }
+		//public bool ShakeOrangeTrees { get; set; }
+		//public bool ShakePeachTrees { get; set; }
+		//public bool ShakePomegranateTrees { get; set; }
 
-		public bool AnyFruitTreeEnabled { get; set; }
+		//public bool AnyFruitTreeEnabled { get; set; }
 
 		#endregion Fruit Tree Properties
 
 		#region Bush Properties
 
-		public bool ShakeSalmonberryBushes { get; set; }
-		public bool ShakeBlackberryBushes { get; set; }
-		public bool ShakeTeaBushes { get; set; }
-		public bool ShakeWalnutBushes { get; set; }
+		//public bool ShakeSalmonberryBushes { get; set; }
+		//public bool ShakeBlackberryBushes { get; set; }
+		//public bool ShakeTeaBushes { get; set; }
+		//public bool ShakeWalnutBushes { get; set; }
 
-		public bool AnyBushEnabled { get; set; }
+		//public bool AnyBushEnabled { get; set; }
 
 		#endregion Bush Properties
 
@@ -80,400 +87,415 @@ namespace AutoShaker
 
 		#region Spring Forageable Properties
 
-		private bool _forageDaffodils;
-		public bool ForageDaffodils
-		{
-			get => _forageDaffodils;
-			set 
-			{
-				_forageDaffodils = value;
-				UpdateForageableBit(Forageable.Daffodil, value);
-			}
-		}
+		//private bool _forageDaffodils;
+		//public bool ForageDaffodils
+		//{
+		//	get => _forageDaffodils;
+		//	set 
+		//	{
+		//		_forageDaffodils = value;
+		//		UpdateForageableBit(Forageable.Daffodil, value);
+		//	}
+		//}
 
-		private bool _forageDandelions;
-		public bool ForageDandelions
-		{
-			get => _forageDandelions;
-			set
-			{
-				_forageDandelions = value;
-				UpdateForageableBit(Forageable.Dandelion, value);
-			}
-		}
+		//private bool _forageDandelions;
+		//public bool ForageDandelions
+		//{
+		//	get => _forageDandelions;
+		//	set
+		//	{
+		//		_forageDandelions = value;
+		//		UpdateForageableBit(Forageable.Dandelion, value);
+		//	}
+		//}
 
-		private bool _forageLeeks;
-		public bool ForageLeeks
-		{
-			get => _forageLeeks;
-			set
-			{
-				_forageLeeks = value;
-				UpdateForageableBit(Forageable.Leek, value);
-			}
-		}
+		//private bool _forageLeeks;
+		//public bool ForageLeeks
+		//{
+		//	get => _forageLeeks;
+		//	set
+		//	{
+		//		_forageLeeks = value;
+		//		UpdateForageableBit(Forageable.Leek, value);
+		//	}
+		//}
 
-		public bool ForageSpringOnions { get; set; }
+		//public bool ForageSpringOnions { get; set; }
 
-		private bool _forageWildHorseradishes;
-		public bool ForageWildHorseradishes
-		{
-			get => _forageWildHorseradishes;
-			set
-			{
-				_forageWildHorseradishes = value;
-				UpdateForageableBit(Forageable.WildHorseradish, value);
-			}
-		}
+		//private bool _forageWildHorseradishes;
+		//public bool ForageWildHorseradishes
+		//{
+		//	get => _forageWildHorseradishes;
+		//	set
+		//	{
+		//		_forageWildHorseradishes = value;
+		//		UpdateForageableBit(Forageable.WildHorseradish, value);
+		//	}
+		//}
 
 		#endregion Spring Forageable Properties
 
 		#region Summer Forageable Properties
 
-		private bool _forageGrapes;
-		public bool ForageGrapes
-		{
-			get => _forageGrapes;
-			set
-			{
-				_forageGrapes = value;
-				UpdateForageableBit(Forageable.Grape, value);
-			}
-		}
+		//private bool _forageGrapes;
+		//public bool ForageGrapes
+		//{
+		//	get => _forageGrapes;
+		//	set
+		//	{
+		//		_forageGrapes = value;
+		//		UpdateForageableBit(Forageable.Grape, value);
+		//	}
+		//}
 
-		private bool _forageSpiceBerries;
-		public bool ForageSpiceBerries
-		{
-			get => _forageSpiceBerries;
-			set
-			{
-				_forageSpiceBerries = value;
-				UpdateForageableBit(Forageable.SpiceBerry, value);
-			}
-		}
+		//private bool _forageSpiceBerries;
+		//public bool ForageSpiceBerries
+		//{
+		//	get => _forageSpiceBerries;
+		//	set
+		//	{
+		//		_forageSpiceBerries = value;
+		//		UpdateForageableBit(Forageable.SpiceBerry, value);
+		//	}
+		//}
 
-		private bool _forageSweetPeas;
-		public bool ForageSweetPeas
-		{
-			get => _forageSweetPeas;
-			set
-			{
-				_forageSweetPeas = value;
-				UpdateForageableBit(Forageable.SweetPea, value);
-			}
-		}
+		//private bool _forageSweetPeas;
+		//public bool ForageSweetPeas
+		//{
+		//	get => _forageSweetPeas;
+		//	set
+		//	{
+		//		_forageSweetPeas = value;
+		//		UpdateForageableBit(Forageable.SweetPea, value);
+		//	}
+		//}
 
 		#endregion Summer Forageable Properties
 
 		#region Fall Forageable Properties
 
-		private bool _forageHazelnuts;
-		public bool ForageHazelnuts
-		{
-			get => _forageHazelnuts;
-			set
-			{
-				_forageHazelnuts = value;
-				UpdateForageableBit(Forageable.Hazelnut, value);
-			}
-		}
+		//private bool _forageHazelnuts;
+		//public bool ForageHazelnuts
+		//{
+		//	get => _forageHazelnuts;
+		//	set
+		//	{
+		//		_forageHazelnuts = value;
+		//		UpdateForageableBit(Forageable.Hazelnut, value);
+		//	}
+		//}
 
-		private bool _forageWildPlums;
-		public bool ForageWildPlums
-		{
-			get => _forageWildPlums;
-			set
-			{
-				_forageWildPlums = value;
-				UpdateForageableBit(Forageable.WildPlum, value);
-			}
-		}
+		//private bool _forageWildPlums;
+		//public bool ForageWildPlums
+		//{
+		//	get => _forageWildPlums;
+		//	set
+		//	{
+		//		_forageWildPlums = value;
+		//		UpdateForageableBit(Forageable.WildPlum, value);
+		//	}
+		//}
 
 		#endregion Fall Forageable Properties
 
 		#region Winter Forageable Properties
 
-		private bool _forageCrocuses;
-		public bool ForageCrocuses
-		{
-			get => _forageCrocuses;
-			set
-			{
-				_forageCrocuses = value;
-				UpdateForageableBit(Forageable.Crocus, value);
-			}
-		}
+		//private bool _forageCrocuses;
+		//public bool ForageCrocuses
+		//{
+		//	get => _forageCrocuses;
+		//	set
+		//	{
+		//		_forageCrocuses = value;
+		//		UpdateForageableBit(Forageable.Crocus, value);
+		//	}
+		//}
 
 
-		private bool _forageCrystalFruits;
-		public bool ForageCrystalFruits
-		{
-			get => _forageCrystalFruits;
-			set
-			{
-				_forageCrystalFruits = value;
-				UpdateForageableBit(Forageable.CrystalFruit, value);
-			}
-		}
+		//private bool _forageCrystalFruits;
+		//public bool ForageCrystalFruits
+		//{
+		//	get => _forageCrystalFruits;
+		//	set
+		//	{
+		//		_forageCrystalFruits = value;
+		//		UpdateForageableBit(Forageable.CrystalFruit, value);
+		//	}
+		//}
 
-		private bool _forageHolly;
-		public bool ForageHolly
-		{
-			get => _forageHolly;
-			set
-			{
-				_forageHolly = value;
-				UpdateForageableBit(Forageable.Holly, value);
-			}
-		}
+		//private bool _forageHolly;
+		//public bool ForageHolly
+		//{
+		//	get => _forageHolly;
+		//	set
+		//	{
+		//		_forageHolly = value;
+		//		UpdateForageableBit(Forageable.Holly, value);
+		//	}
+		//}
 
-		private bool _forageSnowYams;
-		public bool ForageSnowYams
-		{
-			get => _forageSnowYams;
-			set
-			{
-				_forageSnowYams = value;
-				UpdateForageableBit(Forageable.SnowYam, value);
-			}
-		}
+		//private bool _forageSnowYams;
+		//public bool ForageSnowYams
+		//{
+		//	get => _forageSnowYams;
+		//	set
+		//	{
+		//		_forageSnowYams = value;
+		//		UpdateForageableBit(Forageable.SnowYam, value);
+		//	}
+		//}
 
-		private bool _forageWinterRoots;
-		public bool ForageWinterRoots
-		{
-			get => _forageWinterRoots;
-			set
-			{
-				_forageWinterRoots = value;
-				UpdateForageableBit(Forageable.WinterRoot, value);
-			}
-		}
+		//private bool _forageWinterRoots;
+		//public bool ForageWinterRoots
+		//{
+		//	get => _forageWinterRoots;
+		//	set
+		//	{
+		//		_forageWinterRoots = value;
+		//		UpdateForageableBit(Forageable.WinterRoot, value);
+		//	}
+		//}
 
 		#endregion Winter Forageable Properties
 
 		#region Mushroom Forageable Properties
 
-		private bool _forageChanterelles;
-		public bool ForageChanterelles
-		{
-			get => _forageChanterelles;
-			set
-			{
-				_forageChanterelles = value;
-				UpdateForageableBit(Forageable.Chanterelle, value);
-			}
-		}
+		//private bool _forageChanterelles;
+		//public bool ForageChanterelles
+		//{
+		//	get => _forageChanterelles;
+		//	set
+		//	{
+		//		_forageChanterelles = value;
+		//		UpdateForageableBit(Forageable.Chanterelle, value);
+		//	}
+		//}
 
-		private bool _forageCommonMushrooms;
-		public bool ForageCommonMushrooms
-		{
-			get => _forageCommonMushrooms;
-			set
-			{
-				_forageCommonMushrooms = value;
-				UpdateForageableBit(Forageable.CommonMushroom, value);
-			}
-		}
+		//private bool _forageCommonMushrooms;
+		//public bool ForageCommonMushrooms
+		//{
+		//	get => _forageCommonMushrooms;
+		//	set
+		//	{
+		//		_forageCommonMushrooms = value;
+		//		UpdateForageableBit(Forageable.CommonMushroom, value);
+		//	}
+		//}
 
-		private bool _forageMagmaCaps;
-		public bool ForageMagmaCaps
-		{
-			get => _forageMagmaCaps;
-			set
-			{
-				_forageMagmaCaps = value;
-				UpdateForageableBit(Forageable.MagmaCap, value);
-			}
-		}
+		//private bool _forageMagmaCaps;
+		//public bool ForageMagmaCaps
+		//{
+		//	get => _forageMagmaCaps;
+		//	set
+		//	{
+		//		_forageMagmaCaps = value;
+		//		UpdateForageableBit(Forageable.MagmaCap, value);
+		//	}
+		//}
 
-		private bool _forageMorels;
-		public bool ForageMorels
-		{
-			get => _forageMorels;
-			set
-			{
-				_forageMorels = value;
-				UpdateForageableBit(Forageable.Morel, value);
-			}
-		}
+		//private bool _forageMorels;
+		//public bool ForageMorels
+		//{
+		//	get => _forageMorels;
+		//	set
+		//	{
+		//		_forageMorels = value;
+		//		UpdateForageableBit(Forageable.Morel, value);
+		//	}
+		//}
 
-		private bool _foragePurpleMushrooms;
-		public bool ForagePurpleMushrooms
-		{
-			get => _foragePurpleMushrooms;
-			set
-			{
-				_foragePurpleMushrooms = value;
-				UpdateForageableBit(Forageable.PurpleMushroom, value);
-			}
-		}
+		//private bool _foragePurpleMushrooms;
+		//public bool ForagePurpleMushrooms
+		//{
+		//	get => _foragePurpleMushrooms;
+		//	set
+		//	{
+		//		_foragePurpleMushrooms = value;
+		//		UpdateForageableBit(Forageable.PurpleMushroom, value);
+		//	}
+		//}
 
-		private bool _forageRedMushrooms;
-		public bool ForageRedMushrooms
-		{
-			get => _forageRedMushrooms;
-			set
-			{
-				_forageRedMushrooms = value;
-				UpdateForageableBit(Forageable.RedMushroom, value);
-			}
-		}
+		//private bool _forageRedMushrooms;
+		//public bool ForageRedMushrooms
+		//{
+		//	get => _forageRedMushrooms;
+		//	set
+		//	{
+		//		_forageRedMushrooms = value;
+		//		UpdateForageableBit(Forageable.RedMushroom, value);
+		//	}
+		//}
 
 		#endregion Mushroom Forageable Properties
 
 		#region Beach Forageable Properties
 
-		private bool _forageClams;
-		public bool ForageClams
-		{
-			get => _forageClams;
-			set
-			{
-				_forageClams = value;
-				UpdateForageableBit(Forageable.Clam, value);
-			}
-		}
+		//private bool _forageClams;
+		//public bool ForageClams
+		//{
+		//	get => _forageClams;
+		//	set
+		//	{
+		//		_forageClams = value;
+		//		UpdateForageableBit(Forageable.Clam, value);
+		//	}
+		//}
 
-		private bool _forageCockles;
-		public bool ForageCockles
-		{
-			get => _forageCockles;
-			set
-			{
-				_forageCockles = value;
-				UpdateForageableBit(Forageable.Cockle, value);
-			}
-		}
+		//private bool _forageCockles;
+		//public bool ForageCockles
+		//{
+		//	get => _forageCockles;
+		//	set
+		//	{
+		//		_forageCockles = value;
+		//		UpdateForageableBit(Forageable.Cockle, value);
+		//	}
+		//}
 
-		private bool _forageCoral;
-		public bool ForageCoral
-		{
-			get => _forageCoral;
-			set
-			{
-				_forageCoral = value;
-				UpdateForageableBit(Forageable.Coral, value);
-			}
-		}
+		//private bool _forageCoral;
+		//public bool ForageCoral
+		//{
+		//	get => _forageCoral;
+		//	set
+		//	{
+		//		_forageCoral = value;
+		//		UpdateForageableBit(Forageable.Coral, value);
+		//	}
+		//}
 
-		private bool _forageMussels;
-		public bool ForageMussels
-		{
-			get => _forageMussels;
-			set
-			{
-				_forageMussels = value;
-				UpdateForageableBit(Forageable.Mussel, value);
-			}
-		}
+		//private bool _forageMussels;
+		//public bool ForageMussels
+		//{
+		//	get => _forageMussels;
+		//	set
+		//	{
+		//		_forageMussels = value;
+		//		UpdateForageableBit(Forageable.Mussel, value);
+		//	}
+		//}
 
-		private bool _forageNautilusShells;
-		public bool ForageNautilusShells
-		{
-			get => _forageNautilusShells;
-			set
-			{
-				_forageNautilusShells = value;
-				UpdateForageableBit(Forageable.NautilusShell, value);
-			}
-		}
+		//private bool _forageNautilusShells;
+		//public bool ForageNautilusShells
+		//{
+		//	get => _forageNautilusShells;
+		//	set
+		//	{
+		//		_forageNautilusShells = value;
+		//		UpdateForageableBit(Forageable.NautilusShell, value);
+		//	}
+		//}
 
-		private bool _forageOysters;
-		public bool ForageOysters
-		{
-			get => _forageOysters;
-			set
-			{
-				_forageOysters = value;
-				UpdateForageableBit(Forageable.Oyster, value);
-			}
-		}
+		//private bool _forageOysters;
+		//public bool ForageOysters
+		//{
+		//	get => _forageOysters;
+		//	set
+		//	{
+		//		_forageOysters = value;
+		//		UpdateForageableBit(Forageable.Oyster, value);
+		//	}
+		//}
 
-		private bool _forageRainbowShells;
-		public bool ForageRainbowShells
-		{
-			get => _forageRainbowShells;
-			set
-			{
-				_forageRainbowShells = value;
-				UpdateForageableBit(Forageable.RainbowShell, value);
-			}
-		}
+		//private bool _forageRainbowShells;
+		//public bool ForageRainbowShells
+		//{
+		//	get => _forageRainbowShells;
+		//	set
+		//	{
+		//		_forageRainbowShells = value;
+		//		UpdateForageableBit(Forageable.RainbowShell, value);
+		//	}
+		//}
 
-		private bool _forageSeaUrchins;
-		public bool ForageSeaUrchins
-		{
-			get => _forageSeaUrchins;
-			set
-			{
-				_forageSeaUrchins = value;
-				UpdateForageableBit(Forageable.SeaUrchin, value);
-			}
-		}
+		//private bool _forageSeaUrchins;
+		//public bool ForageSeaUrchins
+		//{
+		//	get => _forageSeaUrchins;
+		//	set
+		//	{
+		//		_forageSeaUrchins = value;
+		//		UpdateForageableBit(Forageable.SeaUrchin, value);
+		//	}
+		//}
 
-		private bool _forageSeaweed;
-		public bool ForageSeaweed
-		{
-			get => _forageSeaweed;
-			set
-			{
-				_forageSeaweed = value;
-				UpdateForageableBit(Forageable.Seaweed, value);
-			}
-		}
+		//private bool _forageSeaweed;
+		//public bool ForageSeaweed
+		//{
+		//	get => _forageSeaweed;
+		//	set
+		//	{
+		//		_forageSeaweed = value;
+		//		UpdateForageableBit(Forageable.Seaweed, value);
+		//	}
+		//}
 
 		#endregion Beach Forageable Properties
 
 		#region Cave Forageable Properties
 
-		private bool _forageFiddleheadFerns;
-		public bool ForageFiddleheadFerns
-		{
-			get => _forageFiddleheadFerns;
-			set
-			{
-				_forageFiddleheadFerns = value;
-				UpdateForageableBit(Forageable.FiddleheadFern, value);
-			}
-		}
+		//private bool _forageFiddleheadFerns;
+		//public bool ForageFiddleheadFerns
+		//{
+		//	get => _forageFiddleheadFerns;
+		//	set
+		//	{
+		//		_forageFiddleheadFerns = value;
+		//		UpdateForageableBit(Forageable.FiddleheadFern, value);
+		//	}
+		//}
 
 		#endregion Cave Forageable Properties
 
 		#region Desert Forageable Properties
 
-		private bool _forageCactusFruits;
-		public bool ForageCactusFruits
-		{
-			get => _forageCactusFruits;
-			set
-			{
-				_forageCactusFruits = value;
-				UpdateForageableBit(Forageable.CactusFruit, value);
-			}
-		}
+		//private bool _forageCactusFruits;
+		//public bool ForageCactusFruits
+		//{
+		//	get => _forageCactusFruits;
+		//	set
+		//	{
+		//		_forageCactusFruits = value;
+		//		UpdateForageableBit(Forageable.CactusFruit, value);
+		//	}
+		//}
 
-		private bool _forageCoconuts;
-		public bool ForageCoconuts
-		{
-			get => _forageCoconuts;
-			set
-			{
-				_forageCoconuts = value;
-				UpdateForageableBit(Forageable.Coconut, value);
-			}
-		}
+		//private bool _forageCoconuts;
+		//public bool ForageCoconuts
+		//{
+		//	get => _forageCoconuts;
+		//	set
+		//	{
+		//		_forageCoconuts = value;
+		//		UpdateForageableBit(Forageable.Coconut, value);
+		//	}
+		//}
 
 		#endregion Desert Forageable Properties
 
 		#region Island Forageable Properties
 
-		public bool ForageGinger { get; set; }
+		//public bool ForageGinger { get; set; }
 
 		#endregion Island Forageable Properties
 
-		public bool AnyForageablesEnabled { get; set; }
+		//public bool AnyForageablesEnabled { get; set; }
 
 		#endregion Forageable Properties
+
+		public ModConfig()
+		{
+			_forageableTracker = ForageableItemTracker.Instance;
+
+			ForageToggles = new()
+			{
+				{ BushKey, new() },
+				{ ForagingKey, new() },
+				{ FruitTreeKey, new() },
+				{ WildTreeKey, new() }
+			};
+
+			ResetToDefault();
+		}
 
 		public void ResetToDefault()
 		{
@@ -486,106 +508,115 @@ namespace AutoShaker
 			ShakeDistance = 2;
 			RequireHoe = true;
 
-			AnyShakeEnabled = true;
+			foreach (var toggleDict in ForageToggles)
+			{
+				toggleDict.Value.Clear();
+
+				if (_forageableTracker != null)
+				{
+					switch (toggleDict.Key)
+					{
+						case BushKey:
+							break;
+						case ForagingKey:
+							break;
+						case FruitTreeKey:
+							break;
+						case WildTreeKey:
+							break;
+					}
+				}
+			}
+
+			//AnyShakeEnabled = true;
 
 			// Seed Trees
-			ShakeMahoganyTrees = true;
-			ShakeMapleTrees = true;
-			ShakeOakTrees = true;
-			ShakePalmTrees = true;
-			ShakePineTrees = true;
+			//ShakeMahoganyTrees = true;
+			//ShakeMapleTrees = true;
+			//ShakeOakTrees = true;
+			//ShakePalmTrees = true;
+			//ShakePineTrees = true;
 
-			AnySeedTreeEnabled = true;
+			//AnySeedTreeEnabled = true;
 
 			// Fruit Trees
 			FruitsReadyToShake = MinFruitsReady;
-			ShakeAppleTrees = true;
-			ShakeApricotTrees = true;
-			ShakeBananaTrees = true;
-			ShakeCherryTrees = true;
-			ShakeMangoTrees = true;
-			ShakeOrangeTrees = true;
-			ShakePeachTrees = true;
-			ShakePomegranateTrees = true;
+			//ShakeAppleTrees = true;
+			//ShakeApricotTrees = true;
+			//ShakeBananaTrees = true;
+			//ShakeCherryTrees = true;
+			//ShakeMangoTrees = true;
+			//ShakeOrangeTrees = true;
+			//ShakePeachTrees = true;
+			//ShakePomegranateTrees = true;
 
-			AnyFruitTreeEnabled = true;
+			//AnyFruitTreeEnabled = true;
 
 			// Bushes
-			ShakeSalmonberryBushes = true;
-			ShakeBlackberryBushes = true;
-			ShakeTeaBushes = true;
-			ShakeWalnutBushes = false;
+			//ShakeSalmonberryBushes = true;
+			//ShakeBlackberryBushes = true;
+			//ShakeTeaBushes = true;
+			//ShakeWalnutBushes = false;
 
-			AnyBushEnabled = true;
+			//AnyBushEnabled = true;
 
 			// Forageables
 			// Spring
-			ForageDaffodils = false;
-			ForageDandelions = false;
-			ForageLeeks = false;
-			ForageSpringOnions = false;
-			ForageWildHorseradishes = false;
+			//ForageDaffodils = false;
+			//ForageDandelions = false;
+			//ForageLeeks = false;
+			//ForageSpringOnions = false;
+			//ForageWildHorseradishes = false;
 
 			// Summer
-			ForageGrapes = false;
-			ForageSpiceBerries = false;
-			ForageSweetPeas = false;
+			//ForageGrapes = false;
+			//ForageSpiceBerries = false;
+			//ForageSweetPeas = false;
 
 			// Fall
-			ForageHazelnuts = false;
-			ForageWildPlums = false;
+			//ForageHazelnuts = false;
+			//ForageWildPlums = false;
 
 			// Winter
-			ForageCrocuses = false;
-			ForageCrystalFruits = false;
-			ForageHolly = false;
-			ForageSnowYams = false;
-			ForageWinterRoots = false;
+			//ForageCrocuses = false;
+			//ForageCrystalFruits = false;
+			//ForageHolly = false;
+			//ForageSnowYams = false;
+			//ForageWinterRoots = false;
 
 			// Mushrooms
-			ForageChanterelles = false;
-			ForageCommonMushrooms = false;
-			ForageMagmaCaps = false;
-			ForageMorels = false;
-			ForagePurpleMushrooms = false;
-			ForageRedMushrooms = false;
+			//ForageChanterelles = false;
+			//ForageCommonMushrooms = false;
+			//ForageMagmaCaps = false;
+			//ForageMorels = false;
+			//ForagePurpleMushrooms = false;
+			//ForageRedMushrooms = false;
 
 			// Beach
-			ForageClams = false;
-			ForageCockles = false;
-			ForageCoral = false;
-			ForageMussels = false;
-			ForageNautilusShells = false;
-			ForageOysters = false;
-			ForageRainbowShells = false;
-			ForageSeaUrchins = false;
-			ForageSeaweed = false;
+			//ForageClams = false;
+			//ForageCockles = false;
+			//ForageCoral = false;
+			//ForageMussels = false;
+			//ForageNautilusShells = false;
+			//ForageOysters = false;
+			//ForageRainbowShells = false;
+			//ForageSeaUrchins = false;
+			//ForageSeaweed = false;
 
 			// Caves
-			ForageFiddleheadFerns = false;
+			//ForageFiddleheadFerns = false;
 
 			// Desert
-			ForageCactusFruits = false;
+			//ForageCactusFruits = false;
 
 			// Island
-			ForageGinger = false;
+			//ForageGinger = false;
 
-			AnyForageablesEnabled = false;
-			ForageableToggles = 0;
+			//AnyForageablesEnabled = false;
+			//ForageableToggles = 0;
 		}
 
-		public ModConfig()
-		{
-			ResetToDefault();
-		}
-
-		public void RegisterModConfigMenu(
-			IModHelper helper,
-			IManifest manifest,
-			List<ForageableItem> artifactForageables,
-			List<ForageableItem> fruitTreeForageables,
-			List<ForageableItem> objectForageables,
-			List<ForageableItem> wildTreeForageables)
+		public void RegisterModConfigMenu(IModHelper helper, IManifest manifest)
 		{
 			if (!helper.ModRegistry.IsLoaded("spacechase0.GenericModConfigMenu")) return;
 
@@ -712,10 +743,6 @@ namespace AutoShaker
 				pageId: "AutoShaker.FruitTreesPage",
 				pageTitle: I18n.Page_FruitTrees_Title);
 
-			gmcmApi.AddSectionTitle(
-				mod: manifest,
-				text: I18n.Section_FruitTrees_Text);
-
 			// FruitsReadyToShake
 			gmcmApi.AddNumberOption(
 				mod: manifest,
@@ -726,6 +753,10 @@ namespace AutoShaker
 				setValue: val => FruitsReadyToShake = val,
 				min: MinFruitsReady,
 				max: MaxFruitsReady);
+
+			gmcmApi.AddSectionTitle(
+				mod: manifest,
+				text: I18n.Section_FruitTrees_Text);
 
 			gmcmApi.AddParagraph(
 				mod: manifest,
@@ -884,532 +915,33 @@ namespace AutoShaker
 				mod: manifest,
 				pageId: "",
 				text: I18n.Link_BackToMain_Text);
-
-			///* Spring */
-			//gmcmApi.AddSectionTitle(
-			//	mod: manifest,
-			//	text: I18n.Section_Spring_Text);
-
-			//// PullDaffodils
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageDaffodils",
-			//	name: () => Constants.DaffodilName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Daffodils()),
-			//	getValue: () => ForageDaffodils,
-			//	setValue: val =>
-			//	{
-			//		ForageDaffodils = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullDandelions
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageDandelions",
-			//	name: () => Constants.DandelionName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Dandelions()),
-			//	getValue: () => ForageDandelions,
-			//	setValue: val =>
-			//	{
-			//		ForageDandelions = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullLeeks
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageLeeks",
-			//	name: () => Constants.LeekName,
-			//	tooltip:  () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Leeks()),
-			//	getValue: () => ForageLeeks,
-			//	setValue: val =>
-			//	{
-			//		ForageLeeks = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullSpringOnions
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageSpringOnions",
-			//	name: () => Constants.SpringOnionName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_SpringOnions()),
-			//	getValue: () => ForageSpringOnions,
-			//	setValue: val =>
-			//	{
-			//		ForageSpringOnions = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullWildHorseradishes
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageWildHorseradishes",
-			//	name: () => Constants.WildHorseradishName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_WildHorseradishes()),
-			//	getValue: () => ForageWildHorseradishes,
-			//	setValue: val =>
-			//	{
-			//		ForageWildHorseradishes = val;
-			//		UpdateEnabled();
-			//	});
-
-			///* Summer */
-			//gmcmApi.AddSectionTitle(
-			//	mod: manifest,
-			//	text: I18n.Section_Summer_Text);
-
-			//// PullGrapes
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageGrapes",
-			//	name: () => Constants.GrapeName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Grapes()),
-			//	getValue: () => ForageGrapes,
-			//	setValue: val =>
-			//	{
-			//		ForageGrapes = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullSpiceBerries
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageSpiceBerries",
-			//	name: () => Constants.SpiceBerryName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_SpiceBerries()),
-			//	getValue: () => ForageSpiceBerries,
-			//	setValue: val =>
-			//	{
-			//		ForageSpiceBerries = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullSweetPeas
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageSweetPeas",
-			//	name: () => Constants.SweetPeaName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_SweetPeas()),
-			//	getValue: () => ForageSweetPeas,
-			//	setValue: val =>
-			//	{
-			//		ForageSweetPeas = val;
-			//		UpdateEnabled();
-			//	});
-
-			///* Fall */
-			//gmcmApi.AddSectionTitle(
-			//	mod: manifest,
-			//	text: I18n.Section_Fall_Text);
-
-			//// PullHazelnuts
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageHazelnuts",
-			//	name: () => Constants.HazelnutName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description_Note(
-			//		I18n.Action_Forage_Future().ToLowerInvariant(),
-			//		I18n.Subject_Hazelnuts(),
-			//		I18n.Note_ForageHazelnuts()),
-			//	getValue: () => ForageHazelnuts,
-			//	setValue: val =>
-			//	{
-			//		ForageHazelnuts = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullWildPlums
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageWildPlums",
-			//	name: () => Constants.WildPlumName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_WildPlums()),
-			//	getValue: () => ForageWildPlums,
-			//	setValue: val =>
-			//	{
-			//		ForageWildPlums = val;
-			//		UpdateEnabled();
-			//	});
-
-			///* Winter */
-			//gmcmApi.AddSectionTitle(
-			//	mod: manifest,
-			//	text: I18n.Section_Winter_Text);
-
-			//// PullCrocuses
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageCrocuses",
-			//	name: () => Constants.CrocusName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Crocuses()),
-			//	getValue: () => ForageCrocuses,
-			//	setValue: val =>
-			//	{
-			//		ForageCrocuses = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullCrystalFruits
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageCrystalFruits",
-			//	name: () => Constants.CrystalFruitName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_CrystalFruits()),
-			//	getValue: () => ForageCrystalFruits,
-			//	setValue: val =>
-			//	{
-			//		ForageCrystalFruits = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullHolly
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageHolly",
-			//	name: () => Constants.HollyName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Holly()),
-			//	getValue: () => ForageHolly,
-			//	setValue: val =>
-			//	{
-			//		ForageHolly = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// DigSnowYams
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageSnowYams",
-			//	name: () => Constants.SnowYamName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description_Note(
-			//		I18n.Action_Forage_Future().ToLowerInvariant(),
-			//		I18n.Subject_SnowYams(),
-			//		I18n.Note_ArtifactSpot(I18n.Subject_SnowYam())),
-			//	getValue: () => ForageSnowYams,
-			//	setValue: val =>
-			//	{
-			//		ForageSnowYams = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// DigWinterRoots
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageWinterRoots",
-			//	name: () => Constants.WinterRootName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description_Note(
-			//		I18n.Action_Forage_Future().ToLowerInvariant(),
-			//		I18n.Subject_WinterRoots(),
-			//		I18n.Note_ArtifactSpot(I18n.Subject_WinterRoot())),
-			//	getValue: () => ForageWinterRoots,
-			//	setValue: val =>
-			//	{
-			//		ForageWinterRoots = val;
-			//		UpdateEnabled();
-			//	});
-
-			///* Mushrooms */
-			//gmcmApi.AddSectionTitle(
-			//	mod: manifest,
-			//	text: I18n.Section_Mushrooms_Text);
-
-			//// PullChanterelles
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageChanterelles",
-			//	name: () => Constants.ChanterelleName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_ChanterelleMushrooms()),
-			//	getValue: () => ForageChanterelles,
-			//	setValue: val =>
-			//	{
-			//		ForageChanterelles = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullCommonMushrooms
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageCommonMushrooms",
-			//	name: () => Constants.CommonMushroomName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_CommonMushrooms()),
-			//	getValue: () => ForageCommonMushrooms,
-			//	setValue: val =>
-			//	{
-			//		ForageCommonMushrooms = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullMagmaCaps
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageMagmaCaps",
-			//	name: () => Constants.MagmaCapName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_MagmaCaps()),
-			//	getValue: () => ForageMagmaCaps,
-			//	setValue: val =>
-			//	{
-			//		ForageMagmaCaps = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullMorels
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageMorels",
-			//	name: () => Constants.MorelName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_MorelMushrooms()),
-			//	getValue: () => ForageMorels,
-			//	setValue: val =>
-			//	{
-			//		ForageMorels = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullPurpleMushrooms
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForagePurpleMushrooms",
-			//	name: () => Constants.PurpleMushroomName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_PurpleMushrooms()),
-			//	getValue: () => ForagePurpleMushrooms,
-			//	setValue: val =>
-			//	{
-			//		ForagePurpleMushrooms = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullRedMushrooms
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageRedMushrooms",
-			//	name: () => Constants.RedMushroomName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_RedMushrooms()),
-			//	getValue: () => ForageRedMushrooms,
-			//	setValue: val =>
-			//	{
-			//		ForageRedMushrooms = val;
-			//		UpdateEnabled();
-			//	});
-
-			///* Beach */
-			//gmcmApi.AddSectionTitle(
-			//	mod: manifest,
-			//	text: I18n.Section_Beach_Text);
-
-			//// PullClams
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageClams",
-			//	name: () => Constants.ClamName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Clams()),
-			//	getValue: () => ForageClams,
-			//	setValue: val =>
-			//	{
-			//		ForageClams = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullCockles
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageCockles",
-			//	name: () => Constants.CockleName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Cockles()),
-			//	getValue: () => ForageCockles,
-			//	setValue: val =>
-			//	{
-			//		ForageCockles = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullCoral
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageCoral",
-			//	name: () => Constants.CoralName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Coral()),
-			//	getValue: () => ForageCoral,
-			//	setValue: val =>
-			//	{
-			//		ForageCoral = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullMussels
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageMussels",
-			//	name: () => Constants.MusselName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Mussels()),
-			//	getValue: () => ForageMussels,
-			//	setValue: val =>
-			//	{
-			//		ForageMussels = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullNautilusShells
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageNautilusShells",
-			//	name: () => Constants.NautilusShellName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_NautilusShells()),
-			//	getValue: () => ForageNautilusShells,
-			//	setValue: val =>
-			//	{
-			//		ForageNautilusShells = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullOysters
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageOysters",
-			//	name: () => Constants.OysterName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Oysters()),
-			//	getValue: () => ForageOysters,
-			//	setValue: val =>
-			//	{
-			//		ForageOysters = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullRainbowShells
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageRainbowShells",
-			//	name: () => Constants.RainbowShellName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_RainbowShells()),
-			//	getValue: () => ForageRainbowShells,
-			//	setValue: val =>
-			//	{
-			//		ForageRainbowShells = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullSeaUrchins
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageSeaUrchins",
-			//	name: () => Constants.SeaUrchinName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_SeaUrchins()),
-			//	getValue: () => ForageSeaUrchins,
-			//	setValue: val =>
-			//	{
-			//		ForageSeaUrchins = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// PullSeaweed
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageSeaweed",
-			//	name: () => Constants.SeaweedName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_Seaweed()),
-			//	getValue: () => ForageSeaweed,
-			//	setValue: val =>
-			//	{
-			//		ForageSeaweed = val;
-			//		UpdateEnabled();
-			//	});
-
-			///* Cave */
-			//gmcmApi.AddSectionTitle(
-			//	mod: manifest,
-			//	text: I18n.Section_Cave_Text);
-
-			//// PullFiddleheadFerns
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageFiddleheadFerns",
-			//	name: () => Constants.FiddleheadFernName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_FiddleheadFerns()),
-			//	getValue: () => ForageFiddleheadFerns,
-			//	setValue: val =>
-			//	{
-			//		ForageFiddleheadFerns = val;
-			//		UpdateEnabled();
-			//	});
-
-			///* Desert */
-			//gmcmApi.AddSectionTitle(
-			//	mod: manifest,
-			//	text: I18n.Section_Desert_Text);
-
-			//// PullCactusFruits
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageCactusFruits",
-			//	name: () => Constants.CactusFruitName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_CactusFruits()),
-			//	getValue: () => ForageCactusFruits,
-			//	setValue: val =>
-			//	{
-			//		ForageCactusFruits = val;
-			//		UpdateEnabled();
-			//	});
-
-			//// HarvestCoconuts
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageCoconuts",
-			//	name: () => Constants.CoconutName,
-			//	tooltip:() => I18n.Option_ToggleAction_Description_Note(
-			//		I18n.Action_Forage_Future().ToLowerInvariant(),
-			//		I18n.Subject_Coconuts(),
-			//		I18n.Note_ForageCoconuts()),
-			//	getValue: () => ForageCoconuts,
-			//	setValue: val =>
-			//	{
-			//		ForageCoconuts = val;
-			//		UpdateEnabled();
-			//	});
-
-			///* Island */
-			//gmcmApi.AddSectionTitle(
-			//	mod: manifest,
-			//	text: I18n.Section_Island_Text);
-
-			//// ForageGinger
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ForageGinger",
-			//	name: () => Constants.GingerName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description(I18n.Action_Forage_Future().ToLowerInvariant(), I18n.Subject_GingerRoots()),
-			//	getValue: () => ForageGinger,
-			//	setValue: val =>
-			//	{
-			//		ForageGinger = val;
-			//		UpdateEnabled();
-			//	});
 		}
 
 		public void UpdateEnabled()
 		{
-			AnySeedTreeEnabled = ShakeMahoganyTrees
-				|| ShakeMapleTrees
-				|| ShakeOakTrees
-				|| ShakePalmTrees
-				|| ShakePineTrees;
+			//AnySeedTreeEnabled = ShakeMahoganyTrees
+			//	|| ShakeMapleTrees
+			//	|| ShakeOakTrees
+			//	|| ShakePalmTrees
+			//	|| ShakePineTrees;
 
-			AnyFruitTreeEnabled = ShakeAppleTrees
-				|| ShakeApricotTrees
-				|| ShakeBananaTrees
-				|| ShakeCherryTrees
-				|| ShakeMangoTrees
-				|| ShakeOrangeTrees
-				|| ShakePeachTrees
-				|| ShakePomegranateTrees;
+			//AnyFruitTreeEnabled = ShakeAppleTrees
+			//	|| ShakeApricotTrees
+			//	|| ShakeBananaTrees
+			//	|| ShakeCherryTrees
+			//	|| ShakeMangoTrees
+			//	|| ShakeOrangeTrees
+			//	|| ShakePeachTrees
+			//	|| ShakePomegranateTrees;
 
-			AnyBushEnabled = ShakeSalmonberryBushes
-				|| ShakeBlackberryBushes
-				|| ShakeTeaBushes
-				|| ShakeWalnutBushes;
+			//AnyBushEnabled = ShakeSalmonberryBushes
+			//	|| ShakeBlackberryBushes
+			//	|| ShakeTeaBushes
+			//	|| ShakeWalnutBushes;
 
-			AnyForageablesEnabled = ForageableToggles > 0;
+			//AnyForageablesEnabled = ForageableToggles > 0;
 
-			AnyShakeEnabled = AnySeedTreeEnabled || AnyFruitTreeEnabled || AnyBushEnabled || AnyForageablesEnabled;
+			//AnyShakeEnabled = AnySeedTreeEnabled || AnyFruitTreeEnabled || AnyBushEnabled || AnyForageablesEnabled;
 		}
 
 		private void UpdateForageableBit(Forageable forageble, bool enabled)

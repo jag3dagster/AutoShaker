@@ -42,11 +42,9 @@ namespace AutoShaker
 		//private readonly HashSet<TerrainFeature> _interactedFeatures = new();
 
 		private readonly List<string> _overrideItemIds;
+		private readonly List<string> _ignoreItemIds;
 
-		private readonly List<ForageableItem> _artifactForageables;
-		private readonly List<ForageableItem> _fruitTreeForageables;
-		private readonly List<ForageableItem> _objectForageables;
-		private readonly List<ForageableItem> _wildTreeForageables;
+		private ForageableItemTracker _forageableTracker;
 
 		private readonly Dictionary<Vector2, string> _artifactPredictions;
 
@@ -115,11 +113,12 @@ namespace AutoShaker
 				"(O)851"  // Magma Cap
 			};
 
-			_artifactForageables = new();
-			_fruitTreeForageables = new();
-			_objectForageables = new();
-			_wildTreeForageables = new();
+			_ignoreItemIds = new()
+			{
+				"(O)78" // Cave Carrot
+			};
 
+			_forageableTracker = ForageableItemTracker.Instance;
 			_artifactPredictions = new();
 
 			_trackingCounts = new()
@@ -207,7 +206,7 @@ namespace AutoShaker
 			LocationCache = Game1.content.Load<Dictionary<string, LocationData>>(Constants.LocationsAssetName);
 
 			// $TODO - Figure out how to register / update GMCM
-			_config.RegisterModConfigMenu(Helper, ModManifest, _artifactForageables, _fruitTreeForageables, _objectForageables, _wildTreeForageables);
+			_config.RegisterModConfigMenu(Helper, ModManifest);
 
 			_gameStarted = true;
 		}
@@ -875,7 +874,7 @@ namespace AutoShaker
 		{
 			var toIgnore = false;
 
-			if (!_config.AnyBushEnabled) return false;
+			//if (!_config.AnyBushEnabled) return false;
 			if (bush.townBush.Value) toIgnore = true;
 			if (!bush.inBloom()) toIgnore = true;
 			if (bush.tileSheetOffset.Value != 1) toIgnore = true;
@@ -902,39 +901,39 @@ namespace AutoShaker
 
 					if (!season.Equals("spring") && !season.Equals("fall")) return false;
 
-					if (season.Equals("spring") && !_config.ShakeSalmonberryBushes)
-					{
-						//Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_SalmonberryBushes(), Constants.SalmonberryName), LogLevel.Debug);
-						return false;
-					}
+					//if (season.Equals("spring") && !_config.ShakeSalmonberryBushes)
+					//{
+					//	//Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_SalmonberryBushes(), Constants.SalmonberryName), LogLevel.Debug);
+					//	return false;
+					//}
 
-					if (season.Equals("fall") && !_config.ShakeBlackberryBushes)
-					{
-						//Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_BlackberryBushes(), Constants.BlackberryName), LogLevel.Debug);
-						return false;
-					}
+					//if (season.Equals("fall") && !_config.ShakeBlackberryBushes)
+					//{
+					//	//Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_BlackberryBushes(), Constants.BlackberryName), LogLevel.Debug);
+					//	return false;
+					//}
 
 					_trackingCounts[BushKey].AddOrIncrement(season.Equals("spring") ? I18n.Subject_SalmonberryBushes() : I18n.Subject_BlackberryBushes());
 					break;
 
 				// Tea Bushes
 				case 3:
-					if (!_config.ShakeTeaBushes)
-					{
-						//Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_TeaBushes(), Constants.TeaName), LogLevel.Debug);
-						return false;
-					}
+					//if (!_config.ShakeTeaBushes)
+					//{
+					//	//Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_TeaBushes(), Constants.TeaName), LogLevel.Debug);
+					//	return false;
+					//}
 
 					_trackingCounts[BushKey].AddOrIncrement(I18n.Subject_TeaBushes());
 					break;
 
 				// Walnut Bushes
 				case 4:
-					if (!_config.ShakeWalnutBushes)
-					{
-						//Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_WalnutBushes(), Constants.WalnutName), LogLevel.Debug);
-						return false;
-					}
+					//if (!_config.ShakeWalnutBushes)
+					//{
+					//	//Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_WalnutBushes(), Constants.WalnutName), LogLevel.Debug);
+					//	return false;
+					//}
 
 					_trackingCounts[BushKey].AddOrIncrement(I18n.Subject_WalnutBushes());
 					break;
@@ -1002,6 +1001,8 @@ namespace AutoShaker
 			var objectData = asset.AsDictionary<string, ObjectData>();
 			foreach (var obj in objectData.Data)
 			{
+				if (_ignoreItemIds.Any(i => obj.Key.Equals(i.Substring(3)))) continue;
+
 				if ((obj.Value.ContextTags?.Contains("forage_item") ?? false)
 					|| _overrideItemIds.Any(i => obj.Key.Equals(i.Substring(3))))
 				{

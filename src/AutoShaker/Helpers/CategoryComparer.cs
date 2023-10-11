@@ -9,6 +9,7 @@ namespace AutoShaker.Helpers
 		{
 			if (x is null || y is null)
 			{
+
 				throw new NullReferenceException();
 			}
 
