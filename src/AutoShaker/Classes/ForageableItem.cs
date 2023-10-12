@@ -17,12 +17,16 @@ namespace AutoShaker.Classes
 		private readonly string _qualifiedItemId;
 		public string QualifiedItemId => _qualifiedItemId;
 
+		private readonly string _internalName;
+		public string InternalName => _internalName;
+
 		private readonly string _displayName;
 		public string DisplayName => TokenParser.ParseText(_displayName);
 
 		private readonly Dictionary<string, string> _customFields;
 		public Dictionary<string, string> CustomFields => _customFields;
 
+		private readonly bool _defaultIsEnabled;
 		private bool _isEnabled;
 		public bool IsEnabled
 		{
@@ -30,17 +34,24 @@ namespace AutoShaker.Classes
 			set => _isEnabled = value;
 		}
 
-		public ForageableItem(string itemId, string qualifiedItemId, string displayName, Dictionary<string, string> customFields, bool enabled = false)
+		public ForageableItem(string itemId, string qualifiedItemId, string internalName, string displayName, Dictionary<string, string> customFields, bool enabled = false)
 		{
 			_itemId = itemId;
 			_qualifiedItemId = qualifiedItemId;
+			_internalName = internalName;
 			_displayName = displayName;
 			_customFields = customFields;
 			_isEnabled = enabled;
+			_defaultIsEnabled = enabled;
+		}
+
+		public void ResetToDefaultEnabled()
+		{
+			_isEnabled = _defaultIsEnabled;
 		}
 
 		public ForageableItem(ParsedItemData data, Dictionary<string, string> customFields, bool enabled = false)
-			: this(data.ItemId, data.QualifiedItemId, data.DisplayName, customFields, enabled)
+			: this(data.ItemId, data.QualifiedItemId, data.InternalName, data.DisplayName, customFields, enabled)
 		{ }
 
 		public static IEnumerable<ForageableItem> Parse(IDictionary<string, FruitTreeData> data)

@@ -517,12 +517,16 @@ namespace AutoShaker
 					switch (toggleDict.Key)
 					{
 						case BushKey:
+							// $TODO - Anything to do here?
 							break;
 						case ForagingKey:
+							ResetTracker(_forageableTracker.ObjectForageables, toggleDict.Value);
 							break;
 						case FruitTreeKey:
+							ResetTracker(_forageableTracker.FruitTreeForageables, toggleDict.Value);
 							break;
 						case WildTreeKey:
+							ResetTracker(_forageableTracker.WildTreeForageables, toggleDict.Value);
 							break;
 					}
 				}
@@ -953,6 +957,17 @@ namespace AutoShaker
 			else
 			{
 				ForageableToggles &= ~(uint)forageble;
+			}
+		}
+
+		private static void ResetTracker(IReadOnlyList<ForageableItem> items, Dictionary<string, bool> dict)
+		{
+			if (items.IsNullOrEmpty()) return;
+
+			foreach (var item in items)
+			{
+				item.ResetToDefaultEnabled();
+				dict.Add(item.InternalName, item.IsEnabled);
 			}
 		}
 	}

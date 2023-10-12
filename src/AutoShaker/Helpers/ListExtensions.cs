@@ -21,4 +21,14 @@ namespace AutoShaker.Helpers
 			items.Sort((x, y) => string.CompareOrdinal(x.DisplayName, y.DisplayName));
 		}
 	}
+
+	public static class IReadonlyListExtensions
+	{
+		public static bool IsNullOrEmpty<T>(this IReadOnlyList<T> list)
+		{
+			if (list == null) return true;
+
+			return !list.Any();
+		}
+	}
 }
