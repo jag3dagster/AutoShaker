@@ -141,8 +141,7 @@ namespace AutoShaker
 			I18n.Init(helper.Translation);
 
 			_config = helper.ReadConfig<ModConfig>();
-			_config.UpdateEnabled();
-			helper.WriteConfig(_config);
+			_config.UpdateEnabled(Helper);
 
 			helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
 			helper.Events.GameLoop.DayStarted += OnDayStarted;
@@ -207,6 +206,7 @@ namespace AutoShaker
 
 			// $TODO - Figure out how to register / update GMCM
 			_config.RegisterModConfigMenu(Helper, ModManifest);
+			_config.UpdateEnabled(Helper);
 
 			_gameStarted = true;
 		}
@@ -258,7 +258,7 @@ namespace AutoShaker
 
 						Monitor.Log($"[{x}, {y}] {item.QualifiedItemId}", LogLevel.Info);
 
-						if (_artifactForageables.Any(i => i.QualifiedItemId.Equals(item.QualifiedItemId)))
+						if (_forageableTracker.ArtifactForageables.Any(i => i.QualifiedItemId.Equals(item.QualifiedItemId)))
 						{
 							_artifactPredictions.Add(vec, item.QualifiedItemId);
 						}
@@ -278,8 +278,6 @@ namespace AutoShaker
 			if (Game1.currentLocation == null || Game1.player == null) return;
 			if (Game1.player.Tile.Equals(_previousTilePosition)) return;
 
-			
-
 			_previousTilePosition = Game1.player.Tile;
 			var playerTileLocationPoint = Game1.player.TilePoint;
 			var playerMagnetism = Game1.player.GetAppliedMagneticRadius();
@@ -298,7 +296,7 @@ namespace AutoShaker
 						if (!tree.isActionable()) continue;
 
 						var itemIds = tree.GetSeedAndSeedItemIds();
-						if (_wildTreeForageables.Any(i => itemIds.Contains(i.QualifiedItemId) && i.IsEnabled))
+						if (_forageableTracker.WildTreeForageables.Any(i => itemIds.Contains(i.QualifiedItemId) && i.IsEnabled))
 						{
 							tree.performUseAction(tree.Tile);
 							Monitor.Log($"Tree shaken: {string.Join(", ", itemIds)}", LogLevel.Debug);
@@ -317,7 +315,7 @@ namespace AutoShaker
 						if (fruitCount <= 0 || fruitCount < _config.FruitsReadyToShake) continue;
 
 						var itemIds = fruitTree.GetFruitItemIds();
-						if (_fruitTreeForageables.Any(i => itemIds.Contains(i.QualifiedItemId) && i.IsEnabled))
+						if (_forageableTracker.FruitTreeForageables.Any(i => itemIds.Contains(i.QualifiedItemId) && i.IsEnabled))
 						{
 							fruitTree.performUseAction(fruitTree.Tile);
 							Monitor.Log($"Fruit Tree shaken: {string.Join(", ", itemIds)}", LogLevel.Debug);
@@ -344,7 +342,7 @@ namespace AutoShaker
 					// Forageable Items
 					if (obj.isForage() && obj.IsSpawnedObject && !obj.questItem.Value)
 					{
-						if (_objectForageables.Any(i => i.QualifiedItemId.Equals(obj.QualifiedItemId) && i.IsEnabled))
+						if (_forageableTracker.ObjectForageables.Any(i => i.QualifiedItemId.Equals(obj.QualifiedItemId) && i.IsEnabled))
 						{
 							ForageItem(obj, vec, Utility.CreateDaySaveRandom(vec.X, vec.Y * 777f), 7, true);
 
@@ -356,7 +354,7 @@ namespace AutoShaker
 					else if (obj.QualifiedItemId.Equals("(O)590") && _artifactPredictions.ContainsKey(vec))
 					{
 						var prediction = _artifactPredictions[vec];
-						if (_artifactForageables.Any(i => i.QualifiedItemId.Equals(prediction) && i.IsEnabled))
+						if (_forageableTracker.ArtifactForageables.Any(i => i.QualifiedItemId.Equals(prediction) && i.IsEnabled))
 						{
 							Game1.currentLocation.digUpArtifactSpot((int)vec.X, (int)vec.Y, Game1.player);
 
@@ -951,9 +949,9 @@ namespace AutoShaker
 		{
 			if (data is Dictionary<string, FruitTreeData> fruitTreeData)
 			{
-				_fruitTreeForageables.Clear();
-				_fruitTreeForageables.AddRange(ForageableItem.Parse(fruitTreeData));
-				_fruitTreeForageables.SortByDisplayName();
+				_forageableTracker.FruitTreeForageables.Clear();
+				_forageableTracker.FruitTreeForageables.AddRange(ForageableItem.Parse(fruitTreeData));
+				_forageableTracker.FruitTreeForageables.SortByDisplayName();
 			}
 			else if (data is Dictionary<string, LocationData> locationData)
 			{
@@ -962,28 +960,33 @@ namespace AutoShaker
 					ObjectCache = Game1.content.Load<Dictionary<string, ObjectData>>(Constants.ObjectsAssetName);
 				}
 
-				_artifactForageables.Clear();
-				_artifactForageables.AddRange(ForageableItem.Parse(ObjectCache, locationData));
-				_artifactForageables.SortByDisplayName();
+				_forageableTracker.ArtifactForageables.Clear();
+				_forageableTracker.ArtifactForageables.AddRange(ForageableItem.Parse(ObjectCache, locationData));
+				_forageableTracker.ArtifactForageables.SortByDisplayName();
 			}
 			else if (data is Dictionary<string, ObjectData> objectData)
 			{
-				_objectForageables.Clear();
-				_objectForageables.AddRange(ForageableItem.Parse(objectData));
-				_objectForageables.SortByDisplayName();
+				_forageableTracker.ObjectForageables.Clear();
+				_forageableTracker.ObjectForageables.AddRange(ForageableItem.Parse(objectData));
+				_forageableTracker.ObjectForageables.SortByDisplayName();
 
 				if (LocationCache != null && LocationCache.Count > 0)
 				{
-					_artifactForageables.Clear();
-					_artifactForageables.AddRange(ForageableItem.Parse(objectData, LocationCache));
-					_artifactForageables.SortByDisplayName();
+					_forageableTracker.ArtifactForageables.Clear();
+					_forageableTracker.ArtifactForageables.AddRange(ForageableItem.Parse(objectData, LocationCache));
+					_forageableTracker.ArtifactForageables.SortByDisplayName();
 				}
 			}
 			else if (data is Dictionary<string, WildTreeData> wildTreeData)
 			{
-				_wildTreeForageables.Clear();
-				_wildTreeForageables.AddRange(ForageableItem.Parse(wildTreeData));
-				_wildTreeForageables.SortByDisplayName();
+				_forageableTracker.WildTreeForageables.Clear();
+				_forageableTracker.WildTreeForageables.AddRange(ForageableItem.Parse(wildTreeData));
+				_forageableTracker.WildTreeForageables.SortByDisplayName();
+			}
+
+			if (_config != null)
+			{
+				_config.UpdateEnabled(Helper);
 			}
 		}
 

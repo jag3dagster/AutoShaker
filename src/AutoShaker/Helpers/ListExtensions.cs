@@ -1,9 +1,6 @@
 ﻿using AutoShaker.Classes;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoShaker.Helpers
 {
@@ -20,13 +17,10 @@ namespace AutoShaker.Helpers
 		{
 			items.Sort((x, y) => string.CompareOrdinal(x.DisplayName, y.DisplayName));
 		}
-	}
 
-	public static class IReadonlyListExtensions
-	{
-		public static bool IsNullOrEmpty<T>(this IReadOnlyList<T> list)
+		public static bool IsNullOrEmpty<T>(this List<T> list)
 		{
-			if (list == null) return true;
+			if (list == null) return false;
 
 			return !list.Any();
 		}

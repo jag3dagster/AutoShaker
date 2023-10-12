@@ -5,7 +5,6 @@ using AutoShaker.Classes;
 using AutoShaker.Helpers;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
-using StardewValley.TerrainFeatures;
 using Constants = AutoShaker.Helpers.Constants;
 using Forageable = AutoShaker.Helpers.Constants.Forageable;
 
@@ -36,41 +35,15 @@ namespace AutoShaker
 		public int ShakeDistance { get; set; }
 		public bool RequireHoe { get; set; }
 
-		public Dictionary<string, Dictionary<string, bool>> ForageToggles { get; set; } = new();
-
-		#endregion General Properties
-
-		#region Seed Tree Properties
-
-		//public bool ShakeMahoganyTrees { get; set; }
-		//public bool ShakeMapleTrees { get; set; }
-		//public bool ShakeOakTrees { get; set; }
-		//public bool ShakePalmTrees { get; set; }
-		//public bool ShakePineTrees { get; set; }
-
-		//public bool AnySeedTreeEnabled { get; set; }
-
-		#endregion Seed Tree Properties
-
-		#region Fruit Tree Properties
-
 		public int FruitsReadyToShake
 		{
 			get => _fruitsReadyToShake;
 			set => _fruitsReadyToShake = Math.Clamp(value, MinFruitsReady, MaxFruitsReady);
 		}
-		//public bool ShakeAppleTrees { get; set; }
-		//public bool ShakeApricotTrees { get; set; }
-		//public bool ShakeBananaTrees { get; set; }
-		//public bool ShakeCherryTrees { get; set; }
-		//public bool ShakeMangoTrees { get; set; }
-		//public bool ShakeOrangeTrees { get; set; }
-		//public bool ShakePeachTrees { get; set; }
-		//public bool ShakePomegranateTrees { get; set; }
 
-		//public bool AnyFruitTreeEnabled { get; set; }
+		public Dictionary<string, Dictionary<string, bool>> ForageToggles { get; set; } = new();
 
-		#endregion Fruit Tree Properties
+		#endregion General Properties
 
 		#region Bush Properties
 
@@ -534,25 +507,10 @@ namespace AutoShaker
 
 			//AnyShakeEnabled = true;
 
-			// Seed Trees
-			//ShakeMahoganyTrees = true;
-			//ShakeMapleTrees = true;
-			//ShakeOakTrees = true;
-			//ShakePalmTrees = true;
-			//ShakePineTrees = true;
-
 			//AnySeedTreeEnabled = true;
 
 			// Fruit Trees
 			FruitsReadyToShake = MinFruitsReady;
-			//ShakeAppleTrees = true;
-			//ShakeApricotTrees = true;
-			//ShakeBananaTrees = true;
-			//ShakeCherryTrees = true;
-			//ShakeMangoTrees = true;
-			//ShakeOrangeTrees = true;
-			//ShakePeachTrees = true;
-			//ShakePomegranateTrees = true;
 
 			//AnyFruitTreeEnabled = true;
 
@@ -565,56 +523,6 @@ namespace AutoShaker
 			//AnyBushEnabled = true;
 
 			// Forageables
-			// Spring
-			//ForageDaffodils = false;
-			//ForageDandelions = false;
-			//ForageLeeks = false;
-			//ForageSpringOnions = false;
-			//ForageWildHorseradishes = false;
-
-			// Summer
-			//ForageGrapes = false;
-			//ForageSpiceBerries = false;
-			//ForageSweetPeas = false;
-
-			// Fall
-			//ForageHazelnuts = false;
-			//ForageWildPlums = false;
-
-			// Winter
-			//ForageCrocuses = false;
-			//ForageCrystalFruits = false;
-			//ForageHolly = false;
-			//ForageSnowYams = false;
-			//ForageWinterRoots = false;
-
-			// Mushrooms
-			//ForageChanterelles = false;
-			//ForageCommonMushrooms = false;
-			//ForageMagmaCaps = false;
-			//ForageMorels = false;
-			//ForagePurpleMushrooms = false;
-			//ForageRedMushrooms = false;
-
-			// Beach
-			//ForageClams = false;
-			//ForageCockles = false;
-			//ForageCoral = false;
-			//ForageMussels = false;
-			//ForageNautilusShells = false;
-			//ForageOysters = false;
-			//ForageRainbowShells = false;
-			//ForageSeaUrchins = false;
-			//ForageSeaweed = false;
-
-			// Caves
-			//ForageFiddleheadFerns = false;
-
-			// Desert
-			//ForageCactusFruits = false;
-
-			// Island
-			//ForageGinger = false;
 
 			//AnyForageablesEnabled = false;
 			//ForageableToggles = 0;
@@ -722,7 +630,7 @@ namespace AutoShaker
 				mod: manifest,
 				text: I18n.Page_WildTrees_Description);
 
-			foreach (var item in wildTreeForageables)
+			foreach (var item in _forageableTracker.WildTreeForageables)
 			{
 				gmcmApi.AddBoolOption(
 					mod: manifest,
@@ -731,6 +639,7 @@ namespace AutoShaker
 					setValue: val =>
 					{
 						item.IsEnabled = val;
+						ForageToggles[WildTreeKey].AddOrUpdate(item.InternalName, val);
 						// $TODO - UpdatedEnabled()
 					});
 			}
@@ -766,7 +675,7 @@ namespace AutoShaker
 				mod: manifest,
 				text: I18n.Page_WildTrees_Description);
 
-			foreach (var item in fruitTreeForageables)
+			foreach (var item in _forageableTracker.FruitTreeForageables)
 			{
 				gmcmApi.AddBoolOption(
 					mod: manifest,
@@ -775,6 +684,7 @@ namespace AutoShaker
 					setValue: val =>
 					{
 						item.IsEnabled = val;
+						ForageToggles[FruitTreeKey].AddOrUpdate(item.InternalName, val);
 						// $TODO - UpdateEnabled();
 					});
 			}
@@ -876,7 +786,7 @@ namespace AutoShaker
 				mod: manifest,
 				text: I18n.Page_Forageables_Description);
 
-			var groupedItems = objectForageables
+			var groupedItems = _forageableTracker.ObjectForageables
 				.GroupBy(f =>
 				{
 					if (!(f.CustomFields?.TryGetValue(Constants.CustomFieldCategoryKey, out var category) ?? false))
@@ -910,6 +820,7 @@ namespace AutoShaker
 						setValue: val =>
 						{
 							item.IsEnabled = val;
+							ForageToggles[ForagingKey].AddOrUpdate(item.InternalName, val);
 							// $TODO - UpdatedEnabled();
 						});
 				}
@@ -921,8 +832,31 @@ namespace AutoShaker
 				text: I18n.Link_BackToMain_Text);
 		}
 
-		public void UpdateEnabled()
+		public void UpdateEnabled(IModHelper helper)
 		{
+			if (_forageableTracker != null)
+			{
+				foreach (var toggleDict in ForageToggles)
+				{
+					switch (toggleDict.Key)
+					{
+						case BushKey:
+							// $TODO - Do something here?
+							break;
+						case ForagingKey:
+							UpdateTrackerEnables(_forageableTracker.ObjectForageables, toggleDict.Value);
+							break;
+						case FruitTreeKey:
+							UpdateTrackerEnables(_forageableTracker.FruitTreeForageables, toggleDict.Value);
+							break;
+						case WildTreeKey:
+							UpdateTrackerEnables(_forageableTracker.WildTreeForageables, toggleDict.Value);
+							break;
+					}
+				}
+			}
+
+			helper.WriteConfig(this);
 			//AnySeedTreeEnabled = ShakeMahoganyTrees
 			//	|| ShakeMapleTrees
 			//	|| ShakeOakTrees
@@ -960,7 +894,26 @@ namespace AutoShaker
 			}
 		}
 
-		private static void ResetTracker(IReadOnlyList<ForageableItem> items, Dictionary<string, bool> dict)
+		private static void UpdateTrackerEnables(List<ForageableItem> items, Dictionary<string, bool> dict)
+		{
+			foreach (var toggle in dict)
+			{
+				var item = items.FirstOrDefault(f => f.InternalName.Equals(toggle.Key), null);
+				if (item != null)
+				{
+					item.IsEnabled = toggle.Value;
+				}
+			}
+
+			dict.Clear();
+
+			foreach (var item in items)
+			{
+				dict.AddOrUpdate(item.InternalName, item.IsEnabled);
+			}
+		}
+
+		private static void ResetTracker(List<ForageableItem> items, Dictionary<string, bool> dict)
 		{
 			if (items.IsNullOrEmpty()) return;
 
