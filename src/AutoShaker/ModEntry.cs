@@ -193,8 +193,6 @@ namespace AutoShaker
 			{
 				WildTreeCache = Game1.content.Load<Dictionary<string, WildTreeData>>(Constants.WildTreeAssetName);
 			}
-
-			
 		}
 
 		private void OnGameLaunched(object? sender, GameLaunchedEventArgs e)
@@ -984,7 +982,7 @@ namespace AutoShaker
 				_forageableTracker.WildTreeForageables.SortByDisplayName();
 			}
 
-			if (_config != null)
+			if (_config != null && _gameStarted)
 			{
 				_config.UpdateEnabled(Helper);
 			}

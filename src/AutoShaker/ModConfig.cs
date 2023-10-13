@@ -644,10 +644,10 @@ namespace AutoShaker
 					});
 			}
 
-			gmcmApi.AddPageLink(
-				mod: manifest,
-				pageId: "",
-				text: I18n.Link_BackToMain_Text);
+			//gmcmApi.AddPageLink(
+			//	mod: manifest,
+			//	pageId: "",
+			//	text: I18n.Link_BackToMain_Text);
 
 			/* Fruit Trees */
 
@@ -689,10 +689,10 @@ namespace AutoShaker
 					});
 			}
 
-			gmcmApi.AddPageLink(
-				mod: manifest,
-				pageId: "",
-				text: I18n.Link_BackToMain_Text);
+			//gmcmApi.AddPageLink(
+			//	mod: manifest,
+			//	pageId: "",
+			//	text: I18n.Link_BackToMain_Text);
 
 			/* Bushes */
 
@@ -826,10 +826,10 @@ namespace AutoShaker
 				}
 			}
 
-			gmcmApi.AddPageLink(
-				mod: manifest,
-				pageId: "",
-				text: I18n.Link_BackToMain_Text);
+			//gmcmApi.AddPageLink(
+			//	mod: manifest,
+			//	pageId: "",
+			//	text: I18n.Link_BackToMain_Text);
 		}
 
 		public void UpdateEnabled(IModHelper helper)
@@ -896,6 +896,8 @@ namespace AutoShaker
 
 		private static void UpdateTrackerEnables(List<ForageableItem> items, Dictionary<string, bool> dict)
 		{
+			if (!items.Any()) return;
+
 			foreach (var toggle in dict)
 			{
 				var item = items.FirstOrDefault(f => f.InternalName.Equals(toggle.Key), null);
