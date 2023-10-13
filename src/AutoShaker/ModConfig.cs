@@ -20,10 +20,10 @@ namespace AutoShaker
 		private const int MinFruitsReady = 1;
 		private const int MaxFruitsReady = 3;
 
-		private ForageableItemTracker _forageableTracker;
+		private readonly ForageableItemTracker _forageableTracker;
 
-		private int _fruitsReadyToShake;
-		public uint ForageableToggles;
+		private bool _anyBushesEnabled;
+		//public uint ForageableToggles;
 
 		private bool _isRegistered = false;
 
@@ -35,6 +35,7 @@ namespace AutoShaker
 		public int ShakeDistance { get; set; }
 		public bool RequireHoe { get; set; }
 
+		private int _fruitsReadyToShake;
 		public int FruitsReadyToShake
 		{
 			get => _fruitsReadyToShake;
@@ -47,413 +48,12 @@ namespace AutoShaker
 
 		#region Bush Properties
 
-		//public bool ShakeSalmonberryBushes { get; set; }
-		//public bool ShakeBlackberryBushes { get; set; }
-		//public bool ShakeTeaBushes { get; set; }
-		//public bool ShakeWalnutBushes { get; set; }
-
-		//public bool AnyBushEnabled { get; set; }
+		public bool ShakeSalmonberryBushes { get; set; }
+		public bool ShakeBlackberryBushes { get; set; }
+		public bool ShakeTeaBushes { get; set; }
+		public bool ShakeWalnutBushes { get; set; }
 
 		#endregion Bush Properties
-
-		#region Forageable Properties
-
-		#region Spring Forageable Properties
-
-		//private bool _forageDaffodils;
-		//public bool ForageDaffodils
-		//{
-		//	get => _forageDaffodils;
-		//	set 
-		//	{
-		//		_forageDaffodils = value;
-		//		UpdateForageableBit(Forageable.Daffodil, value);
-		//	}
-		//}
-
-		//private bool _forageDandelions;
-		//public bool ForageDandelions
-		//{
-		//	get => _forageDandelions;
-		//	set
-		//	{
-		//		_forageDandelions = value;
-		//		UpdateForageableBit(Forageable.Dandelion, value);
-		//	}
-		//}
-
-		//private bool _forageLeeks;
-		//public bool ForageLeeks
-		//{
-		//	get => _forageLeeks;
-		//	set
-		//	{
-		//		_forageLeeks = value;
-		//		UpdateForageableBit(Forageable.Leek, value);
-		//	}
-		//}
-
-		//public bool ForageSpringOnions { get; set; }
-
-		//private bool _forageWildHorseradishes;
-		//public bool ForageWildHorseradishes
-		//{
-		//	get => _forageWildHorseradishes;
-		//	set
-		//	{
-		//		_forageWildHorseradishes = value;
-		//		UpdateForageableBit(Forageable.WildHorseradish, value);
-		//	}
-		//}
-
-		#endregion Spring Forageable Properties
-
-		#region Summer Forageable Properties
-
-		//private bool _forageGrapes;
-		//public bool ForageGrapes
-		//{
-		//	get => _forageGrapes;
-		//	set
-		//	{
-		//		_forageGrapes = value;
-		//		UpdateForageableBit(Forageable.Grape, value);
-		//	}
-		//}
-
-		//private bool _forageSpiceBerries;
-		//public bool ForageSpiceBerries
-		//{
-		//	get => _forageSpiceBerries;
-		//	set
-		//	{
-		//		_forageSpiceBerries = value;
-		//		UpdateForageableBit(Forageable.SpiceBerry, value);
-		//	}
-		//}
-
-		//private bool _forageSweetPeas;
-		//public bool ForageSweetPeas
-		//{
-		//	get => _forageSweetPeas;
-		//	set
-		//	{
-		//		_forageSweetPeas = value;
-		//		UpdateForageableBit(Forageable.SweetPea, value);
-		//	}
-		//}
-
-		#endregion Summer Forageable Properties
-
-		#region Fall Forageable Properties
-
-		//private bool _forageHazelnuts;
-		//public bool ForageHazelnuts
-		//{
-		//	get => _forageHazelnuts;
-		//	set
-		//	{
-		//		_forageHazelnuts = value;
-		//		UpdateForageableBit(Forageable.Hazelnut, value);
-		//	}
-		//}
-
-		//private bool _forageWildPlums;
-		//public bool ForageWildPlums
-		//{
-		//	get => _forageWildPlums;
-		//	set
-		//	{
-		//		_forageWildPlums = value;
-		//		UpdateForageableBit(Forageable.WildPlum, value);
-		//	}
-		//}
-
-		#endregion Fall Forageable Properties
-
-		#region Winter Forageable Properties
-
-		//private bool _forageCrocuses;
-		//public bool ForageCrocuses
-		//{
-		//	get => _forageCrocuses;
-		//	set
-		//	{
-		//		_forageCrocuses = value;
-		//		UpdateForageableBit(Forageable.Crocus, value);
-		//	}
-		//}
-
-
-		//private bool _forageCrystalFruits;
-		//public bool ForageCrystalFruits
-		//{
-		//	get => _forageCrystalFruits;
-		//	set
-		//	{
-		//		_forageCrystalFruits = value;
-		//		UpdateForageableBit(Forageable.CrystalFruit, value);
-		//	}
-		//}
-
-		//private bool _forageHolly;
-		//public bool ForageHolly
-		//{
-		//	get => _forageHolly;
-		//	set
-		//	{
-		//		_forageHolly = value;
-		//		UpdateForageableBit(Forageable.Holly, value);
-		//	}
-		//}
-
-		//private bool _forageSnowYams;
-		//public bool ForageSnowYams
-		//{
-		//	get => _forageSnowYams;
-		//	set
-		//	{
-		//		_forageSnowYams = value;
-		//		UpdateForageableBit(Forageable.SnowYam, value);
-		//	}
-		//}
-
-		//private bool _forageWinterRoots;
-		//public bool ForageWinterRoots
-		//{
-		//	get => _forageWinterRoots;
-		//	set
-		//	{
-		//		_forageWinterRoots = value;
-		//		UpdateForageableBit(Forageable.WinterRoot, value);
-		//	}
-		//}
-
-		#endregion Winter Forageable Properties
-
-		#region Mushroom Forageable Properties
-
-		//private bool _forageChanterelles;
-		//public bool ForageChanterelles
-		//{
-		//	get => _forageChanterelles;
-		//	set
-		//	{
-		//		_forageChanterelles = value;
-		//		UpdateForageableBit(Forageable.Chanterelle, value);
-		//	}
-		//}
-
-		//private bool _forageCommonMushrooms;
-		//public bool ForageCommonMushrooms
-		//{
-		//	get => _forageCommonMushrooms;
-		//	set
-		//	{
-		//		_forageCommonMushrooms = value;
-		//		UpdateForageableBit(Forageable.CommonMushroom, value);
-		//	}
-		//}
-
-		//private bool _forageMagmaCaps;
-		//public bool ForageMagmaCaps
-		//{
-		//	get => _forageMagmaCaps;
-		//	set
-		//	{
-		//		_forageMagmaCaps = value;
-		//		UpdateForageableBit(Forageable.MagmaCap, value);
-		//	}
-		//}
-
-		//private bool _forageMorels;
-		//public bool ForageMorels
-		//{
-		//	get => _forageMorels;
-		//	set
-		//	{
-		//		_forageMorels = value;
-		//		UpdateForageableBit(Forageable.Morel, value);
-		//	}
-		//}
-
-		//private bool _foragePurpleMushrooms;
-		//public bool ForagePurpleMushrooms
-		//{
-		//	get => _foragePurpleMushrooms;
-		//	set
-		//	{
-		//		_foragePurpleMushrooms = value;
-		//		UpdateForageableBit(Forageable.PurpleMushroom, value);
-		//	}
-		//}
-
-		//private bool _forageRedMushrooms;
-		//public bool ForageRedMushrooms
-		//{
-		//	get => _forageRedMushrooms;
-		//	set
-		//	{
-		//		_forageRedMushrooms = value;
-		//		UpdateForageableBit(Forageable.RedMushroom, value);
-		//	}
-		//}
-
-		#endregion Mushroom Forageable Properties
-
-		#region Beach Forageable Properties
-
-		//private bool _forageClams;
-		//public bool ForageClams
-		//{
-		//	get => _forageClams;
-		//	set
-		//	{
-		//		_forageClams = value;
-		//		UpdateForageableBit(Forageable.Clam, value);
-		//	}
-		//}
-
-		//private bool _forageCockles;
-		//public bool ForageCockles
-		//{
-		//	get => _forageCockles;
-		//	set
-		//	{
-		//		_forageCockles = value;
-		//		UpdateForageableBit(Forageable.Cockle, value);
-		//	}
-		//}
-
-		//private bool _forageCoral;
-		//public bool ForageCoral
-		//{
-		//	get => _forageCoral;
-		//	set
-		//	{
-		//		_forageCoral = value;
-		//		UpdateForageableBit(Forageable.Coral, value);
-		//	}
-		//}
-
-		//private bool _forageMussels;
-		//public bool ForageMussels
-		//{
-		//	get => _forageMussels;
-		//	set
-		//	{
-		//		_forageMussels = value;
-		//		UpdateForageableBit(Forageable.Mussel, value);
-		//	}
-		//}
-
-		//private bool _forageNautilusShells;
-		//public bool ForageNautilusShells
-		//{
-		//	get => _forageNautilusShells;
-		//	set
-		//	{
-		//		_forageNautilusShells = value;
-		//		UpdateForageableBit(Forageable.NautilusShell, value);
-		//	}
-		//}
-
-		//private bool _forageOysters;
-		//public bool ForageOysters
-		//{
-		//	get => _forageOysters;
-		//	set
-		//	{
-		//		_forageOysters = value;
-		//		UpdateForageableBit(Forageable.Oyster, value);
-		//	}
-		//}
-
-		//private bool _forageRainbowShells;
-		//public bool ForageRainbowShells
-		//{
-		//	get => _forageRainbowShells;
-		//	set
-		//	{
-		//		_forageRainbowShells = value;
-		//		UpdateForageableBit(Forageable.RainbowShell, value);
-		//	}
-		//}
-
-		//private bool _forageSeaUrchins;
-		//public bool ForageSeaUrchins
-		//{
-		//	get => _forageSeaUrchins;
-		//	set
-		//	{
-		//		_forageSeaUrchins = value;
-		//		UpdateForageableBit(Forageable.SeaUrchin, value);
-		//	}
-		//}
-
-		//private bool _forageSeaweed;
-		//public bool ForageSeaweed
-		//{
-		//	get => _forageSeaweed;
-		//	set
-		//	{
-		//		_forageSeaweed = value;
-		//		UpdateForageableBit(Forageable.Seaweed, value);
-		//	}
-		//}
-
-		#endregion Beach Forageable Properties
-
-		#region Cave Forageable Properties
-
-		//private bool _forageFiddleheadFerns;
-		//public bool ForageFiddleheadFerns
-		//{
-		//	get => _forageFiddleheadFerns;
-		//	set
-		//	{
-		//		_forageFiddleheadFerns = value;
-		//		UpdateForageableBit(Forageable.FiddleheadFern, value);
-		//	}
-		//}
-
-		#endregion Cave Forageable Properties
-
-		#region Desert Forageable Properties
-
-		//private bool _forageCactusFruits;
-		//public bool ForageCactusFruits
-		//{
-		//	get => _forageCactusFruits;
-		//	set
-		//	{
-		//		_forageCactusFruits = value;
-		//		UpdateForageableBit(Forageable.CactusFruit, value);
-		//	}
-		//}
-
-		//private bool _forageCoconuts;
-		//public bool ForageCoconuts
-		//{
-		//	get => _forageCoconuts;
-		//	set
-		//	{
-		//		_forageCoconuts = value;
-		//		UpdateForageableBit(Forageable.Coconut, value);
-		//	}
-		//}
-
-		#endregion Desert Forageable Properties
-
-		#region Island Forageable Properties
-
-		//public bool ForageGinger { get; set; }
-
-		#endregion Island Forageable Properties
-
-		//public bool AnyForageablesEnabled { get; set; }
-
-		#endregion Forageable Properties
 
 		public ModConfig()
 		{
@@ -461,7 +61,6 @@ namespace AutoShaker
 
 			ForageToggles = new()
 			{
-				{ BushKey, new() },
 				{ ForagingKey, new() },
 				{ FruitTreeKey, new() },
 				{ WildTreeKey, new() }
@@ -640,7 +239,7 @@ namespace AutoShaker
 					{
 						item.IsEnabled = val;
 						ForageToggles[WildTreeKey].AddOrUpdate(item.InternalName, val);
-						// $TODO - UpdatedEnabled()
+						UpdateEnabled();
 					});
 			}
 
@@ -685,7 +284,7 @@ namespace AutoShaker
 					{
 						item.IsEnabled = val;
 						ForageToggles[FruitTreeKey].AddOrUpdate(item.InternalName, val);
-						// $TODO - UpdateEnabled();
+						UpdateEnabled();
 					});
 			}
 
@@ -821,7 +420,7 @@ namespace AutoShaker
 						{
 							item.IsEnabled = val;
 							ForageToggles[ForagingKey].AddOrUpdate(item.InternalName, val);
-							// $TODO - UpdatedEnabled();
+							UpdateEnabled();
 						});
 				}
 			}
@@ -832,7 +431,7 @@ namespace AutoShaker
 			//	text: I18n.Link_BackToMain_Text);
 		}
 
-		public void UpdateEnabled(IModHelper helper)
+		public void UpdateEnabled(IModHelper? helper = null)
 		{
 			if (_forageableTracker != null)
 			{
@@ -856,43 +455,25 @@ namespace AutoShaker
 				}
 			}
 
-			helper.WriteConfig(this);
-			//AnySeedTreeEnabled = ShakeMahoganyTrees
-			//	|| ShakeMapleTrees
-			//	|| ShakeOakTrees
-			//	|| ShakePalmTrees
-			//	|| ShakePineTrees;
+			_anyBushesEnabled = ShakeSalmonberryBushes
+				|| ShakeBlackberryBushes
+				|| ShakeTeaBushes
+				|| ShakeWalnutBushes;
 
-			//AnyFruitTreeEnabled = ShakeAppleTrees
-			//	|| ShakeApricotTrees
-			//	|| ShakeBananaTrees
-			//	|| ShakeCherryTrees
-			//	|| ShakeMangoTrees
-			//	|| ShakeOrangeTrees
-			//	|| ShakePeachTrees
-			//	|| ShakePomegranateTrees;
-
-			//AnyBushEnabled = ShakeSalmonberryBushes
-			//	|| ShakeBlackberryBushes
-			//	|| ShakeTeaBushes
-			//	|| ShakeWalnutBushes;
-
-			//AnyForageablesEnabled = ForageableToggles > 0;
-
-			//AnyShakeEnabled = AnySeedTreeEnabled || AnyFruitTreeEnabled || AnyBushEnabled || AnyForageablesEnabled;
+			helper?.WriteConfig(this);
 		}
 
-		private void UpdateForageableBit(Forageable forageble, bool enabled)
-		{
-			if (enabled)
-			{
-				ForageableToggles |= (uint)forageble;
-			}
-			else
-			{
-				ForageableToggles &= ~(uint)forageble;
-			}
-		}
+		//private void UpdateForageableBit(Forageable forageble, bool enabled)
+		//{
+		//	if (enabled)
+		//	{
+		//		ForageableToggles |= (uint)forageble;
+		//	}
+		//	else
+		//	{
+		//		ForageableToggles &= ~(uint)forageble;
+		//	}
+		//}
 
 		private static void UpdateTrackerEnables(List<ForageableItem> items, Dictionary<string, bool> dict)
 		{

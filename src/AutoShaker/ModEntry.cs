@@ -44,7 +44,7 @@ namespace AutoShaker
 		private readonly List<string> _overrideItemIds;
 		private readonly List<string> _ignoreItemIds;
 
-		private ForageableItemTracker _forageableTracker;
+		private readonly ForageableItemTracker _forageableTracker;
 
 		private readonly Dictionary<Vector2, string> _artifactPredictions;
 
