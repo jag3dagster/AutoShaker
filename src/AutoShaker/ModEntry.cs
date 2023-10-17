@@ -331,7 +331,65 @@ namespace AutoShaker
 					}
 					else if (feature is HoeDirt hoeDirt)
 					{
+						if (!(hoeDirt.crop?.forageCrop.Value ?? false) || (hoeDirt.crop?.whichForageCrop.Value.IsNullOrEmpty() ?? true)) continue;
+						if (!_forageableTracker.ObjectForageables.Any(i =>
+						{
+							if (i.IsEnabled && i.CustomFields.TryGetValue(Constants.CustomFieldCategoryKey, out var category))
+							{
+								return category == "Special";
+							}
 
+							return false;
+						})) continue;
+
+						var whichCrop = hoeDirt.crop.whichForageCrop.Value;
+						Vector2 tile;
+						switch (whichCrop)
+						{
+							case Crop.forageCrop_springOnionID:
+								var springOnion = _forageableTracker.ObjectForageables.FirstOrDefault(i => i.QualifiedItemId == "(O)399");
+
+								if (springOnion != default(ForageableItem) && springOnion.IsEnabled)
+								{
+									tile = hoeDirt.Tile;
+									var x = (int)tile.X;
+									var y = (int)tile.Y;
+
+									ForageItem(ItemRegistry.Create<Object>("(O)399"), tile, Utility.CreateDaySaveRandom(x * 1000, y * 2000), 3);
+									hoeDirt.destroyCrop(false);
+									Game1.playSound("harvest");
+								}
+
+								break;
+
+							case Crop.forageCrop_gingerID:
+								var ginger = _forageableTracker.ObjectForageables.FirstOrDefault(i => i.QualifiedItemId == "(O)829");
+
+								if (ginger != default(ForageableItem) && ginger.IsEnabled)
+								{
+									if (_config.RequireHoe && !Game1.player.Items.Any(i => i is Hoe))
+									{
+										if (_nextErrorMessage < DateTime.UtcNow)
+										{
+											Game1.addHUDMessage(new HUDMessage(I18n.Message_MissingHoe(I18n.Subject_GingerRoots()), HUDMessage.error_type));
+											_nextErrorMessage = DateTime.UtcNow.AddSeconds(10);
+										}
+
+										Monitor.LogOnce(I18n.Log_MissingHoe(I18n.Subject_GingerRoots(), I18n.Option_RequireHoe_Name(" ")), LogLevel.Debug);
+										continue;
+									}
+
+									tile = hoeDirt.Tile;
+									hoeDirt.crop?.hitWithHoe((int)tile.X, (int)tile.Y, hoeDirt.Location, hoeDirt);
+									hoeDirt.destroyCrop(false);
+								}
+
+								break;
+
+							default:
+								Monitor.Log($"No good case: {whichCrop}");
+								break;
+						}
 					}
 				}
 
@@ -368,26 +426,6 @@ namespace AutoShaker
 				}
 			}
 		}
-
-		//					if ((_config.ForageableToggles & (uint)Constants.ForageableLookup[predictedId]) > 0)
-		//					{
-		//						Game1.currentLocation.digUpArtifactSpot((int)vec.X, (int)vec.Y, Game1.player);
-
-		//						if (!Game1.currentLocation.terrainFeatures.ContainsKey(vec))
-		//						{
-		//							Game1.currentLocation.makeHoeDirt(vec, ignoreChecks: true);
-		//						}
-
-		//						Game1.currentLocation.playSound("hoeHit");
-		//						Game1.currentLocation.removeObject(vec, false);
-
-		//						_trackingCounts[ForageableKey].AddOrIncrement(Constants.SubjectNameLookup[predictedId]);
-		//					}
-		//					else if (_forageablePredictions.ContainsKey(vec))
-		//					{
-		//						Monitor.LogOnce(I18n.Log_DisabledConfig(obj.DisplayName, Constants.ConfigNameLookup[predictedId]), LogLevel.Debug);
-		//						continue;
-		//					}
 
 		//private void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
 		//{
@@ -984,7 +1022,7 @@ namespace AutoShaker
 
 			if (_config != null && _gameStarted)
 			{
-				_config.UpdateEnabled(Helper);
+				_config.RegisterModConfigMenu(Helper, ModManifest);
 			}
 		}
 

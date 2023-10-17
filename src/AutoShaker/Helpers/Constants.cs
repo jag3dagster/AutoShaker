@@ -39,7 +39,6 @@ namespace AutoShaker.Helpers
 			{ "18", "Spring" }, // Daffodil
 			{ "22", "Spring" }, // Dandelion
 			{ "20", "Spring" }, // Leek
-			{ "399", "Spring" }, // Spring Onion
 			{ "16", "Spring" }, // Wild Horseradish
 
 			{ "259", "Summer" }, // Fiddlehead Fern
@@ -79,7 +78,8 @@ namespace AutoShaker.Helpers
 			{ "90", "Desert" }, // Cactus Fruit
 			{ "88", "Desert" }, // Coconut
 
-			{ "829", "Island" } // Ginger
+			{ "829", "Special" }, // Ginger
+			{ "399", "Special" } // Spring Onion
 		};
 
 		[Flags]

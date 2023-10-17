@@ -6,7 +6,6 @@ using AutoShaker.Helpers;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 using Constants = AutoShaker.Helpers.Constants;
-using Forageable = AutoShaker.Helpers.Constants.Forageable;
 
 namespace AutoShaker
 {
@@ -42,7 +41,7 @@ namespace AutoShaker
 			set => _fruitsReadyToShake = Math.Clamp(value, MinFruitsReady, MaxFruitsReady);
 		}
 
-		public Dictionary<string, Dictionary<string, bool>> ForageToggles { get; set; } = new();
+		public Dictionary<string, Dictionary<string, bool>> ForageToggles { get; set; }
 
 		#endregion General Properties
 
@@ -137,6 +136,7 @@ namespace AutoShaker
 			if (_isRegistered)
 			{
 				gmcmApi.Unregister(manifest);
+				_isRegistered = false;
 			}
 
 			gmcmApi.Register(manifest, ResetToDefault, () => helper.WriteConfig(this));
@@ -243,11 +243,6 @@ namespace AutoShaker
 					});
 			}
 
-			//gmcmApi.AddPageLink(
-			//	mod: manifest,
-			//	pageId: "",
-			//	text: I18n.Link_BackToMain_Text);
-
 			/* Fruit Trees */
 
 			gmcmApi.AddPage(
@@ -287,11 +282,6 @@ namespace AutoShaker
 						UpdateEnabled();
 					});
 			}
-
-			//gmcmApi.AddPageLink(
-			//	mod: manifest,
-			//	pageId: "",
-			//	text: I18n.Link_BackToMain_Text);
 
 			/* Bushes */
 
@@ -369,11 +359,6 @@ namespace AutoShaker
 			//		UpdateEnabled();
 			//	});
 
-			//gmcmApi.AddPageLink(
-			//	mod: manifest,
-			//	pageId: "",
-			//	text: I18n.Link_BackToMain_Text);
-
 			/* Forageables */
 
 			gmcmApi.AddPage(
@@ -425,10 +410,7 @@ namespace AutoShaker
 				}
 			}
 
-			//gmcmApi.AddPageLink(
-			//	mod: manifest,
-			//	pageId: "",
-			//	text: I18n.Link_BackToMain_Text);
+			_isRegistered = true;
 		}
 
 		public void UpdateEnabled(IModHelper? helper = null)
@@ -462,18 +444,6 @@ namespace AutoShaker
 
 			helper?.WriteConfig(this);
 		}
-
-		//private void UpdateForageableBit(Forageable forageble, bool enabled)
-		//{
-		//	if (enabled)
-		//	{
-		//		ForageableToggles |= (uint)forageble;
-		//	}
-		//	else
-		//	{
-		//		ForageableToggles &= ~(uint)forageble;
-		//	}
-		//}
 
 		private static void UpdateTrackerEnables(List<ForageableItem> items, Dictionary<string, bool> dict)
 		{
