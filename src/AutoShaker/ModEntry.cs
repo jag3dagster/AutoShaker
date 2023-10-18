@@ -342,8 +342,9 @@ namespace AutoShaker
 							return false;
 						})) continue;
 
-						var whichCrop = hoeDirt.crop.whichForageCrop.Value;
 						Vector2 tile;
+						var whichCrop = hoeDirt.crop.whichForageCrop.Value;
+
 						switch (whichCrop)
 						{
 							case Crop.forageCrop_springOnionID:
@@ -422,6 +423,15 @@ namespace AutoShaker
 							Game1.currentLocation.playSound("hoeHit");
 							Game1.currentLocation.removeObject(vec, false);
 						}
+					}
+				}
+
+				var largeTerrainFeature = Game1.currentLocation.getLargeTerrainFeatureAt((int)vec.X, (int)vec.Y);
+				if (largeTerrainFeature != null && largeTerrainFeature is Bush largeBush)
+				{
+					if (CheckBush(largeBush))
+					{
+						largeBush.performUseAction(vec);
 					}
 				}
 			}

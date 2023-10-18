@@ -6,10 +6,11 @@ using StardewValley.GameData.Objects;
 using StardewValley.GameData.WildTrees;
 using StardewValley.ItemTypeDefinitions;
 using AutoShaker.Helpers;
+using System;
 
 namespace AutoShaker.Classes
 {
-	public class ForageableItem
+	public class ForageableItem : IComparable
 	{
 		private readonly string _itemId;
 		public string ItemId => _itemId;
@@ -34,6 +35,11 @@ namespace AutoShaker.Classes
 			set => _isEnabled = value;
 		}
 
+		public void ResetToDefaultEnabled()
+		{
+			_isEnabled = _defaultIsEnabled;
+		}
+
 		public ForageableItem(string itemId, string qualifiedItemId, string internalName, string displayName, Dictionary<string, string> customFields, bool enabled = false)
 		{
 			_itemId = itemId;
@@ -43,11 +49,6 @@ namespace AutoShaker.Classes
 			_customFields = customFields;
 			_isEnabled = enabled;
 			_defaultIsEnabled = enabled;
-		}
-
-		public void ResetToDefaultEnabled()
-		{
-			_isEnabled = _defaultIsEnabled;
 		}
 
 		public ForageableItem(ParsedItemData data, Dictionary<string, string> customFields, bool enabled = false)
@@ -97,7 +98,7 @@ namespace AutoShaker.Classes
 				if (customFields == null || !customFields.ContainsKey(Constants.CustomFieldForageableKey)) continue;
 
 				var qualifiedItemId = "(O)" + kvp.Key;
-				forageItems.AddDistinct(new ForageableItem(ItemRegistry.GetData(qualifiedItemId), customFields, true));
+				forageItems.AddDistinct(new ForageableItem(ItemRegistry.GetData(qualifiedItemId), customFields, false));
 			}
 
 			return forageItems;
@@ -136,12 +137,26 @@ namespace AutoShaker.Classes
 						var objData = oData[artifactId];
 						if (objData == null || objData.CustomFields == null || !objData.CustomFields.ContainsKey(Constants.CustomFieldForageableKey)) continue;
 
-						forageItems.AddDistinct(new ForageableItem(ItemRegistry.GetData(itemId), objData.CustomFields, true));
+						forageItems.AddDistinct(new ForageableItem(ItemRegistry.GetData(itemId), objData.CustomFields, false));
 					}
 				}
 			}
 
 			return forageItems;
+		}
+
+		public int CompareTo(object? obj)
+		{
+			if (obj == null) return 1;
+
+			if (obj is ForageableItem otherForageable)
+			{
+				return QualifiedItemId.CompareTo(otherForageable.QualifiedItemId);
+			}
+			else
+			{
+				throw new ArgumentException($"Object is not a {nameof(ForageableItem)}");
+			}
 		}
 	}
 }

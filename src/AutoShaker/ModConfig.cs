@@ -22,7 +22,6 @@ namespace AutoShaker
 		private readonly ForageableItemTracker _forageableTracker;
 
 		private bool _anyBushesEnabled;
-		//public uint ForageableToggles;
 
 		private bool _isRegistered = false;
 
@@ -45,21 +44,20 @@ namespace AutoShaker
 
 		#endregion General Properties
 
-		#region Bush Properties
-
-		public bool ShakeSalmonberryBushes { get; set; }
-		public bool ShakeBlackberryBushes { get; set; }
-		public bool ShakeTeaBushes { get; set; }
-		public bool ShakeWalnutBushes { get; set; }
-
-		#endregion Bush Properties
-
 		public ModConfig()
 		{
 			_forageableTracker = ForageableItemTracker.Instance;
 
 			ForageToggles = new()
 			{
+				{ BushKey, new()
+					{
+						{ "Salmonberry", true },
+						{ "Blackberry", true },
+						{ "Tea", true },
+						{ "Walnut", false }
+					}
+				},
 				{ ForagingKey, new() },
 				{ FruitTreeKey, new() },
 				{ WildTreeKey, new() }
@@ -88,7 +86,10 @@ namespace AutoShaker
 					switch (toggleDict.Key)
 					{
 						case BushKey:
-							// $TODO - Anything to do here?
+							toggleDict.Value["Salmonberry"] = true;
+							toggleDict.Value["Blackberry"] = true;
+							toggleDict.Value["Tea"] = true;
+							toggleDict.Value["Walnut"] = false;
 							break;
 						case ForagingKey:
 							ResetTracker(_forageableTracker.ObjectForageables, toggleDict.Value);
@@ -422,7 +423,10 @@ namespace AutoShaker
 					switch (toggleDict.Key)
 					{
 						case BushKey:
-							// $TODO - Do something here?
+							_anyBushesEnabled = toggleDict.Value["Salmonberry"]
+								|| toggleDict.Value["Blackberry"]
+								|| toggleDict.Value["Tea"]
+								|| toggleDict.Value["Walnut"];
 							break;
 						case ForagingKey:
 							UpdateTrackerEnables(_forageableTracker.ObjectForageables, toggleDict.Value);
@@ -436,11 +440,6 @@ namespace AutoShaker
 					}
 				}
 			}
-
-			_anyBushesEnabled = ShakeSalmonberryBushes
-				|| ShakeBlackberryBushes
-				|| ShakeTeaBushes
-				|| ShakeWalnutBushes;
 
 			helper?.WriteConfig(this);
 		}
