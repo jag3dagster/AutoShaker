@@ -47,17 +47,9 @@ namespace AutoShaker
 		public ModConfig()
 		{
 			_forageableTracker = ForageableItemTracker.Instance;
-
 			ForageToggles = new()
 			{
-				{ BushKey, new()
-					{
-						{ "Salmonberry", true },
-						{ "Blackberry", true },
-						{ "Tea", true },
-						{ "Walnut", false }
-					}
-				},
+				{ BushKey, new() },
 				{ ForagingKey, new() },
 				{ FruitTreeKey, new() },
 				{ WildTreeKey, new() }
@@ -81,7 +73,7 @@ namespace AutoShaker
 			{
 				toggleDict.Value.Clear();
 
-				if (_forageableTracker != null)
+				if (_forageableTracker != null || toggleDict.Key == BushKey)
 				{
 					switch (toggleDict.Key)
 					{
@@ -92,13 +84,13 @@ namespace AutoShaker
 							toggleDict.Value["Walnut"] = false;
 							break;
 						case ForagingKey:
-							ResetTracker(_forageableTracker.ObjectForageables, toggleDict.Value);
+							ResetTracker(_forageableTracker?.ObjectForageables, toggleDict.Value);
 							break;
 						case FruitTreeKey:
-							ResetTracker(_forageableTracker.FruitTreeForageables, toggleDict.Value);
+							ResetTracker(_forageableTracker?.FruitTreeForageables, toggleDict.Value);
 							break;
 						case WildTreeKey:
-							ResetTracker(_forageableTracker.WildTreeForageables, toggleDict.Value);
+							ResetTracker(_forageableTracker?.WildTreeForageables, toggleDict.Value);
 							break;
 					}
 				}
@@ -423,10 +415,14 @@ namespace AutoShaker
 					switch (toggleDict.Key)
 					{
 						case BushKey:
-							_anyBushesEnabled = toggleDict.Value["Salmonberry"]
-								|| toggleDict.Value["Blackberry"]
-								|| toggleDict.Value["Tea"]
-								|| toggleDict.Value["Walnut"];
+							if (toggleDict.Value.Keys.Any())
+							{
+								_anyBushesEnabled = toggleDict.Value["Salmonberry"]
+									|| toggleDict.Value["Blackberry"]
+									|| toggleDict.Value["Tea"]
+									|| toggleDict.Value["Walnut"];
+							}
+							
 							break;
 						case ForagingKey:
 							UpdateTrackerEnables(_forageableTracker.ObjectForageables, toggleDict.Value);
@@ -451,6 +447,7 @@ namespace AutoShaker
 			foreach (var toggle in dict)
 			{
 				var item = items.FirstOrDefault(f => f.InternalName.Equals(toggle.Key), null);
+
 				if (item != null)
 				{
 					item.IsEnabled = toggle.Value;
@@ -465,7 +462,7 @@ namespace AutoShaker
 			}
 		}
 
-		private static void ResetTracker(List<ForageableItem> items, Dictionary<string, bool> dict)
+		private static void ResetTracker(List<ForageableItem>? items, Dictionary<string, bool> dict)
 		{
 			if (items.IsNullOrEmpty()) return;
 
