@@ -285,112 +285,124 @@ namespace AutoShaker
 			{
 				if (Game1.currentLocation.terrainFeatures.TryGetValue(vec, out var feature))
 				{
-					if (feature is Tree tree)
+					switch (feature)
 					{
-						if (tree.stump.Value) continue;
-						if (tree.wasShakenToday.Value) continue;
-						if (tree.growthStage.Value < 5 || !tree.hasSeed.Value) continue;
-						if (!Game1.IsMultiplayer && Game1.player.ForagingLevel < 1) continue;
-						if (!tree.isActionable()) continue;
+						case Tree tree:
+							if (tree.stump.Value) continue;
+							if (tree.wasShakenToday.Value) continue;
+							if (tree.growthStage.Value < 5 || !tree.hasSeed.Value) continue;
+							if (!Game1.IsMultiplayer && Game1.player.ForagingLevel < 1) continue;
+							if (!tree.isActionable()) continue;
 
-						var itemIds = tree.GetSeedAndSeedItemIds();
-						if (_forageableTracker.WildTreeForageables.Any(i => itemIds.Contains(i.QualifiedItemId) && i.IsEnabled))
-						{
-							tree.performUseAction(tree.Tile);
-							Monitor.Log($"Tree shaken: {string.Join(", ", itemIds)}", LogLevel.Debug);
-						}
-						else
-						{
-							Monitor.Log($"Tree not shaken: {string.Join(",", itemIds)}", LogLevel.Debug);
-						}
-					}
-					else if (feature is FruitTree fruitTree)
-					{
-						if (fruitTree.stump.Value) continue;
-						if (fruitTree.growthStage.Value < 4) continue;
-
-						var fruitCount = fruitTree.fruit.Count;
-						if (fruitCount <= 0 || fruitCount < _config.FruitsReadyToShake) continue;
-
-						var itemIds = fruitTree.GetFruitItemIds();
-						if (_forageableTracker.FruitTreeForageables.Any(i => itemIds.Contains(i.QualifiedItemId) && i.IsEnabled))
-						{
-							fruitTree.performUseAction(fruitTree.Tile);
-							Monitor.Log($"Fruit Tree shaken: {string.Join(", ", itemIds)}", LogLevel.Debug);
-						}
-						else
-						{
-							Monitor.Log($"Fruit Tree not shaken: {string.Join(",", itemIds)}", LogLevel.Debug);
-						}
-					}
-					else if (feature is Bush bush)
-					{
-						if (!CheckBush(bush)) continue;
-
-						bush.performUseAction(bush.Tile);
-					}
-					else if (feature is HoeDirt hoeDirt)
-					{
-						if (!(hoeDirt.crop?.forageCrop.Value ?? false) || (hoeDirt.crop?.whichForageCrop.Value.IsNullOrEmpty() ?? true)) continue;
-						if (!_forageableTracker.ObjectForageables.Any(i =>
-						{
-							if (i.IsEnabled && i.CustomFields.TryGetValue(Constants.CustomFieldCategoryKey, out var category))
+							var seedItemIds = tree.GetSeedAndSeedItemIds();
+							if (_forageableTracker.WildTreeForageables.Any(i => seedItemIds.Contains(i.QualifiedItemId) && i.IsEnabled))
 							{
-								return category == "Special";
+								tree.performUseAction(tree.Tile);
+								Monitor.Log($"Tree shaken: {string.Join(", ", seedItemIds)}", LogLevel.Debug);
+
+								foreach (var id in seedItemIds)
+								{
+									var name = _forageableTracker.WildTreeForageables.FirstOrDefault(i => i.QualifiedItemId == id, null)?.DisplayName ?? id;
+									_trackingCounts[WildTreeKey].AddOrIncrement(name);
+								}
+							}
+							else
+							{
+								Monitor.Log($"Tree not shaken: {string.Join(",", seedItemIds)}", LogLevel.Debug);
 							}
 
-							return false;
-						})) continue;
+							break;
 
-						Vector2 tile;
-						var whichCrop = hoeDirt.crop.whichForageCrop.Value;
+						case FruitTree fruitTree:
+							if (fruitTree.stump.Value) continue;
+							if (fruitTree.growthStage.Value < 4) continue;
 
-						switch (whichCrop)
-						{
-							case Crop.forageCrop_springOnionID:
-								var springOnion = _forageableTracker.ObjectForageables.FirstOrDefault(i => i.QualifiedItemId == "(O)399");
+							var fruitCount = fruitTree.fruit.Count;
+							if (fruitCount <= 0 || fruitCount < _config.FruitsReadyToShake) continue;
 
-								if (springOnion != default(ForageableItem) && springOnion.IsEnabled)
+							var fruitItemIds = fruitTree.GetFruitItemIds();
+							if (_forageableTracker.FruitTreeForageables.Any(i => fruitItemIds.Contains(i.QualifiedItemId) && i.IsEnabled))
+							{
+								fruitTree.performUseAction(fruitTree.Tile);
+								Monitor.Log($"Fruit Tree shaken: {string.Join(", ", fruitItemIds)}", LogLevel.Debug);
+							}
+							else
+							{
+								Monitor.Log($"Fruit Tree not shaken: {string.Join(",", fruitItemIds)}", LogLevel.Debug);
+							}
+
+							break;
+
+						case Bush bush:
+							if (!CheckBush(bush)) continue;
+
+							bush.performUseAction(bush.Tile);
+
+							break;
+
+						case HoeDirt hoeDirt:
+							if (!(hoeDirt.crop?.forageCrop.Value ?? false) || (hoeDirt.crop?.whichForageCrop.Value.IsNullOrEmpty() ?? true)) continue;
+							if (!_forageableTracker.ObjectForageables.Any(i =>
+							{
+								if (i.IsEnabled && i.CustomFields.TryGetValue(Constants.CustomFieldCategoryKey, out var category))
 								{
-									tile = hoeDirt.Tile;
-									var x = (int)tile.X;
-									var y = (int)tile.Y;
-
-									ForageItem(ItemRegistry.Create<Object>("(O)399"), tile, Utility.CreateDaySaveRandom(x * 1000, y * 2000), 3);
-									hoeDirt.destroyCrop(false);
-									Game1.playSound("harvest");
+									return category == "Special";
 								}
 
-								break;
+								return false;
+							})) continue;
 
-							case Crop.forageCrop_gingerID:
-								var ginger = _forageableTracker.ObjectForageables.FirstOrDefault(i => i.QualifiedItemId == "(O)829");
+							Vector2 tile;
+							var whichCrop = hoeDirt.crop.whichForageCrop.Value;
 
-								if (ginger != default(ForageableItem) && ginger.IsEnabled)
-								{
-									if (_config.RequireHoe && !Game1.player.Items.Any(i => i is Hoe))
+							switch (whichCrop)
+							{
+								case Crop.forageCrop_springOnionID:
+									var springOnion = _forageableTracker.ObjectForageables.FirstOrDefault(i => i.QualifiedItemId == "(O)399");
+
+									if (springOnion != default(ForageableItem) && springOnion.IsEnabled)
 									{
-										if (_nextErrorMessage < DateTime.UtcNow)
-										{
-											Game1.addHUDMessage(new HUDMessage(I18n.Message_MissingHoe(I18n.Subject_GingerRoots()), HUDMessage.error_type));
-											_nextErrorMessage = DateTime.UtcNow.AddSeconds(10);
-										}
+										tile = hoeDirt.Tile;
+										var x = (int)tile.X;
+										var y = (int)tile.Y;
 
-										Monitor.LogOnce(I18n.Log_MissingHoe(I18n.Subject_GingerRoots(), I18n.Option_RequireHoe_Name(" ")), LogLevel.Debug);
-										continue;
+										ForageItem(ItemRegistry.Create<Object>("(O)399"), tile, Utility.CreateDaySaveRandom(x * 1000, y * 2000), 3);
+										hoeDirt.destroyCrop(false);
+										Game1.playSound("harvest");
 									}
 
-									tile = hoeDirt.Tile;
-									hoeDirt.crop?.hitWithHoe((int)tile.X, (int)tile.Y, hoeDirt.Location, hoeDirt);
-									hoeDirt.destroyCrop(false);
-								}
+									break;
 
-								break;
+								case Crop.forageCrop_gingerID:
+									var ginger = _forageableTracker.ObjectForageables.FirstOrDefault(i => i.QualifiedItemId == "(O)829");
 
-							default:
-								Monitor.Log($"No good case: {whichCrop}");
-								break;
-						}
+									if (ginger != default(ForageableItem) && ginger.IsEnabled)
+									{
+										if (_config.RequireHoe && !Game1.player.Items.Any(i => i is Hoe))
+										{
+											if (_nextErrorMessage < DateTime.UtcNow)
+											{
+												Game1.addHUDMessage(new HUDMessage(I18n.Message_MissingHoe(I18n.Subject_GingerRoots()), HUDMessage.error_type));
+												_nextErrorMessage = DateTime.UtcNow.AddSeconds(10);
+											}
+
+											Monitor.LogOnce(I18n.Log_MissingHoe(I18n.Subject_GingerRoots(), I18n.Option_RequireHoe_Name(" ")), LogLevel.Debug);
+											continue;
+										}
+
+										tile = hoeDirt.Tile;
+										hoeDirt.crop?.hitWithHoe((int)tile.X, (int)tile.Y, hoeDirt.Location, hoeDirt);
+										hoeDirt.destroyCrop(false);
+									}
+
+									break;
+
+								default:
+									Monitor.Log($"No good case: {whichCrop}");
+									break;
+							}
+
+							break;
 					}
 				}
 
@@ -918,7 +930,7 @@ namespace AutoShaker
 		{
 			var toIgnore = false;
 
-			//if (!_config.AnyBushEnabled) return false;
+			if (!_config.AnyBushEnabled()) return false;
 			if (bush.townBush.Value) toIgnore = true;
 			if (!bush.inBloom()) toIgnore = true;
 			if (bush.tileSheetOffset.Value != 1) toIgnore = true;
@@ -943,41 +955,45 @@ namespace AutoShaker
 				case 2:
 					var season = Game1.currentSeason;
 
-					if (!season.Equals("spring") && !season.Equals("fall")) return false;
+					if (!season.IEquals("spring") && !season.IEquals("fall")) return false;
 
-					//if (season.Equals("spring") && !_config.ShakeSalmonberryBushes)
-					//{
-					//	//Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_SalmonberryBushes(), Constants.SalmonberryName), LogLevel.Debug);
-					//	return false;
-					//}
+					if (season.IEquals("spring") && !_config.SalmonberryBushesEnabled())
+					{
+						Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_SalmonberryBushes(), Constants.SalmonberryName), LogLevel.Debug);
+						return false;
+					}
 
-					//if (season.Equals("fall") && !_config.ShakeBlackberryBushes)
-					//{
-					//	//Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_BlackberryBushes(), Constants.BlackberryName), LogLevel.Debug);
-					//	return false;
-					//}
+					if (season.IEquals("spring") && !_config.BlackberryBushesEnabled())
+					{
+						Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_BlackberryBushes(), Constants.BlackberryName), LogLevel.Debug);
+						return false;
+					}
 
-					_trackingCounts[BushKey].AddOrIncrement(season.Equals("spring") ? I18n.Subject_SalmonberryBushes() : I18n.Subject_BlackberryBushes());
+					var subjectName = season.IEquals("spring")
+						? I18n.Subject_SalmonberryBushes()
+						: I18n.Subject_BlackberryBushes();
+
+					_trackingCounts[BushKey].AddOrIncrement(subjectName);
 					break;
 
 				// Tea Bushes
 				case 3:
-					//if (!_config.ShakeTeaBushes)
-					//{
-					//	//Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_TeaBushes(), Constants.TeaName), LogLevel.Debug);
-					//	return false;
-					//}
+					if (!_config.TeaBushesEnabled())
+					{
+						Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_TeaBushes(), Constants.TeaName), LogLevel.Debug);
+						return false;
+					}
 
 					_trackingCounts[BushKey].AddOrIncrement(I18n.Subject_TeaBushes());
 					break;
 
 				// Walnut Bushes
 				case 4:
-					//if (!_config.ShakeWalnutBushes)
-					//{
-					//	//Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_WalnutBushes(), Constants.WalnutName), LogLevel.Debug);
-					//	return false;
-					//}
+					if (!_config.WalnutBushesEnabled())
+					{
+						Monitor.LogOnce(I18n.Log_DisabledConfig(I18n.Subject_WalnutBushes(), Constants.WalnutName), LogLevel.Debug);
+						return false;
+					}
 
 					_trackingCounts[BushKey].AddOrIncrement(I18n.Subject_WalnutBushes());
 					break;

@@ -85,7 +85,7 @@ namespace AutoShaker.Helpers
 		//public static string AppleName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_AppleTrees());
 		//public static string ApricotName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_ApricotTrees());
 		//public static string BananaName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_BananaTrees());
-		//public static string BlackberryName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_BlackberryBushes());
+		public static string BlackberryName => I18n.Option_ToggleAction_Name(I18n.Subject_BlackberryBushes());
 		//public static string CactusFruitName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_CactusFruits());
 		//public static string ChanterelleName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_ChanterelleMushrooms());
 		//public static string CherryName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_CherryTrees());
@@ -121,15 +121,15 @@ namespace AutoShaker.Helpers
 		//public static string PurpleMushroomName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_PurpleMushrooms());
 		//public static string RainbowShellName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_RainbowShells());
 		//public static string RedMushroomName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_RedMushrooms());
-		//public static string SalmonberryName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_SalmonberryBushes());
+		public static string SalmonberryName => I18n.Option_ToggleAction_Name(I18n.Subject_SalmonberryBushes());
 		//public static string SeaUrchinName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_SeaUrchins());
 		//public static string SeaweedName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_Seaweed());
 		//public static string SnowYamName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_SnowYams());
 		//public static string SpiceBerryName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_SpiceBerries());
 		//public static string SpringOnionName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_SpringOnions());
 		//public static string SweetPeaName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_SweetPeas());
-		//public static string TeaName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_TeaBushes());
-		//public static string WalnutName => I18n.Option_ToggleAction_Name(I18n.Action_Shake_Future(), I18n.Subject_WalnutBushes());
+		public static string TeaName => I18n.Option_ToggleAction_Name(I18n.Subject_TeaBushes());
+		public static string WalnutName => I18n.Option_ToggleAction_Name(I18n.Subject_WalnutBushes());
 		//public static string WildHorseradishName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_WildHorseradishes());
 		//public static string WildPlumName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_WildPlums());
 		//public static string WinterRootName => I18n.Option_ToggleAction_Name(I18n.Action_Forage_Future(), I18n.Subject_WinterRoots());

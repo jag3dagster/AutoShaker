@@ -16,6 +16,11 @@ namespace AutoShaker
 		private const string FruitTreeKey = "FruitTreeToggles";
 		private const string WildTreeKey = "WildTreeToggles";
 
+		private const string SalmonberryBushKey = "Salmonberry";
+		private const string BlackberryBushKey = "Blackberry";
+		private const string TeaBushKey = "Tea";
+		private const string WalnutBushKey = "Walnut";
+
 		private const int MinFruitsReady = 1;
 		private const int MaxFruitsReady = 3;
 
@@ -58,7 +63,7 @@ namespace AutoShaker
 			ResetToDefault();
 		}
 
-		public void ResetToDefault()
+		public void ResetToDefault() 
 		{
 			IsShakerActive = true;
 			ToggleShakerKeybind = new KeybindList(
@@ -78,10 +83,10 @@ namespace AutoShaker
 					switch (toggleDict.Key)
 					{
 						case BushKey:
-							toggleDict.Value["Salmonberry"] = true;
-							toggleDict.Value["Blackberry"] = true;
-							toggleDict.Value["Tea"] = true;
-							toggleDict.Value["Walnut"] = false;
+							toggleDict.Value[SalmonberryBushKey] = true;
+							toggleDict.Value[BlackberryBushKey] = true;
+							toggleDict.Value[TeaBushKey] = true;
+							toggleDict.Value[WalnutBushKey] = false;
 							break;
 						case ForagingKey:
 							ResetTracker(_forageableTracker?.ObjectForageables, toggleDict.Value);
@@ -417,10 +422,10 @@ namespace AutoShaker
 						case BushKey:
 							if (toggleDict.Value.Keys.Any())
 							{
-								_anyBushesEnabled = toggleDict.Value["Salmonberry"]
-									|| toggleDict.Value["Blackberry"]
-									|| toggleDict.Value["Tea"]
-									|| toggleDict.Value["Walnut"];
+								_anyBushesEnabled = toggleDict.Value[SalmonberryBushKey]
+									|| toggleDict.Value[BlackberryBushKey]
+									|| toggleDict.Value[TeaBushKey]
+									|| toggleDict.Value[WalnutBushKey];
 							}
 							
 							break;
@@ -439,6 +444,12 @@ namespace AutoShaker
 
 			helper?.WriteConfig(this);
 		}
+
+		public bool AnyBushEnabled() => _anyBushesEnabled;
+		public bool SalmonberryBushesEnabled() => ForageToggles[BushKey][SalmonberryBushKey];
+		public bool BlackberryBushesEnabled() => ForageToggles[BushKey][BlackberryBushKey];
+		public bool TeaBushesEnabled() => ForageToggles[BushKey][TeaBushKey];
+		public bool WalnutBushesEnabled() => ForageToggles[BushKey][WalnutBushKey];
 
 		private static void UpdateTrackerEnables(List<ForageableItem> items, Dictionary<string, bool> dict)
 		{

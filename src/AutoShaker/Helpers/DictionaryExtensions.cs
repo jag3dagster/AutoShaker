@@ -43,6 +43,14 @@ namespace AutoShaker.Helpers
 			}
 		}
 
+		public static void AddOrIncrement<TKey>(this Dictionary<TKey, int> dict, IEnumerable<TKey> keys) where TKey : notnull
+		{
+			foreach (var key in keys)
+			{
+				dict.AddOrIncrement(key);
+			}
+		}
+
 		public static void AddOrUpdate<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, TValue value)
 			where TKey : notnull
 			where TValue : notnull
