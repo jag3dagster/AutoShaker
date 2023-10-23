@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AutoShaker.Classes;
-using AutoShaker.Helpers;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
+using AutoShaker.Classes;
+using AutoShaker.Helpers;
+
 using Constants = AutoShaker.Helpers.Constants;
 
 namespace AutoShaker
@@ -73,6 +74,7 @@ namespace AutoShaker
 			UsePlayerMagnetism = false;
 			ShakeDistance = 2;
 			RequireHoe = true;
+			FruitsReadyToShake = MinFruitsReady;
 
 			foreach (var toggleDict in ForageToggles)
 			{
@@ -100,28 +102,6 @@ namespace AutoShaker
 					}
 				}
 			}
-
-			//AnyShakeEnabled = true;
-
-			//AnySeedTreeEnabled = true;
-
-			// Fruit Trees
-			FruitsReadyToShake = MinFruitsReady;
-
-			//AnyFruitTreeEnabled = true;
-
-			// Bushes
-			//ShakeSalmonberryBushes = true;
-			//ShakeBlackberryBushes = true;
-			//ShakeTeaBushes = true;
-			//ShakeWalnutBushes = false;
-
-			//AnyBushEnabled = true;
-
-			// Forageables
-
-			//AnyForageablesEnabled = false;
-			//ForageableToggles = 0;
 		}
 
 		public void RegisterModConfigMenu(IModHelper helper, IManifest manifest)
@@ -194,23 +174,23 @@ namespace AutoShaker
 
 			gmcmApi.AddPageLink(
 				mod: manifest,
-				pageId: "AutoShaker.WildTreesPage",
-				text: I18n.Link_WildTrees_Text);
+				pageId: "AutoShaker.BushesPage",
+				text: I18n.Link_Bushes_Text);
+
+			gmcmApi.AddPageLink(
+				mod: manifest,
+				pageId: "AutoShaker.ForageablesPage",
+				text: I18n.Link_Forageables_Text);
 
 			gmcmApi.AddPageLink(
 				mod: manifest,
 				pageId: "AutoShaker.FruitTreesPage",
 				text: I18n.Link_FruitTrees_Text);
 
-			//gmcmApi.AddPageLink(
-			//	mod: manifest,
-			//	pageId: "AutoShaker.BushesPage",
-			//	text: I18n.Link_Bushes_Text);
-
 			gmcmApi.AddPageLink(
 				mod: manifest,
-				pageId: "AutoShaker.ForageablesPage",
-				text: I18n.Link_Forageables_Text);
+				pageId: "AutoShaker.WildTreesPage",
+				text: I18n.Link_WildTrees_Text);
 
 			/* Wild Trees */
 
@@ -283,79 +263,79 @@ namespace AutoShaker
 
 			/* Bushes */
 
-			//gmcmApi.AddPage(
-			//	mod: manifest,
-			//	pageId: "AutoShaker.BushesPage",
-			//	pageTitle: I18n.Page_Bushes_Title);
+			gmcmApi.AddPage(
+				mod: manifest,
+				pageId: "AutoShaker.BushesPage",
+				pageTitle: I18n.Page_Bushes_Title);
 
-			//gmcmApi.AddSectionTitle(
-			//	mod: manifest,
-			//	text: I18n.Section_Bushes_Text);
+			gmcmApi.AddSectionTitle(
+				mod: manifest,
+				text: I18n.Section_Bushes_Text);
 
-			//// ShakeSalmonberries
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ShakeSalmonberries",
-			//	name: () => Constants.SalmonberryName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description_Reward(
-			//		I18n.Action_Shake_Future().ToLowerInvariant(),
-			//		I18n.Subject_SalmonberryBushes(),
-			//		I18n.Reward_Salmonberries()),
-			//	getValue: () => ShakeSalmonberryBushes,
-			//	setValue: val =>
-			//	{
-			//		ShakeSalmonberryBushes = val;
-			//		UpdateEnabled();
-			//	});
+			// ShakeSalmonberries
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				fieldId: "AutoShaker.ShakeSalmonberries",
+				name: () => Constants.SalmonberryName,
+				tooltip: () => I18n.Option_ToggleAction_Description_Reward(
+					I18n.Action_Shake_Future().ToLowerInvariant(),
+					I18n.Subject_SalmonberryBushes(),
+					I18n.Reward_Salmonberries()),
+				getValue: GetSalmonberryBushesEnabled,
+				setValue: val =>
+				{
+					SetSalmonberryBushesEnabled(val);
+					UpdateEnabled();
+				});
 
-			//// ShakeBlackberries
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ShakeBlackberries",
-			//	name: () => Constants.BlackberryName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description_Reward(
-			//		I18n.Action_Shake_Future().ToLowerInvariant(),
-			//		I18n.Subject_BlackberryBushes(),
-			//		I18n.Reward_Blackberries()),
-			//	getValue: () => ShakeBlackberryBushes,
-			//	setValue: val =>
-			//	{
-			//		ShakeBlackberryBushes = val;
-			//		UpdateEnabled();
-			//	});
+			// ShakeBlackberries
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				fieldId: "AutoShaker.ShakeBlackberries",
+				name: () => Constants.BlackberryName,
+				tooltip: () => I18n.Option_ToggleAction_Description_Reward(
+					I18n.Action_Shake_Future().ToLowerInvariant(),
+					I18n.Subject_BlackberryBushes(),
+					I18n.Reward_Blackberries()),
+				getValue: GetBlackberryBushesEnabled,
+				setValue: val =>
+				{
+					SetBlackberryBushesEnabled(val);
+					UpdateEnabled();
+				});
 
-			//// ShakeTeaBushes
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ShakeTeaBushes",
-			//	name: () => Constants.TeaName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description_Reward(
-			//		I18n.Action_Shake_Future().ToLowerInvariant(),
-			//		I18n.Subject_TeaBushes(),
-			//		I18n.Reward_TeaLeaves()),
-			//	getValue: () => ShakeTeaBushes,
-			//	setValue: val =>
-			//	{
-			//		ShakeTeaBushes = val;
-			//		UpdateEnabled();
-			//	});
+			// ShakeTeaBushes
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				fieldId: "AutoShaker.ShakeTeaBushes",
+				name: () => Constants.TeaName,
+				tooltip: () => I18n.Option_ToggleAction_Description_Reward(
+					I18n.Action_Shake_Future().ToLowerInvariant(),
+					I18n.Subject_TeaBushes(),
+					I18n.Reward_TeaLeaves()),
+				getValue: GetTeaBushesEnabled,
+				setValue: val =>
+				{
+					SetTeaBushesEnabled(val);
+					UpdateEnabled();
+				});
 
-			//// ShakeWalnutBushes
-			//gmcmApi.AddBoolOption(
-			//	mod: manifest,
-			//	fieldId: "AutoShaker.ShakeWalnutBushes",
-			//	name: () => Constants.WalnutName,
-			//	tooltip: () => I18n.Option_ToggleAction_Description_Reward_Note(
-			//		I18n.Action_Shake_Future().ToLowerInvariant(),
-			//		I18n.Subject_WalnutBushes(),
-			//		I18n.Reward_GoldenWalnuts(),
-			//		I18n.Note_ShakeWalnutBushes()),
-			//	getValue: () => ShakeWalnutBushes,
-			//	setValue: val =>
-			//	{
-			//		ShakeWalnutBushes = val;
-			//		UpdateEnabled();
-			//	});
+			// ShakeWalnutBushes
+			gmcmApi.AddBoolOption(
+				mod: manifest,
+				fieldId: "AutoShaker.ShakeWalnutBushes",
+				name: () => Constants.WalnutName,
+				tooltip: () => I18n.Option_ToggleAction_Description_Reward_Note(
+					I18n.Action_Shake_Future().ToLowerInvariant(),
+					I18n.Subject_WalnutBushes(),
+					I18n.Reward_GoldenWalnuts(),
+					I18n.Note_ShakeWalnutBushes()),
+				getValue: GetWalnutBushesEnabled,
+				setValue: val =>
+				{
+					SetWalnutBushesEnabled(val);
+					UpdateEnabled();
+				});
 
 			/* Forageables */
 
@@ -446,10 +426,18 @@ namespace AutoShaker
 		}
 
 		public bool AnyBushEnabled() => _anyBushesEnabled;
-		public bool SalmonberryBushesEnabled() => ForageToggles[BushKey][SalmonberryBushKey];
-		public bool BlackberryBushesEnabled() => ForageToggles[BushKey][BlackberryBushKey];
-		public bool TeaBushesEnabled() => ForageToggles[BushKey][TeaBushKey];
-		public bool WalnutBushesEnabled() => ForageToggles[BushKey][WalnutBushKey];
+
+		public bool GetSalmonberryBushesEnabled() => ForageToggles[BushKey][SalmonberryBushKey];
+		private void SetSalmonberryBushesEnabled(bool value) => ForageToggles[BushKey][SalmonberryBushKey] = value;
+
+		public bool GetBlackberryBushesEnabled() => ForageToggles[BushKey][BlackberryBushKey];
+		private void SetBlackberryBushesEnabled(bool value) => ForageToggles[BushKey][BlackberryBushKey] = value;
+
+		public bool GetTeaBushesEnabled() => ForageToggles[BushKey][TeaBushKey];
+		private void SetTeaBushesEnabled(bool value) => ForageToggles[BushKey][TeaBushKey] = value;
+
+		public bool GetWalnutBushesEnabled() => ForageToggles[BushKey][WalnutBushKey];
+		private void SetWalnutBushesEnabled(bool value) => ForageToggles[BushKey][WalnutBushKey] = value;
 
 		private static void UpdateTrackerEnables(List<ForageableItem> items, Dictionary<string, bool> dict)
 		{
@@ -457,7 +445,7 @@ namespace AutoShaker
 
 			foreach (var toggle in dict)
 			{
-				var item = items.FirstOrDefault(f => f.InternalName.Equals(toggle.Key), null);
+				var item = items.FirstOrDefault(f => f?.InternalName.Equals(toggle.Key) ?? false, null);
 
 				if (item != null)
 				{
@@ -475,7 +463,7 @@ namespace AutoShaker
 
 		private static void ResetTracker(List<ForageableItem>? items, Dictionary<string, bool> dict)
 		{
-			if (items.IsNullOrEmpty()) return;
+			if (items?.IsNullOrEmpty() ?? true) return;
 
 			foreach (var item in items)
 			{

@@ -1,6 +1,6 @@
-﻿using AutoShaker.Classes;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using AutoShaker.Classes;
 
 namespace AutoShaker.Helpers
 {
@@ -23,6 +23,27 @@ namespace AutoShaker.Helpers
 			if (list == null) return false;
 
 			return !list.Any();
+		}
+
+		public static bool TryGetItem(this List<ForageableItem> items, string itemId, out ForageableItem? item)
+		{
+			item = null;
+
+			if (items == null || itemId == null)
+			{
+				return false;
+			}
+
+			foreach (var fItem in items)
+			{
+				if (fItem.QualifiedItemId.IEquals(itemId))
+				{
+					item = fItem;
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using StardewValley;
 using StardewValley.GameData.FruitTrees;
 using StardewValley.GameData.Locations;
@@ -6,7 +7,7 @@ using StardewValley.GameData.Objects;
 using StardewValley.GameData.WildTrees;
 using StardewValley.ItemTypeDefinitions;
 using AutoShaker.Helpers;
-using System;
+using System.Linq;
 
 namespace AutoShaker.Classes
 {
@@ -82,7 +83,17 @@ namespace AutoShaker.Classes
 				var customFields = kvp.Value.CustomFields;
 				if (customFields == null|| !customFields.ContainsKey(Constants.CustomFieldForageableKey)) continue;
 
-				forageItems.AddDistinct(new ForageableItem(ItemRegistry.GetData(kvp.Value.SeedItemId), customFields, true));
+				var seedAndSeedItemIds = new List<string> { kvp.Value.SeedItemId };
+
+				if (kvp.Value.SeedDropItems != null)
+				{
+					seedAndSeedItemIds.AddRange(kvp.Value.SeedDropItems.Select(i => i.ItemId));
+				}
+
+				foreach (var seedItem in seedAndSeedItemIds)
+				{
+					forageItems.AddDistinct(new ForageableItem(ItemRegistry.GetData(seedItem), customFields, true));
+				}
 			}
 
 			return forageItems;
