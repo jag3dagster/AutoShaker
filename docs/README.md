@@ -1,3 +1,7 @@
+# MOVED
+
+THIS REPOSITORY HAS MOVED TO https://github.com/Hedgehog-Technologies/StardewMods. ALL FUTURE UPDATES WILL COME FROM THERE. ANY ISSUES MAY BE BROUGHT UP THERE AS WELL. THANK YOU FOR YOUR CONTINUED SUPPORT!
+
 **AutoShaker** is an open-source mod for [Stardew Valley](https://stardewvalley.net) that allows players to automatically shake trees and bushes simply by moving nearby to them.
 
 ## Documentation
